@@ -1,7 +1,62 @@
 {
-  "name": "aket-uygulama",
-  "version": "1.0.0",
+  "name": "aket-kurumsal",
+  "version": "1.16.0",
+  "description": "AK ET Kurumsal Yönetim Sistemi",
+  "main": "main.js",
+  "author": {
+    "name": "AK ET Entegre Gıda",
+    "email": "aket@aket.com.tr"
+  },
   "scripts": {
-    "deploy": "wrangler pages deploy . --project-name=aket-uygulama --commit-dirty=true"
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "deploy": "npx wrangler pages deploy . --project-name=aket-uygulama --commit-dirty=true"
+  },
+  "build": {
+    "appId": "com.aket.kurumsal",
+    "productName": "AK ET Kurumsal",
+    "copyright": "© 2025 AK ET Entegre Gıda",
+    "forceCodeSigning": false,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "AK-ET KURUMSAL LOGO.png",
+      "requestedExecutionLevel": "asInvoker",
+      "sign": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "AK-ET KURUMSAL LOGO.png",
+      "uninstallerIcon": "AK-ET KURUMSAL LOGO.png",
+      "installerHeaderIcon": "AK-ET KURUMSAL LOGO.png",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AK ET Kurumsal",
+      "license": null
+    },
+    "files": [
+      "index.html",
+      "main.js",
+      "preload.js",
+      "manifest.json",
+      "sw.js",
+      "AK-ET KURUMSAL LOGO.png",
+      "_headers"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
   }
 }

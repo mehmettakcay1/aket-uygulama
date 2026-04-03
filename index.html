@@ -1426,20 +1426,100 @@
                 <div class="m-welcome-badge" id="m-welcome-badge" onclick="profilModalAc()" style="cursor:pointer; font-size:13px; font-weight:900; letter-spacing:0.5px; width:50px; height:50px;"></div>
             </div>
 
-            <!-- Gizli stat elementleri - JS uyumluluğu için -->
-            <div style="display:none;">
-                <div id="m-stat-karkas">0</div>
-                <div id="m-stat-siparis">0</div>
-                <div id="m-stat-sevk">0</div>
-                <div id="mcard-giren"></div>
-                <div id="mcard-stok"></div>
-                <div id="mcard-siparis"></div>
-                <div id="mcard-cikan"></div>
-                <div id="mcard-kemik"></div>
-                <div id="mcard-tarifler"></div>
-                <div id="mcard-perakende"></div>
-                <div id="mcard-muhasebe"></div>
-                <div id="mcard-personel"></div>
+            <!-- Anlık İstatistikler -->
+            <div class="m-stats-row">
+                <div class="m-stat-card" onclick="mobileOpenTab('giren')">
+                    <div class="m-stat-dot" style="background:#f39c12;"></div>
+                    <div class="m-stat-val" id="m-stat-karkas">0</div>
+                    <div class="m-stat-lbl">Aktif Karkas</div>
+                </div>
+                <div class="m-stat-card" onclick="mobileOpenTab('siparis')">
+                    <div class="m-stat-dot" style="background:#2980b9;"></div>
+                    <div class="m-stat-val" id="m-stat-siparis">0</div>
+                    <div class="m-stat-lbl">Sipariş</div>
+                </div>
+                <div class="m-stat-card" onclick="mobileOpenTab('cikan')">
+                    <div class="m-stat-dot" style="background:#27ae60;"></div>
+                    <div class="m-stat-val" id="m-stat-sevk">0</div>
+                    <div class="m-stat-lbl">Sevkiyat</div>
+                </div>
+            </div>
+
+            <!-- Modül Kartları -->
+            <div class="m-section-title">MODÜLLER</div>
+            <div class="m-card-grid">
+                <div id="mcard-giren" class="m-card" style="--c-accent:#f39c12;" onclick="mobileOpenTab('giren')">
+                    <div class="m-card-icon" style="background:rgba(243,156,18,0.12);color:#f39c12;">MK</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Mal Kabul</div>
+                        <div class="m-card-sub">Karkas &amp; giriş</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-stok" class="m-card" style="--c-accent:#27ae60;" onclick="mobileOpenTab('stok')">
+                    <div class="m-card-icon" style="background:rgba(39,174,96,0.12);color:#27ae60;">STK</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Merkez Stok</div>
+                        <div class="m-card-sub">Mevcut envanter</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-siparis" class="m-card" style="--c-accent:#2980b9;" onclick="mobileOpenTab('siparis')">
+                    <div class="m-card-icon" style="background:rgba(41,128,185,0.12);color:#2980b9;">SİP</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Siparişler</div>
+                        <div class="m-card-sub">Müşteri &amp; mağaza</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-cikan" class="m-card" style="--c-accent:#8e44ad;" onclick="mobileOpenTab('cikan')">
+                    <div class="m-card-icon" style="background:rgba(142,68,173,0.12);color:#8e44ad;">SEV</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">İşlem Hattı</div>
+                        <div class="m-card-sub">Sevkiyat takibi</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-kemik" class="m-card" style="--c-accent:#e0a060;" onclick="mobileOpenTab('kemik')">
+                    <div class="m-card-icon" style="background:rgba(224,160,96,0.12);color:#e0a060;">KEM</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Kemik Tartımı</div>
+                        <div class="m-card-sub">Fire analizi</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-tarifler" class="m-card" style="--c-accent:#e74c3c;" onclick="mobileOpenTab('tarifler')">
+                    <div class="m-card-icon" style="background:rgba(231,76,60,0.12);color:#e74c3c;">TAR</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Tarifler</div>
+                        <div class="m-card-sub">Ürün tarifleri</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-perakende" class="m-card" style="--c-accent:#7b2c24;" onclick="mobileOpenTab('perakende')">
+                    <div class="m-card-icon" style="background:rgba(123,44,36,0.12);color:#c0392b;">MAĞ</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Mağaza</div>
+                        <div class="m-card-sub">Perakende satış</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-muhasebe" class="m-card" style="--c-accent:#f1c40f;" onclick="mobileOpenTab('muhasebe')">
+                    <div class="m-card-icon" style="background:rgba(241,196,15,0.12);color:#f1c40f;">MUH</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Muhasebe</div>
+                        <div class="m-card-sub">Kasa &amp; cari</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
+                <div id="mcard-personel" class="m-card" style="--c-accent:#555;grid-column:span 2;" onclick="openModal('kullaniciModal')">
+                    <div class="m-card-icon" style="background:rgba(85,85,85,0.18);color:#888;">YÖN</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Personel Yönetimi</div>
+                        <div class="m-card-sub">Kullanıcılar &amp; yetkiler</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
             </div>
         </div>
 
@@ -2707,9 +2787,9 @@
             let cardMuh = document.getElementById('mcard-muhasebe');
             let cardTar = document.getElementById('mcard-tarifler');
             let cardPers = document.getElementById('mcard-personel');
-            if(cardMuh) cardMuh.style.display = (y === 'Admin' || y === 'Muhasebe') ? 'flex' : 'none';
-            if(cardTar) cardTar.style.display = (y === 'Admin' || y === 'Kasap') ? 'flex' : 'none';
-            if(cardPers) cardPers.style.display = (y === 'Admin') ? 'flex' : 'none';
+            if(cardMuh) cardMuh.style.display = (y === 'Admin' || y === 'Muhasebe') ? '' : 'none';
+            if(cardTar) cardTar.style.display = (y === 'Admin' || y === 'Kasap') ? '' : 'none';
+            if(cardPers) cardPers.style.display = (y === 'Admin') ? '' : 'none';
 
             // Dashboard hoşgeldiniz alanını güncelle
             let mName = document.getElementById('m-welcome-name');
