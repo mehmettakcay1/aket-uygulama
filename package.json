@@ -9,8 +9,8 @@
   },
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win",
-    "deploy": "npx wrangler pages deploy . --project-name=aket-uygulama --commit-dirty=true"
+    "deploy": "npx wrangler pages deploy . --project-name=aket-uygulama --commit-dirty=true",
+    "build:win": "electron-builder --win"
   },
   "build": {
     "appId": "com.aket.kurumsal",
