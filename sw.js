@@ -1,4 +1,4 @@
-const CACHE_NAME = "aket-v19";
+const CACHE_NAME = "aket-v20";
 
 self.addEventListener('install', event => {
   // skipWaiting: yeni SW hemen aktif olsun (güncelleme otomatik uygulanır)
