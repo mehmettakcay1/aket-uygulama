@@ -508,6 +508,24 @@
             .mesaj-kanallar { width: 110px; }
         }
 
+        /* ===== YÖNETİM DROPDOWN ===== */
+        .perf-dropdown-wrapper { position: relative; display: inline-block; }
+        .perf-dropdown { display: none; position: fixed; background: #161616; border: 1px solid #2e2e2e; border-radius: 10px; min-width: 210px; z-index: 9999; box-shadow: 0 12px 40px rgba(0,0,0,0.7); overflow: hidden; }
+        .perf-dropdown-header { padding: 10px 16px 8px; border-bottom: 1px solid #2a2a2a; }
+        .perf-dropdown-header span { font-size: 9px; color: #444; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+        .perf-dropdown-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; text-align: left; background: transparent; border: none; border-bottom: 1px solid #1e1e1e; color: #bbb; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.15s, color 0.15s; letter-spacing: 0.3px; }
+        .perf-dropdown-item:last-child { border-bottom: none; }
+        .perf-dropdown-item:hover { background: rgba(123,44,36,0.25); color: white; }
+        .perf-dropdown-item .item-icon { font-size: 13px; width: 18px; text-align: center; flex-shrink: 0; opacity: 0.7; }
+
+        /* ===== TOGGLE SWITCH ===== */
+        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 24px; transition: 0.3s; }
+        .toggle-slider::before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+        .toggle-switch input:checked + .toggle-slider { background: var(--yesil); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
         /* ===== LOGO GEÇİŞ ANİMASYONU ===== */
         @keyframes logoPulse {
             0%   { filter: brightness(1) drop-shadow(0 0 0px transparent); }
@@ -1005,7 +1023,7 @@
                 border-radius: 20px !important;
                 box-sizing: border-box;
             }
-            .login-logo { width: 190px !important; height: 90px !important; background: transparent !important; }
+            .login-logo { width: 190px !important; height: 90px !important; }
             .login-box h2 { font-size: 12px; margin-bottom: 14px; }
             .kurulus-yazisi { font-size: 9px; margin-bottom: 18px; }
             .login-box input {
@@ -1226,6 +1244,48 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
+
+        /* ===== CARİ BAKİYE ===== */
+        .profil-tab-btns { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+        .profil-tab-btn { flex: 1; min-width: 60px; padding: 8px 6px; background: #222; border: 1px solid #333; border-radius: 8px; color: #777; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; }
+        .profil-tab-btn.active { background: var(--kirmizi); border-color: var(--kirmizi); color: white; }
+        .profil-tab-content { display: none; }
+        .profil-tab-content.active { display: block; }
+        .sessiz-secenekler { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .sessiz-btn { padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; color: #aaa; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; transition: 0.2s; }
+        .sessiz-btn:hover { background: rgba(123,44,36,0.3); border-color: var(--kirmizi); color: white; }
+        .sessiz-kapat-btn { width:100%; margin-top:12px; padding:10px; border-radius:6px; border:1px solid #2a2a2a; background:#1e1e1e; color:#555; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s; }
+        .sessiz-kapat-btn.aktif { background:rgba(243,156,18,0.15); border-color:rgba(243,156,18,0.5); color:#f39c12; }
+        .sessiz-kapat-btn.aktif:hover { background:rgba(243,156,18,0.3); }
+        /* Muhasebe mağaza grid */
+        .muh-mag-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:10px; margin-bottom:20px; }
+        .muh-mag-kart { background:#161616; border:1px solid #222; border-radius:10px; padding:14px; }
+        .muh-mag-kart-baslik { font-size:10px; font-weight:800; color:var(--kirmizi); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid #1e1e1e; }
+        .muh-mag-stok-item { display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:12px; border-bottom:1px solid #111; }
+        .muh-mag-stok-item:last-child { border-bottom:none; }
+        /* Eksik ürün modal: diğer mağaza stok */
+        .diger-mag-kart { background:#161616; border:1px solid #222; border-radius:8px; padding:12px 14px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
+        .diger-mag-kart-ad { font-size:12px; font-weight:700; color:#bbb; }
+        .diger-mag-kart-stok { font-size:14px; font-weight:800; }
+
+        /* ===== PERFORMANS & MAĞAZA ===== */
+        .perf-ay-secici { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .perf-ay-btn { padding: 7px 14px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; color: #666; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .perf-ay-btn.active { background: rgba(123,44,36,0.3); border-color: var(--kirmizi); color: white; }
+        .perf-kart-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .perf-kart { background: #161616; border: 1px solid #252525; border-radius: 12px; padding: 14px; text-align: center; }
+        .perf-kart-adi { font-size: 12px; font-weight: 700; color: #aaa; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .perf-kart-val { font-size: 24px; font-weight: 900; color: white; line-height: 1; margin-bottom: 4px; }
+        .perf-kart-alt { font-size: 10px; color: #555; }
+        .perf-trend { font-size: 12px; font-weight: 700; margin-top: 4px; }
+        .trend-yukari { color: #27ae60; }
+        .trend-asagi { color: #e74c3c; }
+        .trend-esit { color: #666; }
+        .magaza-sec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+        .magaza-sec-kart { background: #161616; border: 2px solid #252525; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .magaza-sec-kart:hover, .magaza-sec-kart.active { border-color: var(--kirmizi); background: rgba(123,44,36,0.1); }
+        .magaza-sec-adi { font-size: 13px; font-weight: 700; color: white; margin-bottom: 4px; }
+        .magaza-sec-personel { font-size: 10px; color: #555; }
     </style>
 </head>
 <body>
@@ -1358,106 +1418,28 @@
         <div id="mobile-home">
             <div class="m-welcome">
                 <div class="m-welcome-left">
-                    <div class="m-welcome-label">Hoş Geldiniz</div>
+                    <div class="m-welcome-label">AK ET KURUMSAL</div>
                     <div class="m-welcome-name" id="m-welcome-name">Yönetici</div>
                     <div class="m-welcome-date" id="m-welcome-date"></div>
+                    <div id="m-welcome-role" style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;"></div>
                 </div>
-                <div class="m-welcome-badge" id="m-welcome-badge">YÖN</div>
+                <div class="m-welcome-badge" id="m-welcome-badge" onclick="profilModalAc()" style="cursor:pointer; font-size:13px; font-weight:900; letter-spacing:0.5px; width:50px; height:50px;"></div>
             </div>
 
-            <!-- ANLİK DURUM STATS -->
-            <div class="m-stats-row">
-                <div class="m-stat-card" onclick="mobileOpenTab('giren')">
-                    <div class="m-stat-dot" style="background:#27ae60;"></div>
-                    <div class="m-stat-val" id="m-stat-karkas" style="color:#27ae60;">0</div>
-                    <div class="m-stat-lbl">Aktif Karkas</div>
-                </div>
-                <div class="m-stat-card" onclick="mobileOpenTab('siparis')">
-                    <div class="m-stat-dot" style="background:#f39c12;"></div>
-                    <div class="m-stat-val" id="m-stat-siparis" style="color:#f39c12;">0</div>
-                    <div class="m-stat-lbl">Bekleyen Sipariş</div>
-                </div>
-                <div class="m-stat-card" onclick="mobileOpenTab('cikan')">
-                    <div class="m-stat-dot" style="background:#8e44ad;"></div>
-                    <div class="m-stat-val" id="m-stat-sevk" style="color:#8e44ad;">0</div>
-                    <div class="m-stat-lbl">Sevkiyat</div>
-                </div>
-            </div>
-
-            <div class="m-section-title">MODÜLLER</div>
-            <div class="m-card-grid">
-                <div class="m-card" id="mcard-giren" onclick="mobileOpenTab('giren')" style="--c-accent:#27ae60;">
-                    <div class="m-card-icon" style="background:rgba(39,174,96,0.18); color:#27ae60; font-size:22px;">📋</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Mal Kabul</div>
-                        <div class="m-card-sub">Gelen malları kaydet ve takip et</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card" id="mcard-stok" onclick="mobileOpenTab('stok')" style="--c-accent:#2980b9;">
-                    <div class="m-card-icon" style="background:rgba(41,128,185,0.18); color:#2980b9; font-size:22px;">🏭</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Merkez Stok</div>
-                        <div class="m-card-sub">Depo anlık stok durumu</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card" id="mcard-siparis" onclick="mobileOpenTab('siparis')" style="--c-accent:#f39c12;">
-                    <div class="m-card-icon" style="background:rgba(243,156,18,0.18); color:#f39c12; font-size:22px;">📦</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Siparişler</div>
-                        <div class="m-card-sub">Müşteri talep ve siparişleri</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card" id="mcard-cikan" onclick="mobileOpenTab('cikan')" style="--c-accent:#8e44ad;">
-                    <div class="m-card-icon" style="background:rgba(142,68,173,0.18); color:#8e44ad; font-size:22px;">🚚</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">İşlem Hattı</div>
-                        <div class="m-card-sub">Sevkiyat ve teslimat takibi</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card yetki-kemik-card" id="mcard-kemik" onclick="mobileOpenTab('kemik')" style="--c-accent:#795548; display:none;">
-                    <div class="m-card-icon" style="background:rgba(121,85,72,0.18); color:#a0806a; font-size:22px;">⚖️</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Kemik Tartımı</div>
-                        <div class="m-card-sub">Karkas kemik tartım kayıtları</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card" id="mcard-tarifler" onclick="mobileOpenTab('tarifler')" style="--c-accent:#16a085; display:none;">
-                    <div class="m-card-icon" style="background:rgba(22,160,133,0.18); color:#16a085; font-size:22px;">📖</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Tarifler</div>
-                        <div class="m-card-sub">Üretim reçeteleri ve formüller</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card" id="mcard-perakende" onclick="mobileOpenTab('perakende')" style="--c-accent:#c0392b;">
-                    <div class="m-card-icon" style="background:rgba(192,57,43,0.18); color:#c0392b; font-size:22px;">🏪</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Mağaza</div>
-                        <div class="m-card-sub">Perakende satış ve stok</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card" id="mcard-muhasebe" onclick="mobileOpenTab('muhasebe')" style="--c-accent:#d4ac0d; display:none;">
-                    <div class="m-card-icon" style="background:rgba(212,172,13,0.18); color:#d4ac0d; font-size:22px;">💼</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Muhasebe</div>
-                        <div class="m-card-sub">Finans özeti ve kasa raporu</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div class="m-card" id="mcard-personel" onclick="openModal('kullaniciModal')" style="--c-accent:#e67e22; display:none;">
-                    <div class="m-card-icon" style="background:rgba(230,126,34,0.18); color:#e67e22; font-size:22px;">👥</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Personel Yönetimi</div>
-                        <div class="m-card-sub">Kullanıcı ekle veya çıkart</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
+            <!-- Gizli stat elementleri - JS uyumluluğu için -->
+            <div style="display:none;">
+                <div id="m-stat-karkas">0</div>
+                <div id="m-stat-siparis">0</div>
+                <div id="m-stat-sevk">0</div>
+                <div id="mcard-giren"></div>
+                <div id="mcard-stok"></div>
+                <div id="mcard-siparis"></div>
+                <div id="mcard-cikan"></div>
+                <div id="mcard-kemik"></div>
+                <div id="mcard-tarifler"></div>
+                <div id="mcard-perakende"></div>
+                <div id="mcard-muhasebe"></div>
+                <div id="mcard-personel"></div>
             </div>
         </div>
 
@@ -1487,8 +1469,20 @@
                 <button class="tab-link" id="nav-muhasebe" onclick="openTab('muhasebe', this)">Muhasebe</button>
             </div>
             <div class="user-actions">
-                <div class="user-info" id="active-user-display" title="Şifreni Değiştirmek İçin Tıkla" onclick="openModal('sifreDegistirModal')">Giriş Bekleniyor</div>
-                <button class="btn-admin" id="btn-personel-yonetimi" onclick="openModal('kullaniciModal')">Personel Yönetimi</button>
+                <div class="user-info" id="active-user-display" title="Profil & Ayarlar" onclick="profilModalAc()">Giriş Bekleniyor</div>
+                <div class="perf-dropdown-wrapper yetki-admin" id="btn-performans-dropdown" style="display:none;">
+                    <button class="btn-admin" id="btn-yonetim-panel" onclick="togglePerfDropdown(event)" style="position:relative;">
+                        Yönetim &#9660; <span id="talep-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e74c3c;color:white;font-size:9px;border-radius:6px;padding:1px 4px;"></span>
+                    </button>
+                    <div class="perf-dropdown" id="perf-dropdown">
+                        <div class="perf-dropdown-header"><span>YÖNETİM PANELİ</span></div>
+                        <button class="perf-dropdown-item" onclick="openModal('magazaYonetimModal'); closePerfDropdown()"><span class="item-icon">🏪</span>Mağazalar</button>
+                        <button class="perf-dropdown-item" onclick="personelPerfModalAc(); closePerfDropdown()"><span class="item-icon">📊</span>Personel Performansı</button>
+                        <button class="perf-dropdown-item" onclick="sirketPerfModalAc(); closePerfDropdown()"><span class="item-icon">📈</span>Aylık Analiz</button>
+                        <button class="perf-dropdown-item" onclick="openModal('kullaniciModal'); closePerfDropdown()"><span class="item-icon">👥</span>Personel Yönetimi</button>
+                        <button class="perf-dropdown-item" onclick="yetkiTaleplerModalAc(); closePerfDropdown()"><span class="item-icon">📋</span>Yetki Talepleri</button>
+                    </div>
+                </div>
                 <button class="btn-logout" onclick="cikisYap()">Çıkış</button>
             </div>
         </div>
@@ -1718,10 +1712,13 @@
                 </div>
 
                 <div class="table-header" style="margin-top:20px; border:none;">
-                    <h3 style="color:var(--yazi-soluk); margin:0;">Mağaza Güncel Stok Durumu</h3>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <h3 style="color:var(--yazi-soluk); margin:0;">Mağaza Güncel Stok Durumu</h3>
+                        <span id="aktif-magaza-badge" style="background:rgba(123,44,36,0.2);border:1px solid var(--kirmizi);color:var(--kirmizi);font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:20px;text-transform:uppercase;"></span>
+                    </div>
                     <div class="header-actions">
-                        <button class="btn yetki-magaza" style="background-color: #333; border: 1px solid #555;" onclick="openModal('perakendeTalepModal')">Merkezden Eksik Ürün İste</button>
-                        <button class="btn yetki-magaza" style="background-color: var(--kirmizi);" onclick="openModal('perakendeSatisModal')">Günlük Satış Çıkışı Gir</button>
+                        <button class="btn yetki-magaza" style="background-color: #333; border: 1px solid #555;" onclick="perakendeTalepModalAc()">Merkezden Eksik Ürün İste</button>
+                        <button class="btn yetki-magaza" style="background-color: var(--kirmizi);" onclick="satisModalAc()">Günlük Satış Çıkışı Gir</button>
                     </div>
                 </div>
                 <table>
@@ -1731,9 +1728,14 @@
 
                 <div class="table-header" style="margin-top:40px; border:none; padding:0;">
                     <h3 style="color:var(--yazi-soluk); margin:0;">Mağaza Günlük Satış Çıkışları</h3>
+                    <div class="header-actions">
+                        <select id="filtre-magaza-satis" style="background:#1a1a1a;border:1px solid #333;color:var(--yazi);padding:6px 12px;border-radius:6px;font-size:12px;" onchange="ekranlariGuncelle()">
+                            <option value="">Tüm Mağazalar</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="tablo-arama-wrap">
-                    <input type="text" class="tablo-arama" placeholder="Ürün veya tarih ara..." oninput="tabloFiltrele('perakendeSatisTablosu','tf-magaza-bas','tf-magaza-bit',this.value)">
+                    <input type="text" class="tablo-arama" placeholder="Ürün, mağaza veya tarih ara..." oninput="tabloFiltrele('perakendeSatisTablosu','tf-magaza-bas','tf-magaza-bit',this.value)">
                 </div>
                 <div class="tarih-filtre-wrap">
                     <label>Tarih:</label>
@@ -1743,7 +1745,7 @@
                     <button class="btn-tarih-sifirla" onclick="tarihFiltreSifirla('perakendeSatisTablosu','tf-magaza-bas','tf-magaza-bit','tablo-ara-magaza')">× Temizle</button>
                 </div>
                 <table>
-                    <thead><tr><th>Tarih</th><th>Satılan Ürün</th><th>Çıkan Miktar (KG)</th><th class="yetki-magaza no-excel">İşlem</th></tr></thead>
+                    <thead><tr><th>Tarih</th><th>Mağaza</th><th>Satılan Ürün</th><th>Çıkan Miktar (KG)</th><th>Kaydeden</th><th class="yetki-magaza no-excel">İşlem</th></tr></thead>
                     <tbody id="perakendeSatisTablosu"></tbody>
                 </table>
             </div>
@@ -1771,10 +1773,35 @@
                         <div class="deger" id="muh-toplam">0 ₺</div>
                     </div>
                     <div class="muhasebe-card" style="border-top-color:#f1c40f;">
-                        <h4>Cari Alacaklar</h4>
-                        <div class="deger" style="font-size:16px; margin-top:5px; color:#aaa;">(Yakında Eklenecek)</div>
+                        <h4>Toplam Cari Alacak</h4>
+                        <div class="deger" id="muh-cari-toplam">0 ₺</div>
                     </div>
                 </div>
+
+                <!-- CARİ BAKİYE BÖLÜMÜ -->
+                <div class="table-header" style="margin-top:30px; border:none; padding:0;">
+                    <h3 style="color:var(--yazi-soluk); margin:0;">Firma Cari Bakiyeleri</h3>
+                    <div class="header-actions">
+                        <button class="btn" style="background:#333;border:1px solid #555;" onclick="openModal('cariHareketModal')">+ Cari Hareket Gir</button>
+                    </div>
+                </div>
+                <div id="cariBakiyeTabloWrap" style="overflow-x:auto;margin-bottom:28px;">
+                    <table>
+                        <thead><tr><th>Firma</th><th>Vadeli Bakiye</th><th>Nakit Ödenen</th><th>Net Bakiye</th><th>Son Hareket</th><th class="no-excel">İşlem</th></tr></thead>
+                        <tbody id="cariBakiyeTablosu"></tbody>
+                    </table>
+                </div>
+                
+                <div class="table-header" style="margin-top:10px; border:none; padding:0;">
+                    <h3 style="color:var(--yazi-soluk); margin:0;">Cari Hareket Geçmişi</h3>
+                </div>
+                <div class="tablo-arama-wrap">
+                    <input type="text" class="tablo-arama" placeholder="Firma veya açıklama ara..." oninput="tabloAra('cariHareketTablosu', this.value)">
+                </div>
+                <table>
+                    <thead><tr><th>Tarih</th><th>Firma</th><th>Tür</th><th>Tutar</th><th>Açıklama</th><th>Kaydeden</th></tr></thead>
+                    <tbody id="cariHareketTablosu"></tbody>
+                </table>
 
                 <div class="table-header" style="margin-top:30px; border:none; padding:0;">
                     <h3 style="color:var(--yazi-soluk); margin:0;">Mağaza Z-Raporu Geçmişi</h3>
@@ -1790,9 +1817,28 @@
                     <button class="btn-tarih-sifirla" onclick="tarihFiltreSifirla('muhasebeKasaTablosu','tf-muh-bas','tf-muh-bit','tablo-ara-muh')">× Temizle</button>
                 </div>
                 <table>
-                    <thead><tr><th>Tarih</th><th>Bildiren Kasiyer</th><th>Nakit Bakiye</th><th>Kredi Kartı Bakiye</th><th>Toplam Günlük</th></tr></thead>
+                    <thead><tr><th>Tarih</th><th>Mağaza</th><th>Kasiyer</th><th>Nakit</th><th>Kredi Kartı</th><th>Toplam</th></tr></thead>
                     <tbody id="muhasebeKasaTablosu"></tbody>
                 </table>
+
+                <!-- MAĞAZA YÖNETİM PANELİ -->
+                <div style="margin-top:40px; padding-top:20px; border-top:2px solid var(--kirmizi);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <h3 style="color:white;margin:0;font-size:14px;letter-spacing:1px;">🏪 Mağaza Paneli</h3>
+                        <select id="muh-magaza-filtre" style="background:#1a1a1a;border:1px solid #333;color:var(--yazi);padding:6px 12px;border-radius:6px;font-size:12px;" onchange="muhMagazaGuncelle()">
+                            <option value="">Tüm Mağazalar</option>
+                        </select>
+                    </div>
+                    <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">GÜNCEL STOK DURUMLARI</div>
+                    <div class="muh-mag-grid" id="muh-magaza-stok-grid">
+                        <div style="color:#444;font-size:12px;padding:16px;text-align:center;grid-column:span 4;">Henüz mağaza stok verisi yok.</div>
+                    </div>
+                    <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;margin-top:10px;">EKSİK ÜRÜN TALEPLERİ</div>
+                    <table>
+                        <thead><tr><th>Tarih</th><th>Mağaza / Talep Eden</th><th>Ürün</th><th>Miktar</th><th>Durum</th></tr></thead>
+                        <tbody id="muh-magaza-talep-tablosu"></tbody>
+                    </table>
+                </div>
             </div>
 
         </div>
@@ -1810,16 +1856,106 @@
         </div>
     </div>
 
-    <!-- PROFİL MODAL -->
+    <!-- PROFİL & AYARLAR MODAL -->
     <div id="profilModal" class="modal">
-        <div class="modal-content" style="width:340px; text-align:center;">
+        <div class="modal-content" style="width:380px;">
             <span class="close-btn" onclick="closeModal('profilModal')">×</span>
-            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Profil Fotoğrafı</h3>
-            <div id="profilFotoOnizleme" style="width:90px;height:90px;border-radius:50%;background:#2a2a2a;border:3px solid var(--kirmizi);margin:0 auto 16px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--altin);">?</div>
-            <p style="font-size:12px;color:#888;margin-bottom:16px;">Fotoğrafınızı yükleyin veya kaldırın.</p>
-            <input type="file" id="profilFotoInput" accept="image/*" style="display:none;" onchange="profilFotoKaydet(this)">
-            <button class="btn" style="width:100%;margin-bottom:8px;" onclick="document.getElementById('profilFotoInput').click()">Fotoğraf Seç</button>
-            <button class="btn" style="width:100%;background:#333;color:#888;" onclick="profilFotoSil()">Fotoğrafı Kaldır</button>
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid #333;">
+                <div id="profilFotoOnizleme" style="width:54px;height:54px;border-radius:14px;background:rgba(123,44,36,0.25);border:2px solid rgba(123,44,36,0.5);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--altin);flex-shrink:0;">?</div>
+                <div>
+                    <div id="profil-ad" style="font-size:15px;font-weight:700;color:white;"></div>
+                    <div id="profil-yetki" style="font-size:11px;color:#666;margin-top:2px;text-transform:uppercase;letter-spacing:1px;"></div>
+                    <div id="profil-magaza" style="font-size:10px;color:#555;margin-top:2px;"></div>
+                </div>
+            </div>
+            <div class="profil-tab-btns">
+                <button class="profil-tab-btn active" onclick="profilTab('ayarlar',this)">Ayarlar</button>
+                <button class="profil-tab-btn" onclick="profilTab('bildirim',this)">Bildirim</button>
+                <button class="profil-tab-btn" onclick="profilTab('sifre',this)">Şifre</button>
+                <button class="profil-tab-btn" onclick="profilTab('yetki',this)">Yetki</button>
+            </div>
+
+            <!-- AYARLAR SEKMESİ -->
+            <div id="profil-tab-ayarlar" class="profil-tab-content active">
+                <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">HESAP BİLGİLERİ</div>
+                <div style="background:#161616;border:1px solid #222;border-radius:10px;padding:14px;margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1e1e1e;">
+                        <span style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;">Ad Soyad</span>
+                        <span id="profil-info-ad" style="font-size:12px;font-weight:700;color:#ccc;"></span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1e1e1e;">
+                        <span style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;">Yetki</span>
+                        <span id="profil-info-yetki" style="font-size:12px;font-weight:700;color:var(--altin);"></span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;">
+                        <span style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;">Mağaza</span>
+                        <span id="profil-info-magaza" style="font-size:12px;font-weight:700;color:#ccc;"></span>
+                    </div>
+                </div>
+                <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">BİLDİRİM AYARLARI</div>
+                <div style="background:#161616;border:1px solid #222;border-radius:10px;padding:14px;margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <div style="font-size:12px;font-weight:700;color:white;">Uygulama Bildirimleri</div>
+                            <div style="font-size:10px;color:#555;margin-top:3px;">Mal kabul, sipariş ve stok uyarıları</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="bildirim-toggle" onchange="bildirimToggleChange(this)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div id="profil-talep-wrap" style="display:none;">
+                    <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">YÖNETİM</div>
+                    <button class="btn" style="width:100%;background:#1a1a1a;border:1px solid #2e2e2e;color:#ccc;font-size:12px;display:flex;align-items:center;gap:8px;justify-content:center;" onclick="yetkiTaleplerModalAc(); closeModal('profilModal')">
+                        <span>📋</span> Yetki Taleplerini Görüntüle <span id="talep-badge-profil" style="display:none;background:#e74c3c;color:white;font-size:9px;border-radius:6px;padding:1px 5px;"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- BİLDİRİM SEKMESİ -->
+            <div id="profil-tab-bildirim" class="profil-tab-content">
+                <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">GEÇİCİ SESSİZ MOD</div>
+                <div id="sessiz-aktif-bilgi" style="display:none;background:rgba(243,156,18,0.08);border:1px solid rgba(243,156,18,0.3);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#f39c12;"></div>
+                <div class="sessiz-secenekler">
+                    <button class="sessiz-btn" onclick="sessizModAc(60)">1 Saat</button>
+                    <button class="sessiz-btn" onclick="sessizModAc(240)">4 Saat</button>
+                    <button class="sessiz-btn" onclick="sessizModAc(480)">8 Saat</button>
+                    <button class="sessiz-btn" onclick="sessizModAc(1440)">1 Gün</button>
+                    <button class="sessiz-btn" onclick="sessizModSuresiz()" style="grid-column:span 2;color:#e74c3c;border-color:rgba(231,76,60,0.35);background:rgba(231,76,60,0.06);">Süresiz — Bildirimleri Tamamen Kapat</button>
+                </div>
+                <button id="sessiz-kapat-btn" class="sessiz-kapat-btn" onclick="sessizModKapat()">&#9654; Sessiz Modu Kapat</button>
+            </div>
+
+            <!-- ŞİFRE SEKMESİ -->
+            <div id="profil-tab-sifre" class="profil-tab-content">
+                <div class="form-group"><label>Mevcut Şifreniz</label><input type="password" id="profil-eski-sifre"></div>
+                <div class="form-group"><label>Yeni Şifreniz</label><input type="password" id="profil-yeni-sifre"></div>
+                <div class="form-group"><label>Yeni Şifreniz (Tekrar)</label><input type="password" id="profil-yeni-sifre2"></div>
+                <button class="btn btn-success" style="width:100%;" onclick="profilSifreGuncelle()">Şifreyi Güncelle</button>
+            </div>
+
+            <!-- YETKİ TALEP SEKMESİ -->
+            <div id="profil-tab-yetki" class="profil-tab-content">
+                <div style="font-size:11px;color:#555;margin-bottom:14px;">Ek yetki talebinde bulunabilirsiniz. Yönetici onayı ile geçerli olur.</div>
+                <div class="form-group">
+                    <label>Talep Edilen Yetki</label>
+                    <select id="yetki-talep-secim" style="width:100%;padding:10px;background:#111;border:1px solid #444;border-radius:6px;color:white;">
+                        <option value="Muhasebe">Muhasebe Görüntüleme</option>
+                        <option value="Rapor">Rapor Alma</option>
+                        <option value="StokDuzenleme">Stok Düzenleme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Talep Gerekçesi</label>
+                    <textarea id="yetki-talep-aciklama" style="width:100%;padding:10px;background:#111;border:1px solid #444;border-radius:6px;color:white;resize:none;min-height:70px;font-family:inherit;box-sizing:border-box;" placeholder="Neden bu yetkiye ihtiyaç duyuyorsunuz?"></textarea>
+                </div>
+                <button class="btn" style="width:100%;" onclick="yetkiTalepGonder()">Talep Gönder</button>
+                <div style="margin-top:14px;">
+                    <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">GEÇMİŞ TALEPLERİM</div>
+                    <div id="yetki-talep-liste"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1889,6 +2025,12 @@
                         <option value="Kasa">Kasa Görevlisi</option>
                         <option value="Muhasebe">Muhasebe</option>
                         <option value="Admin">Tam Yetkili Yönetici</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Atandığı Mağaza <span style="color:#555;font-size:10px;">(İsteğe bağlı)</span></label>
+                    <select id="uMagaza">
+                        <option value="">— Merkez / Genel —</option>
                     </select>
                 </div>
                 <button class="btn btn-success" style="background-color: var(--altin); color:black;" onclick="kullaniciKaydet()">Personeli Kaydet & Şifre Üret</button>
@@ -2102,22 +2244,34 @@
     </div>
 
     <div id="perakendeTalepModal" class="modal">
-        <div class="modal-content"><span class="close-btn" onclick="closeModal('perakendeTalepModal')">×</span>
+        <div class="modal-content" style="width:460px;"><span class="close-btn" onclick="closeModal('perakendeTalepModal')">×</span>
             <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Eksik Ürün Talebi (Merkezden)</h3>
-            <div class="form-group"><label>Kategori</label><select id="pKategori" onchange="kategoriDegisti('pKategori', 'pUrun')"><option value="dana">Dana Ürünleri</option><option value="kuzu">Kuzu Ürünleri</option><option value="beyaz">Beyaz Et (Piliç) Ürünleri</option></select></div>
-            <div class="form-group"><label>Eksik Ürün</label><select id="pUrun"></select></div>
-            <div class="form-group"><label>İstenen Miktar (KG)</label><input type="number" id="pMiktar"></div>
-            <button class="btn btn-success" style="background-color:var(--kirmizi);" onclick="siparisKaydet('Mağaza')">Talep Et</button>
+            <div class="form-group">
+                <label>Hangi Mağaza İçin?</label>
+                <select id="pHedefMagaza" onchange="digerMagazaStokGoster()" style="background:#111;border:1px solid #333;color:white;padding:10px;border-radius:4px;width:100%;font-size:13px;"></select>
+            </div>
+            <div class="form-group"><label>Kategori</label><select id="pKategori" onchange="kategoriDegisti('pKategori', 'pUrun'); digerMagazaStokGoster()"><option value="dana">Dana Ürünleri</option><option value="kuzu">Kuzu Ürünleri</option><option value="beyaz">Beyaz Et (Piliç) Ürünleri</option></select></div>
+            <div class="form-group"><label>Eksik Ürün</label><select id="pUrun" onchange="digerMagazaStokGoster()"></select></div>
+            <div class="form-group"><label>İstenen Miktar (KG)</label><input type="number" id="pMiktar" placeholder="Örn: 50"></div>
+            <div id="diger-magaza-stok-wrap" style="display:none;margin-bottom:14px;">
+                <div style="font-size:9px;color:#444;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;padding-top:4px;">DİĞER MAĞAZALARDA AYNI ÜRÜN</div>
+                <div id="diger-magaza-stok-icerik"></div>
+            </div>
+            <button class="btn btn-success" style="background-color:var(--kirmizi);width:100%;" onclick="siparisKaydet('Mağaza')">Talep Et</button>
         </div>
     </div>
 
     <div id="perakendeSatisModal" class="modal">
         <div class="modal-content"><span class="close-btn" onclick="closeModal('perakendeSatisModal')">×</span>
             <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Günlük Satış Çıkışı</h3>
+            <div class="form-group">
+                <label>Mağaza</label>
+                <select id="psMagaza" style="background:#111;border:1px solid #333;color:white;padding:10px;border-radius:4px;width:100%;font-size:13px;"></select>
+            </div>
             <div class="form-group"><label>Kategori</label><select id="psKategori" onchange="kategoriDegisti('psKategori', 'psUrun')"><option value="dana">Dana Ürünleri</option><option value="kuzu">Kuzu Ürünleri</option><option value="beyaz">Beyaz Et (Piliç) Ürünleri</option></select></div>
             <div class="form-group"><label>Satılan Ürün</label><select id="psUrun"></select></div>
-            <div class="form-group"><label>Çıkan Miktar (KG)</label><input type="number" id="psMiktar"></div>
-            <button class="btn btn-success" style="background-color:var(--kirmizi);" onclick="magazaSatisKaydet()">Stoktan Düş</button>
+            <div class="form-group"><label>Çıkan Miktar (KG)</label><input type="number" id="psMiktar" placeholder="0.00" step="0.01" min="0"></div>
+            <button class="btn btn-success" style="background-color:var(--kirmizi);width:100%;" onclick="magazaSatisKaydet()">Stoktan Düş</button>
         </div>
     </div>
 
@@ -2127,6 +2281,114 @@
             <div class="form-group"><label>Şoför Bilgisi</label><input type="text" id="iPersonel" placeholder="Ad Soyad giriniz"></div>
             <div class="form-group"><label>Araç İçi Fotoğraf</label><input type="file" id="iFoto" accept="image/*" capture="environment"></div>
             <button class="btn btn-success" style="background-color: var(--mavi);" onclick="sevkiyatIslemKaydet()">Başlat</button>
+        </div>
+    </div>
+
+    <!-- CARİ HAREKET MODAL -->
+    <div id="cariHareketModal" class="modal">
+        <div class="modal-content" style="width:420px;">
+            <span class="close-btn" onclick="closeModal('cariHareketModal')">×</span>
+            <h3 style="color:var(--altin);border-bottom:1px solid #444;padding-bottom:10px;">Cari Hareket Kaydı</h3>
+            <div class="form-group">
+                <label>Firma Adı</label>
+                <input type="text" id="cari-firma" list="cari-firma-list" placeholder="Firma adı giriniz..." autocomplete="off">
+                <datalist id="cari-firma-list"></datalist>
+            </div>
+            <div class="form-group">
+                <label>İşlem Türü</label>
+                <select id="cari-tur" onchange="cariTurDegisti()">
+                    <option value="vadeli-satis">Vadeli Satış (Borç Oluştur)</option>
+                    <option value="nakit-tahsilat">Nakit Tahsilat (Ödeme Alındı)</option>
+                    <option value="vadeli-tahsilat">Vadeli Ödeme Tahsilatı</option>
+                    <option value="duzeltme">Düzeltme / Açıklama</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tutar (₺)</label>
+                <input type="number" id="cari-tutar" placeholder="0.00" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Açıklama / Not</label>
+                <input type="text" id="cari-aciklama" placeholder="Ürün, fatura no veya not...">
+            </div>
+            <button class="btn btn-success" style="width:100%;background:var(--altin);color:black;" onclick="cariHareketKaydet()">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- MAĞAZA YÖNETİMİ MODAL (ADMIN) -->
+    <div id="magazaYonetimModal" class="modal">
+        <div class="modal-content" style="width:560px;">
+            <span class="close-btn" onclick="closeModal('magazaYonetimModal')">×</span>
+            <h3 style="color:white;border-bottom:1px solid #444;padding-bottom:10px;">Mağaza Yönetimi</h3>
+            <div style="display:flex;gap:10px;margin-bottom:20px;">
+                <button class="btn active" id="btn-magaza-listele" onclick="magazaTab('listele')" style="flex:1;">Mağazalar</button>
+                <button class="btn" id="btn-magaza-ekle" onclick="magazaTab('ekle')" style="flex:1;background:#333;">Mağaza Ekle</button>
+                <button class="btn" id="btn-magaza-perf" onclick="magazaTab('perf')" style="flex:1;background:#333;">Performans</button>
+            </div>
+            <div id="magaza-listele-tab">
+                <div id="magaza-listesi-html" class="magaza-sec-grid"></div>
+            </div>
+            <div id="magaza-ekle-tab" style="display:none;">
+                <div class="form-group"><label>Mağaza Adı</label><input type="text" id="yeni-magaza-ad" placeholder="Örn: A Mağazası"></div>
+                <div class="form-group"><label>Adres</label><input type="text" id="yeni-magaza-adres" placeholder="Mağaza adresi..."></div>
+                <button class="btn btn-success" style="width:100%;" onclick="magazaEkle()">Mağaza Ekle</button>
+            </div>
+            <div id="magaza-perf-tab" style="display:none;">
+                <div style="font-size:11px;color:#555;margin-bottom:12px;">Mağaza bazlı aylık satış performansı</div>
+                <div class="form-group">
+                    <label>Ay Seç</label>
+                    <select id="perf-ay-secim" onchange="magazaPerfGoster()">
+                    </select>
+                </div>
+                <div id="magaza-perf-icerik"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERSONEL PERFORMANS MODAL (ADMIN) -->
+    <div id="personelPerfModal" class="modal">
+        <div class="modal-content" style="width:600px;max-height:88vh;overflow-y:auto;">
+            <span class="close-btn" onclick="closeModal('personelPerfModal')">×</span>
+            <h3 style="color:white;border-bottom:1px solid #444;padding-bottom:10px;">Personel Performans Analizi</h3>
+            <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+                <div class="form-group" style="margin:0;flex:1;min-width:130px;">
+                    <label>Referans Ay</label>
+                    <select id="perf-ref-ay" onchange="personelPerfGoster()"></select>
+                </div>
+                <div class="form-group" style="margin:0;flex:1;min-width:130px;">
+                    <label>Karşılaştırma Ayı</label>
+                    <select id="perf-kars-ay" onchange="personelPerfGoster()"></select>
+                </div>
+            </div>
+            <div id="personel-perf-icerik"></div>
+        </div>
+    </div>
+
+    <!-- ŞİRKET PERFORMANSI MODAL (ADMIN) -->
+    <div id="sirketPerfModal" class="modal">
+        <div class="modal-content" style="width:600px;max-height:88vh;overflow-y:auto;">
+            <span class="close-btn" onclick="closeModal('sirketPerfModal')">×</span>
+            <h3 style="color:white;border-bottom:1px solid #444;padding-bottom:10px;">Aylık Şirket Performansı</h3>
+            <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+                <div class="form-group" style="margin:0;flex:1;min-width:130px;">
+                    <label>1. Ay</label>
+                    <select id="sirket-ay1" onchange="sirketPerfGoster()"></select>
+                </div>
+                <div class="form-group" style="margin:0;flex:1;min-width:130px;">
+                    <label>2. Ay</label>
+                    <select id="sirket-ay2" onchange="sirketPerfGoster()"></select>
+                </div>
+            </div>
+            <div id="sirket-perf-icerik"></div>
+        </div>
+    </div>
+
+    <!-- YETKİ TALEPLERİ MODAL (ADMIN) -->
+    <div id="yetkiTaleplerModal" class="modal">
+        <div class="modal-content" style="width:500px;">
+            <span class="close-btn" onclick="closeModal('yetkiTaleplerModal')">×</span>
+            <h3 style="color:white;border-bottom:1px solid #444;padding-bottom:10px;">Yetki Talepleri</h3>
+            <div id="yetki-talepler-listesi"></div>
         </div>
     </div>
 
@@ -2213,7 +2475,11 @@
         });
 
         let stok = JSON.parse(localStorage.getItem('aket_stok')) || {};
+        let cariHareketler = JSON.parse(localStorage.getItem('aket_cari')) || [];
+        let magazalar = JSON.parse(localStorage.getItem('aket_magazalar')) || [];
+        let yetkiTalepleri = JSON.parse(localStorage.getItem('aket_yetki_talepler')) || [];
         let perakendeStok = JSON.parse(localStorage.getItem('aket_perakende_stok')) || {};
+        let magazaStoklar = JSON.parse(localStorage.getItem('aket_magaza_stoklar')) || {};
         let sonİslemYapan = JSON.parse(localStorage.getItem('aket_islem')) || {};
         let siparisler = JSON.parse(localStorage.getItem('aket_siparis')) || [];
         let girenler = JSON.parse(localStorage.getItem('aket_giren')) || [];
@@ -2379,6 +2645,8 @@
         function sistemiBaslat() {
             document.getElementById('app-body').classList.add('visible');
             document.getElementById('active-user-display').innerText = `${aktifKullanici.ad} [${aktifKullanici.yetki}]`;
+            magazaDropdownlariGuncelle();
+            yetkiTalepBadgeGuncelle();
 
             eskiKayitlariTemizle();
             tarifListesiniDoldur();
@@ -2403,7 +2671,11 @@
 
         function yetkileriUygula() {
             let y = aktifKullanici.yetki;
-            
+            // Admin-only butonları
+            document.querySelectorAll('.yetki-admin').forEach(b => { b.style.display = y === 'Admin' ? '' : 'none'; });
+            let restartPanel = document.querySelector('.restart-panel');
+            if(restartPanel) restartPanel.style.display = y === 'Admin' ? 'block' : 'none';
+
             // LOGO DEĞİŞTİRME YETKİSİ SADECE ADMİNDE
             let navLogoContainer = document.getElementById('nav-logo-container');
             if (y === 'Admin') {
@@ -2423,7 +2695,6 @@
                 if(!localStorage.getItem('aket_logo_base64')) document.getElementById('nav-text').innerText = "AK ET";
             }
             
-            document.getElementById('btn-personel-yonetimi').style.display = (y === 'Admin') ? 'block' : 'none';
             document.getElementById('nav-muhasebe').style.display = (y === 'Admin' || y === 'Muhasebe') ? 'block' : 'none';
             document.getElementById('nav-tarifler').style.display = (y === 'Admin' || y === 'Kasap') ? 'block' : 'none';
             // Mobil bottom nav görünürlükleri
@@ -2514,7 +2785,8 @@
             let rndSifre;
             do { rndSifre = String(Math.floor(Math.random() * 999) + 2).padStart(4, '0'); } while(sistemKullanicilari.find(k => k.sifre === rndSifre));
             
-            sistemKullanicilari.push({ id: tc, sifre: rndSifre, ad: ad, yetki: yetki, tel: tel, sozlesmeOnay: false, sozlesmeOnayTarihi: null });
+            let magazaAtama = document.getElementById('uMagaza') ? document.getElementById('uMagaza').value : '';
+            sistemKullanicilari.push({ id: tc, sifre: rndSifre, ad: ad, yetki: yetki, tel: tel, magaza: magazaAtama, sozlesmeOnay: false, sozlesmeOnayTarihi: null });
             localStorage.setItem('aket_users', JSON.stringify(sistemKullanicilari));
             if(firebaseDB) firebaseDB.ref('aket_data/sistemKullanicilari').set(sistemKullanicilari);
 
@@ -2760,6 +3032,7 @@
         function verileriKaydet() {
             localStorage.setItem('aket_stok', JSON.stringify(stok));
             localStorage.setItem('aket_perakende_stok', JSON.stringify(perakendeStok));
+            localStorage.setItem('aket_magaza_stoklar', JSON.stringify(magazaStoklar));
             localStorage.setItem('aket_islem', JSON.stringify(sonİslemYapan));
             localStorage.setItem('aket_siparis', JSON.stringify(siparisler));
             localStorage.setItem('aket_giren', JSON.stringify(girenler));
@@ -2768,12 +3041,16 @@
             localStorage.setItem('aket_muhasebe_z', JSON.stringify(muhasebeZ));
             localStorage.setItem('aket_kemik', JSON.stringify(kemikler));
 
+            localStorage.setItem('aket_cari', JSON.stringify(cariHareketler));
+            localStorage.setItem('aket_magazalar', JSON.stringify(magazalar));
+            localStorage.setItem('aket_yetki_talepler', JSON.stringify(yetkiTalepleri));
             // Firebase çevrimiçi senkron
             if(firebaseDB) {
                 firebaseYaziyoruz = true;
                 firebaseDB.ref('aket_data').update({
                     stok, perakendeStok, siparisler, girenler, cikanlar,
                     magazaSatislar, muhasebeZ, kemikler,
+                    cariHareketler, magazalar, yetkiTalepleri,
                     sistemKullanicilari,
                     ts: Date.now()
                 }).then(() => {
@@ -2886,8 +3163,8 @@
             
             if(tur === "Mağaza") {
                 urun = document.getElementById("pUrun").value; miktar = parseFloat(document.getElementById("pMiktar").value); anaKategori = document.getElementById("pKategori").value;
-                firma = "Kendi Mağazamız";
-                if(!miktar) return;
+                firma = (document.getElementById("pHedefMagaza") && document.getElementById("pHedefMagaza").value) || aktifKullanici.magaza || "Mağaza";
+                if(!miktar || !firma) { showToast("Mağaza ve miktar zorunludur!", "error"); return; }
             } else {
                 firma = document.getElementById("sFirma").value; urun = document.getElementById("sUrun").value; miktar = parseFloat(document.getElementById("sMiktar").value); anaKategori = document.getElementById("sKategori").value;
                 if(!firma || !miktar) { showToast("Müşteri adı ve miktar zorunludur.", "error"); return; }
@@ -2931,6 +3208,7 @@
 
             if(s.tur === "Mağaza") {
                 perakendeStok[s.urun] = (perakendeStok[s.urun] || 0) + s.miktar;
+                magazaStokGuncelle(s.firma);
                 cikanlar.unshift({ id: s.id, tur: "Mağaza", tarih: anlikTarihSaat(), firma: s.firma, talepEden: s.talepEden, tedarikEden: personelAdi, urun: s.urun, miktar: s.miktar, durum: "Tedarik Edildi" });
                 sonİslemYapan[s.urun] = `Mağazaya Çıkış -> Gönderen: ${personelAdi}`;
             } else {
@@ -2974,13 +3252,33 @@
             }
         }
 
+        function satisModalAc() {
+            let sel = document.getElementById('psMagaza');
+            if(sel) {
+                let benimMagaza = aktifKullanici ? (aktifKullanici.magaza || '') : '';
+                let isAdmin = aktifKullanici && aktifKullanici.yetki === 'Admin';
+                let secenekler = magazalar.length > 0
+                    ? magazalar.map(m => `<option value="${m.ad}" ${m.ad === benimMagaza ? 'selected' : ''}>${m.ad}</option>`).join('')
+                    : (benimMagaza ? `<option value="${benimMagaza}" selected>${benimMagaza}</option>` : '<option value="">— Önce mağaza ekleyin —</option>');
+                sel.innerHTML = secenekler;
+                sel.disabled = (!isAdmin && !!benimMagaza);
+            }
+            document.getElementById('psMiktar').value = '';
+            kategoriDegisti('psKategori', 'psUrun');
+            openModal('perakendeSatisModal');
+        }
+
         function magazaSatisKaydet() {
-            let urun = document.getElementById("psUrun").value, miktar = parseFloat(document.getElementById("psMiktar").value);
-            if(!miktar || miktar <= 0) return;
+            let magaza = document.getElementById("psMagaza").value;
+            let urun = document.getElementById("psUrun").value;
+            let miktar = parseFloat(document.getElementById("psMiktar").value);
+            if(!magaza) { showToast("Lütfen mağaza seçin!", "error"); return; }
+            if(!miktar || miktar <= 0) { showToast("Geçerli bir miktar girin!", "error"); return; }
             if((perakendeStok[urun]||0) < miktar) { showToast("Stok yetersiz!", "error"); return; }
             perakendeStok[urun] -= miktar;
-            magazaSatislar.unshift({ id: Date.now(), tarih: anlikTarihSaat(), urun: urun, miktar: miktar, personel: aktifKullanici.ad });
-            sonİslemYapan[urun] = `Satış (${aktifKullanici.ad}) -> Çıkan: ${miktar} KG`;
+            magazaStokGuncelle(magaza);
+            magazaSatislar.unshift({ id: Date.now(), tarih: anlikTarihSaat(), urun: urun, miktar: miktar, personel: aktifKullanici.ad, magaza: magaza });
+            sonİslemYapan[urun] = `Satış (${aktifKullanici.ad} / ${magaza}) -> Çıkan: ${miktar} KG`;
             closeModal('perakendeSatisModal'); verileriKaydet(); ekranlariGuncelle();
         }
 
@@ -2988,7 +3286,7 @@
             let n = parseFloat(document.getElementById("zNakit").value) || 0;
             let k = parseFloat(document.getElementById("zKart").value) || 0;
             if(n===0 && k===0) return;
-            muhasebeZ.unshift({tarih: anlikTarihSaat(), personel: aktifKullanici.ad, nakit: n, kart: k});
+            muhasebeZ.unshift({tarih: anlikTarihSaat(), personel: aktifKullanici.ad, magaza: aktifKullanici.magaza || 'Merkez', nakit: n, kart: k});
             closeModal('zRaporuModal'); verileriKaydet(); ekranlariGuncelle();
             showToast("Gün sonu raporu muhasebeye iletildi.", "success");
         }
@@ -2998,7 +3296,16 @@
         function siparisIptal(id) { let i = siparisler.findIndex(x=>x.id===id); stok[siparisler[i].anaUrun]+=siparisler[i].miktar; stok[siparisler[i].urun]-=siparisler[i].miktar; siparisler[i].durum="İptal"; verileriKaydet(); ekranlariGuncelle(); }
         function sevkiyatTeslim(id) { cikanlar.find(x=>x.id===id).durum="Teslim Edildi"; verileriKaydet(); ekranlariGuncelle(); }
         function sevkiyatIade(id) { let c=cikanlar.find(x=>x.id===id); stok[c.urun]+=c.miktar; c.durum="İade"; verileriKaydet(); ekranlariGuncelle(); }
-        function magazaSatisIptal(id) { let i=magazaSatislar.findIndex(x=>x.id===id); perakendeStok[magazaSatislar[i].urun]+=magazaSatislar[i].miktar; magazaSatislar.splice(i,1); verileriKaydet(); ekranlariGuncelle(); }
+        function magazaSatisIptal(id) {
+            let i = magazaSatislar.findIndex(x => x.id === id);
+            if(i === -1) return;
+            let kayit = magazaSatislar[i];
+            perakendeStok[kayit.urun] = (perakendeStok[kayit.urun] || 0) + kayit.miktar;
+            magazaStokGuncelle(kayit.magaza || '');
+            magazaSatislar.splice(i, 1);
+            verileriKaydet(); ekranlariGuncelle();
+            showToast("Satış kaydı geri alındı.", "success");
+        }
 
         function ekranlariGuncelle() {
             let y = aktifKullanici ? aktifKullanici.yetki : '';
@@ -3077,20 +3384,39 @@
                 return `<tr><td>${c.tarih}</td><td><b>${c.firma}</b></td><td>${c.urun}</td><td>${c.miktar} KG</td><td>${c.personel}</td><td>${fotoHtml}</td><td>${c.onaylayan||'-'}</td><td><span style="color:${durumRenk};font-weight:700;">${c.durum}</span></td><td style="${sevkBtnGorunur}" class="no-excel">${btn}</td></tr>`;
             }).join('');
 
+            let aktifMagaza = aktifKullanici ? (aktifKullanici.magaza || '') : '';
+            let badge = document.getElementById('aktif-magaza-badge');
+            if(badge) badge.textContent = aktifMagaza ? ('🏪 ' + aktifMagaza) : '';
             let pStokHtml = "";
             for(let pu in perakendeStok) { if(perakendeStok[pu]) pStokHtml += `<tr><td><b>${pu}</b></td><td><b style="color:var(--yesil);">${perakendeStok[pu]} KG</b></td></tr>`; }
-            document.getElementById("perakendeStokTablosu").innerHTML = pStokHtml;
-            document.getElementById("perakendeSatisTablosu").innerHTML = magazaSatislar.map(m => `<tr><td>${m.tarih}</td><td><b>${m.urun}</b></td><td>-${m.miktar} KG</td><td style="${magazaBtnGorunur}" class="no-excel"><button class="btn-sm btn-iptal" onclick="magazaSatisIptal(${m.id})">Geri Al</button></td></tr>`).join('');
+            document.getElementById("perakendeStokTablosu").innerHTML = pStokHtml || '<tr><td colspan="2" style="color:#444;text-align:center;padding:16px;">Stok verisi bulunamadı.</td></tr>';
+            let satisFiltreMagaza = (document.getElementById('filtre-magaza-satis')||{}).value || '';
+            // Mağaza filtre seçeneğini güncelle
+            let satisFiltreSel = document.getElementById('filtre-magaza-satis');
+            if(satisFiltreSel) {
+                let mevcutFiltre = satisFiltreSel.value;
+                let tumMagazalar = [...new Set(magazaSatislar.map(m => m.magaza||'').filter(Boolean))].sort();
+                satisFiltreSel.innerHTML = '<option value="">Tüm Mağazalar</option>' + tumMagazalar.map(m => `<option value="${m}" ${m===mevcutFiltre?'selected':''}>${m}</option>`).join('');
+                satisFiltreMagaza = satisFiltreSel.value;
+            }
+            let filtrelenmisStislar = satisFiltreMagaza ? magazaSatislar.filter(m => (m.magaza||'') === satisFiltreMagaza) : magazaSatislar;
+            document.getElementById("perakendeSatisTablosu").innerHTML = filtrelenmisStislar.map(m => {
+                let mag = m.magaza || '<span style="color:#555;">—</span>';
+                let magRenkli = m.magaza ? `<span style="color:var(--altin);font-weight:700;">${m.magaza}</span>` : '<span style="color:#555;">—</span>';
+                return `<tr><td>${m.tarih}</td><td>${magRenkli}</td><td><b>${m.urun}</b></td><td style="color:#e74c3c;font-weight:700;">-${m.miktar} KG</td><td style="color:#888;font-size:11px;">${m.personel||'-'}</td><td style="${magazaBtnGorunur}" class="no-excel"><button class="btn-sm btn-iptal" onclick="magazaSatisIptal(${m.id})">Geri Al</button></td></tr>`;
+            }).join('') || '<tr><td colspan="6" style="color:#444;text-align:center;padding:16px;">Kayıt bulunamadı.</td></tr>';
 
             let topNakit=0, topKart=0;
-            let mHtml = muhasebeZ.map(z => {
+            let muhFiltre = document.getElementById('muh-magaza-filtre') ? document.getElementById('muh-magaza-filtre').value : '';
+            let mHtml = muhasebeZ.filter(z => !muhFiltre || (z.magaza||'Merkez') === muhFiltre).map(z => {
                 topNakit+=z.nakit; topKart+=z.kart;
-                return `<tr><td>${z.tarih}</td><td><b>${z.personel}</b></td><td>${z.nakit} ₺</td><td>${z.kart} ₺</td><td><b>${z.nakit+z.kart} ₺</b></td></tr>`;
-            }).join('');
+                return `<tr><td>${z.tarih}</td><td><span style="color:var(--altin);font-weight:700;">${z.magaza||'Merkez'}</span></td><td>${z.personel}</td><td style="color:#27ae60;">${z.nakit.toLocaleString('tr-TR')} ₺</td><td style="color:#3498db;">${z.kart.toLocaleString('tr-TR')} ₺</td><td><b>${(z.nakit+z.kart).toLocaleString('tr-TR')} ₺</b></td></tr>`;
+            }).join('') || '<tr><td colspan="6" style="color:#444;text-align:center;padding:16px;">Kayıt bulunamadı.</td></tr>';
             document.getElementById("muhasebeKasaTablosu").innerHTML = mHtml;
-            document.getElementById("muh-nakit").innerText = topNakit + " ₺";
-            document.getElementById("muh-kart").innerText = topKart + " ₺";
-            document.getElementById("muh-toplam").innerText = (topNakit+topKart) + " ₺";
+            document.getElementById("muh-nakit").innerText = topNakit.toLocaleString('tr-TR') + " ₺";
+            document.getElementById("muh-kart").innerText = topKart.toLocaleString('tr-TR') + " ₺";
+            document.getElementById("muh-toplam").innerText = (topNakit+topKart).toLocaleString('tr-TR') + " ₺";
+            muhMagazaGuncelle();
 
             // Kemik tartım tablosu
             let kemikBtnGorunur = (y === 'Admin' || y === 'Kasap' || y === 'Satis') ? '' : 'display:none;';
@@ -3106,6 +3432,8 @@
             document.getElementById("kemik-ozet-kuzu").innerText = kuzuToplam;
             document.getElementById("kemik-ozet-pilc").innerText = pilcToplam;
 
+            // Cari bakiye tablosunu güncelle
+            cariTablosunuGuncelle();
             // Mobil dashboard stats güncelle
             mobileStatsGuncelle();
 
@@ -3250,6 +3578,8 @@
                             islem = `<button class="btn-sm btn-onay" onclick="sevkiyatTeslim(${c.id})">Teslim Edildi</button>
                                      <button class="btn-sm btn-iptal" onclick="sevkiyatIade(${c.id})">İade Et</button>`;
                     }
+                    let cariBtn = (aktifKullanici && (aktifKullanici.yetki === 'Admin' || aktifKullanici.yetki === 'Muhasebe'))
+                    ? `<button class="btn-sm btn-duzenle" onclick="cariModalAc('${c.firma.replace(/'/g,'&#39;')}')">Cari Gir</button>` : '';
                     board += `
                     <div class="pipeline-card">
                         <div class="pipeline-firm">${c.firma}</div>
@@ -3258,7 +3588,7 @@
                         <div class="pipeline-detail"><b>Tarih:</b> ${c.tarih}</div>
                         ${c.personel && c.personel !== '-' ? `<div class="pipeline-detail"><b>Şoför:</b> ${c.personel}</div>` : ''}
                         <div class="pipeline-detail"><b>Onaylayan:</b> ${c.onaylayan||'-'}</div>
-                        ${islem ? `<div class="pipeline-card-actions">${islem}</div>` : ''}
+                        ${(islem || cariBtn) ? `<div class="pipeline-card-actions">${islem}${cariBtn}</div>` : ''}
                     </div>`;
                 });
 
@@ -3379,7 +3709,7 @@
 
         function eskiKayitlariTemizle() {
             let sinir = new Date();
-            sinir.setDate(sinir.getDate() - 7); // 7 gün
+            sinir.setDate(sinir.getDate() - 30); // 30 gün
 
             let oncekiToplam = girenler.length + siparisler.length + cikanlar.length + magazaSatislar.length + muhasebeZ.length + kemikler.length;
 
@@ -3667,6 +3997,10 @@
             // Uygulama içi bildirim (toast her zaman gösterilir)
             showToast(mesaj, tip || 'info');
 
+            // Kullanıcı bildirimleri açmadıysa veya sessiz moddaysa tarayıcı bildirimi gönderme
+            if(localStorage.getItem('aket_bildirim_acik') !== 'true') return;
+            if(bildirimSessizMi()) return;
+
             // Tarayıcı / PWA bildirimi (arka planda da çalışır)
             if('Notification' in window && Notification.permission === 'granted') {
                 try {
@@ -3776,6 +4110,9 @@
                     magazaSatislar = data.magazaSatislar || [];
                     muhasebeZ      = data.muhasebeZ      || [];
                     kemikler       = data.kemikler       || [];
+                    cariHareketler = data.cariHareketler || [];
+                    magazalar      = data.magazalar      || [];
+                    yetkiTalepleri = data.yetkiTalepleri || [];
 
                     // Kullanıcı listesini senkronize et
                     if(data.sistemKullanicilari && Array.isArray(data.sistemKullanicilari) && data.sistemKullanicilari.length > 0) {
@@ -3882,6 +4219,690 @@
                 }
             }, 30000); // Her 30 saniyede kontrol
         })();
+
+        // ===== PROFİL SEKME =====
+        function profilTab(tab, btn) {
+            document.querySelectorAll('.profil-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.profil-tab-content').forEach(c => c.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            let el = document.getElementById('profil-tab-' + tab);
+            if(el) el.classList.add('active');
+            if(tab === 'yetki') yetkiTalepListeGoster();
+            if(tab === 'bildirim') sessizBilgiGuncelle();
+        }
+
+        function profilModalAc() {
+            if(!aktifKullanici) return;
+            let initials = aktifKullanici.ad.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+            let onizleme = document.getElementById('profilFotoOnizleme');
+            if(onizleme) onizleme.innerText = initials;
+            let profilAd = document.getElementById('profil-ad'); if(profilAd) profilAd.innerText = aktifKullanici.ad;
+            let profilYetki = document.getElementById('profil-yetki'); if(profilYetki) profilYetki.innerText = aktifKullanici.yetki;
+            let profilMagaza = document.getElementById('profil-magaza');
+            if(profilMagaza) profilMagaza.innerText = aktifKullanici.magaza ? '📍 ' + aktifKullanici.magaza : '';
+            let infoAd = document.getElementById('profil-info-ad'); if(infoAd) infoAd.innerText = aktifKullanici.ad;
+            let infoYetki = document.getElementById('profil-info-yetki'); if(infoYetki) infoYetki.innerText = aktifKullanici.yetki;
+            let infoMagaza = document.getElementById('profil-info-magaza'); if(infoMagaza) infoMagaza.innerText = aktifKullanici.magaza || 'Merkez';
+            // Aktif sekmeyi sıfırla
+            document.querySelectorAll('.profil-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.profil-tab-content').forEach(c => c.classList.remove('active'));
+            let ilkBtn = document.querySelector('.profil-tab-btn');
+            if(ilkBtn) ilkBtn.classList.add('active');
+            let ilkTab = document.getElementById('profil-tab-ayarlar');
+            if(ilkTab) ilkTab.classList.add('active');
+            // Bildirim toggle senkronizasyonu (varsayılan: kapalı)
+            let toggle = document.getElementById('bildirim-toggle');
+            if(toggle) toggle.checked = localStorage.getItem('aket_bildirim_acik') === 'true';
+            // Admin için Talepler butonu göster
+            let talepWrap = document.getElementById('profil-talep-wrap');
+            if(talepWrap) talepWrap.style.display = (aktifKullanici.yetki === 'Admin') ? 'block' : 'none';
+            // Talep badge profil
+            let badgeProfil = document.getElementById('talep-badge-profil');
+            if(badgeProfil) {
+                let bekleyen = yetkiTalepleri ? yetkiTalepleri.filter(t => t.durum === 'Bekliyor').length : 0;
+                badgeProfil.style.display = bekleyen > 0 ? 'inline' : 'none';
+                badgeProfil.innerText = bekleyen;
+            }
+            openModal('profilModal');
+        }
+
+        // Hoşgeldin alanındaki badge'i güncelle (foto kaldırıldı, initials göster)
+        function profilDotGuncelle() {
+            if(!aktifKullanici) return;
+            let initials = aktifKullanici.ad.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+            let dot = document.getElementById('m-user-dot');
+            if(dot) { dot.style.backgroundImage = ''; dot.style.color = ''; dot.innerText = initials; }
+            let badge = document.getElementById('m-welcome-badge');
+            if(badge) { badge.style.backgroundImage = ''; badge.style.color = ''; badge.innerText = initials; }
+            let roleEl = document.getElementById('m-welcome-role');
+            if(roleEl) roleEl.innerText = aktifKullanici.yetki + (aktifKullanici.magaza ? ' · ' + aktifKullanici.magaza : '');
+        }
+
+        function profilSifreGuncelle() {
+            let eski = document.getElementById('profil-eski-sifre').value;
+            let yeni = document.getElementById('profil-yeni-sifre').value;
+            let tekrar = document.getElementById('profil-yeni-sifre2').value;
+            if(!eski || !yeni || !tekrar) { showToast("Tüm alanları doldurun!", "error"); return; }
+            if(aktifKullanici.sifre !== eski) { showToast("Mevcut şifreniz hatalı!", "error"); return; }
+            if(yeni !== tekrar) { showToast("Yeni şifreler uyuşmuyor!", "error"); return; }
+            if(yeni.length < 4) { showToast("Şifre en az 4 haneli olmalı!", "error"); return; }
+            aktifKullanici.sifre = yeni;
+            let idx = sistemKullanicilari.findIndex(u => u.id === aktifKullanici.id);
+            if(idx !== -1) { sistemKullanicilari[idx].sifre = yeni; localStorage.setItem('aket_users', JSON.stringify(sistemKullanicilari)); localStorage.setItem('aket_current_user', JSON.stringify(aktifKullanici)); }
+            if(firebaseDB) firebaseDB.ref('aket_data/sistemKullanicilari').set(sistemKullanicilari);
+            document.getElementById('profil-eski-sifre').value = ''; document.getElementById('profil-yeni-sifre').value = ''; document.getElementById('profil-yeni-sifre2').value = '';
+            showToast("Şifreniz başarıyla güncellendi.", "success");
+        }
+
+        // ===== MAĞAZA STOK SENKRON =====
+        function magazaStokGuncelle(magazaAdi) {
+            let mag = magazaAdi || (aktifKullanici ? (aktifKullanici.magaza || 'Merkez') : 'Merkez');
+            magazaStoklar[mag] = Object.assign({}, perakendeStok);
+        }
+
+        // ===== PERAKENDE TALEP MODAL AÇ =====
+        function perakendeTalepModalAc() {
+            let sel = document.getElementById('pHedefMagaza');
+            if(sel) {
+                let benimMagaza = aktifKullanici ? (aktifKullanici.magaza || '') : '';
+                let isAdmin = aktifKullanici && aktifKullanici.yetki === 'Admin';
+                // Mağaza listesini doldur
+                let secenekler = magazalar.length > 0
+                    ? magazalar.map(m => `<option value="${m.ad}" ${m.ad === benimMagaza ? 'selected' : ''}>${m.ad}</option>`).join('')
+                    : (benimMagaza ? `<option value="${benimMagaza}" selected>${benimMagaza}</option>` : '<option value="">— Önce mağaza ekleyin —</option>');
+                sel.innerHTML = secenekler;
+                // Admin değilse kendi mağazası sabit seçili
+                sel.disabled = (!isAdmin && !!benimMagaza);
+            }
+            document.getElementById('pMiktar').value = '';
+            digerMagazaStokGoster();
+            openModal('perakendeTalepModal');
+        }
+
+        // ===== DİĞER MAĞAZA STOK KARŞILAŞTIRMA =====
+        function digerMagazaStokGoster() {
+            let wrap = document.getElementById('diger-magaza-stok-wrap');
+            let icerik = document.getElementById('diger-magaza-stok-icerik');
+            if(!wrap || !icerik) return;
+            let secilenUrun = document.getElementById('pUrun') ? document.getElementById('pUrun').value : '';
+            let secilenMagaza = document.getElementById('pHedefMagaza') ? document.getElementById('pHedefMagaza').value : '';
+            let digerler = Object.keys(magazaStoklar).filter(m => m !== secilenMagaza);
+            if(digerler.length === 0 || !secilenUrun) { wrap.style.display = 'none'; return; }
+            wrap.style.display = 'block';
+            icerik.innerHTML = digerler.map(mag => {
+                let miktar = (magazaStoklar[mag] && magazaStoklar[mag][secilenUrun]) || 0;
+                let renk = miktar === 0 ? '#e74c3c' : miktar < 20 ? '#f39c12' : '#27ae60';
+                return `<div class="diger-mag-kart"><div class="diger-mag-kart-ad">🏪 ${mag}</div><div class="diger-mag-kart-stok" style="color:${renk};">${miktar} KG</div></div>`;
+            }).join('');
+        }
+
+        // ===== MUHASEBE MAĞAZA PANELİ =====
+        function muhMagazaGuncelle() {
+            let filtreSel = document.getElementById('muh-magaza-filtre');
+            if(filtreSel) {
+                let mevcut = filtreSel.value;
+                let tumMag = [...new Set(muhasebeZ.map(z => z.magaza || 'Merkez').concat(Object.keys(magazaStoklar)))].sort();
+                filtreSel.innerHTML = '<option value="">Tüm Mağazalar</option>' + tumMag.map(m => `<option value="${m}" ${m===mevcut?'selected':''}>${m}</option>`).join('');
+            }
+            let filtre = filtreSel ? filtreSel.value : '';
+            // Stok grid
+            let stokGrid = document.getElementById('muh-magaza-stok-grid');
+            if(stokGrid) {
+                let magList = Object.keys(magazaStoklar).filter(m => !filtre || m === filtre);
+                stokGrid.innerHTML = magList.length > 0
+                    ? magList.map(mag => {
+                        let kalemler = Object.entries(magazaStoklar[mag]||{}).filter(([,v])=>v>0);
+                        let kalemHtml = kalemler.length > 0
+                            ? kalemler.map(([u,m2]) => `<div class="muh-mag-stok-item"><span style="color:#999;">${u}</span><b style="color:${m2<20?'#e74c3c':m2<50?'#f39c12':'#27ae60'};">${m2} KG</b></div>`).join('')
+                            : '<div style="color:#444;font-size:11px;padding:4px 0;">Stok verisi yok</div>';
+                        return `<div class="muh-mag-kart"><div class="muh-mag-kart-baslik">${mag}</div>${kalemHtml}</div>`;
+                    }).join('')
+                    : '<div style="color:#444;font-size:12px;padding:16px;text-align:center;grid-column:span 4;">Henüz mağaza stok verisi yok.</div>';
+            }
+            // Talep tablosu
+            let talepTablo = document.getElementById('muh-magaza-talep-tablosu');
+            if(talepTablo) {
+                let mTalepler = siparisler.filter(s => s.tur==='Mağaza' && (!filtre || s.firma===filtre));
+                let tamamlanan = cikanlar.filter(c => c.tur==='Mağaza' && (!filtre || c.firma===filtre));
+                let hepsi = [
+                    ...mTalepler.map(s=>({tarih:s.tarih, mag:s.firma||s.talepEden, urun:s.urun, miktar:s.miktar, durum:s.durum})),
+                    ...tamamlanan.map(c=>({tarih:c.tarih, mag:c.firma||c.talepEden, urun:c.urun, miktar:c.miktar, durum:c.durum}))
+                ].sort((a,b)=>b.tarih.localeCompare(a.tarih));
+                talepTablo.innerHTML = hepsi.length > 0
+                    ? hepsi.map(t => {
+                        let rc = t.durum==='Tedarik Edildi'?'#27ae60':t.durum.includes('İptal')?'#e74c3c':'#f39c12';
+                        return `<tr><td>${t.tarih}</td><td><b>${t.mag}</b></td><td>${t.urun}</td><td>${t.miktar} KG</td><td><span style="color:${rc};font-weight:700;">${t.durum}</span></td></tr>`;
+                    }).join('')
+                    : '<tr><td colspan="5" style="color:#444;text-align:center;padding:16px;">Talep kaydı bulunamadı.</td></tr>';
+            }
+        }
+
+        // ===== SESSİZ BİLDİRİM =====
+        // ===== YÖNETİM DROPDOWN =====
+        function togglePerfDropdown(e) {
+            e.stopPropagation();
+            let d = document.getElementById('perf-dropdown');
+            if(!d) return;
+            if(d.style.display === 'block') { d.style.display = 'none'; return; }
+            // Fixed pozisyon: navbar overflow'dan etkilenmemek için
+            let btn = document.getElementById('btn-yonetim-panel');
+            let rect = btn.getBoundingClientRect();
+            d.style.top = (rect.bottom + 6) + 'px';
+            d.style.right = (window.innerWidth - rect.right) + 'px';
+            d.style.left = 'auto';
+            d.style.display = 'block';
+        }
+        function closePerfDropdown() {
+            let d = document.getElementById('perf-dropdown');
+            if(d) d.style.display = 'none';
+        }
+        document.addEventListener('click', function() { closePerfDropdown(); });
+
+        // ===== BİLDİRİM TOGGLE =====
+        function bildirimToggleChange(cb) {
+            if(cb.checked) {
+                if('Notification' in window && Notification.permission === 'denied') {
+                    cb.checked = false;
+                    showToast('Tarayıcı bildirimleri engellemiş. Adres çubuğundan izin verin.', 'error');
+                    return;
+                }
+                if('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission().then(p => {
+                        if(p !== 'granted') { cb.checked = false; localStorage.removeItem('aket_bildirim_acik'); showToast('Tarayıcı bildirimlere izin verilmedi.', 'error'); }
+                        else { localStorage.setItem('aket_bildirim_acik', 'true'); showToast('Bildirimler açık.', 'success'); }
+                    });
+                } else {
+                    localStorage.setItem('aket_bildirim_acik', 'true');
+                    showToast('Bildirimler açık.', 'success');
+                }
+            } else {
+                localStorage.removeItem('aket_bildirim_acik');
+                showToast('Bildirimler kapatıldı.', 'info');
+            }
+        }
+
+        function sessizModAc(dakika) {
+            let bitis = Date.now() + dakika * 60 * 1000;
+            localStorage.setItem('aket_sessiz_bitis', bitis);
+            sessizBilgiGuncelle();
+            showToast(`Bildirimler ${dakika < 60 ? dakika + ' dakika' : (dakika/60) + ' saat'} sessiz.`, "info");
+        }
+
+        function sessizModSuresiz() {
+            localStorage.setItem('aket_sessiz_bitis', 9999999999999);
+            sessizBilgiGuncelle();
+            showToast("Bildirimler süresiz olarak kapatıldı.", "info");
+        }
+
+        function sessizModKapat() {
+            localStorage.removeItem('aket_sessiz_bitis');
+            sessizBilgiGuncelle();
+            showToast("Bildirimler tekrar aktif.", "success");
+        }
+
+        function bildirimSessizMi() {
+            let bitis = parseInt(localStorage.getItem('aket_sessiz_bitis') || '0');
+            return bitis > Date.now();
+        }
+
+        function sessizBilgiGuncelle() {
+            let el = document.getElementById('sessiz-aktif-bilgi');
+            if(!el) return;
+            let bitis = parseInt(localStorage.getItem('aket_sessiz_bitis') || '0');
+            let btn = document.getElementById('sessiz-kapat-btn');
+            if(bitis > Date.now()) {
+                let kalan = Math.ceil((bitis - Date.now()) / 60000);
+                let metin = bitis >= 9999999999000 ? 'Süresiz sessiz mod aktif' : `Sessiz mod aktif — ${kalan < 60 ? kalan + ' dakika' : Math.ceil(kalan/60) + ' saat'} kaldı`;
+                el.style.display = 'block';
+                el.innerText = metin;
+                if(btn) { btn.classList.add('aktif'); btn.innerText = '■ Sessiz Modu Kapat'; }
+            } else {
+                el.style.display = 'none';
+                if(btn) { btn.classList.remove('aktif'); btn.innerText = '▶ Sessiz Modu Kapat'; }
+            }
+        }
+
+        // ===== YETKİ TALEP =====
+        function yetkiTalepGonder() {
+            let yetki = document.getElementById('yetki-talep-secim').value;
+            let aciklama = document.getElementById('yetki-talep-aciklama').value.trim();
+            if(!aciklama) { showToast("Gerekçe zorunludur!", "error"); return; }
+            yetkiTalepleri.push({
+                id: Date.now(),
+                tarih: anlikTarihSaat(),
+                personelId: aktifKullanici.id,
+                personelAd: aktifKullanici.ad,
+                mevcutYetki: aktifKullanici.yetki,
+                talepYetki: yetki,
+                aciklama: aciklama,
+                durum: 'Bekliyor'
+            });
+            verileriKaydet();
+            document.getElementById('yetki-talep-aciklama').value = '';
+            yetkiTalepListeGoster();
+            showToast("Yetki talebiniz yöneticiye iletildi.", "success");
+            // Admin badge güncelle
+            yetkiTalepBadgeGuncelle();
+        }
+
+        function yetkiTalepListeGoster() {
+            let el = document.getElementById('yetki-talep-liste');
+            if(!el || !aktifKullanici) return;
+            let benimTalepler = yetkiTalepleri.filter(t => t.personelId === aktifKullanici.id);
+            if(benimTalepler.length === 0) { el.innerHTML = '<div style="font-size:12px;color:#555;text-align:center;padding:12px;">Henüz talep yok.</div>'; return; }
+            el.innerHTML = benimTalepler.map(t => {
+                let renkClass = t.durum === 'Onaylandı' ? 'color:#27ae60' : t.durum === 'Reddedildi' ? 'color:#e74c3c' : 'color:#f39c12';
+                return `<div style="background:#161616;border:1px solid #252525;border-radius:8px;padding:10px;margin-bottom:8px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                        <span style="font-size:12px;font-weight:700;color:#ccc;">${t.talepYetki}</span>
+                        <span style="font-size:11px;font-weight:700;${renkClass}">${t.durum}</span>
+                    </div>
+                    <div style="font-size:10px;color:#555;">${t.tarih} · ${t.aciklama}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function yetkiTaleplerModalAc() {
+            if(aktifKullanici && aktifKullanici.yetki !== 'Admin') return;
+            let el = document.getElementById('yetki-talepler-listesi');
+            if(!el) return;
+            let bekleyenler = yetkiTalepleri.filter(t => t.durum === 'Bekliyor');
+            if(bekleyenler.length === 0) { el.innerHTML = '<div style="font-size:13px;color:#555;text-align:center;padding:20px;">Bekleyen talep yok.</div>'; }
+            else {
+                el.innerHTML = bekleyenler.map(t => `
+                    <div style="background:#161616;border:1px solid #252525;border-radius:10px;padding:14px;margin-bottom:10px;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                            <div>
+                                <div style="font-size:14px;font-weight:700;color:white;">${t.personelAd}</div>
+                                <div style="font-size:10px;color:#666;margin-top:2px;">${t.mevcutYetki} → ${t.talepYetki}</div>
+                            </div>
+                            <div style="font-size:10px;color:#555;">${t.tarih}</div>
+                        </div>
+                        <div style="font-size:12px;color:#888;margin-bottom:10px;">${t.aciklama}</div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn-sm btn-onay" style="flex:1;padding:8px;" onclick="yetkiTalepCevapla(${t.id},'Onaylandı')">Onayla</button>
+                            <button class="btn-sm btn-iptal" style="flex:1;padding:8px;" onclick="yetkiTalepCevapla(${t.id},'Reddedildi')">Reddet</button>
+                        </div>
+                    </div>`).join('');
+            }
+            openModal('yetkiTaleplerModal');
+        }
+
+        function yetkiTalepCevapla(id, durum) {
+            let t = yetkiTalepleri.find(x => x.id === id);
+            if(!t) return;
+            t.durum = durum;
+            t.cevapTarihi = anlikTarihSaat();
+            verileriKaydet();
+            yetkiTaleplerModalAc();
+            yetkiTalepBadgeGuncelle();
+            showToast(`Talep ${durum}.`, durum === 'Onaylandı' ? 'success' : 'error');
+        }
+
+        function yetkiTalepBadgeGuncelle() {
+            let badge = document.getElementById('talep-badge');
+            if(!badge) return;
+            let bekleyen = yetkiTalepleri.filter(t => t.durum === 'Bekliyor').length;
+            badge.style.display = bekleyen > 0 ? 'inline-block' : 'none';
+            badge.innerText = bekleyen;
+        }
+
+        // ===== CARİ BAKİYE =====
+        function cariModalAc(firma) {
+            let input = document.getElementById('cari-firma');
+            if(input) { input.value = firma || ''; }
+            // Firma önerilerini doldur
+            let dl = document.getElementById('cari-firma-list');
+            if(dl) {
+                let firmalar = [...new Set(cikanlar.filter(c=>c.tur==='Müşteri').map(c=>c.firma))];
+                dl.innerHTML = firmalar.map(f => `<option value="${f}">`).join('');
+            }
+            openModal('cariHareketModal');
+        }
+
+        function cariTurDegisti() {
+            // Tutar alanı placeholder güncelle
+        }
+
+        function cariHareketKaydet() {
+            let firma = document.getElementById('cari-firma').value.trim();
+            let tur = document.getElementById('cari-tur').value;
+            let tutar = parseFloat(document.getElementById('cari-tutar').value);
+            let aciklama = document.getElementById('cari-aciklama').value.trim();
+            if(!firma || !tutar || tutar <= 0) { showToast("Firma ve tutar zorunludur!", "error"); return; }
+            cariHareketler.unshift({
+                id: Date.now(),
+                tarih: anlikTarihSaat(),
+                firma: firma,
+                tur: tur,
+                tutar: tutar,
+                aciklama: aciklama || '-',
+                kaydeden: aktifKullanici.ad
+            });
+            document.getElementById('cari-firma').value = '';
+            document.getElementById('cari-tutar').value = '';
+            document.getElementById('cari-aciklama').value = '';
+            closeModal('cariHareketModal');
+            verileriKaydet();
+            ekranlariGuncelle();
+            showToast(`Cari hareket kaydedildi: ${firma} — ${tutar} ₺`, "success");
+        }
+
+        function cariTablosunuGuncelle() {
+            // Firma bazlı bakiye hesapla
+            let firmaBakiyeler = {};
+            cariHareketler.forEach(h => {
+                if(!firmaBakiyeler[h.firma]) firmaBakiyeler[h.firma] = { vadeli: 0, nakit: 0, sonHareket: '' };
+                let fb = firmaBakiyeler[h.firma];
+                if(h.tur === 'vadeli-satis') fb.vadeli += h.tutar;
+                else if(h.tur === 'nakit-tahsilat') fb.nakit += h.tutar;
+                else if(h.tur === 'vadeli-tahsilat') fb.vadeli -= h.tutar;
+                fb.sonHareket = h.tarih;
+            });
+
+            // Toplam cari
+            let toplamCari = Object.values(firmaBakiyeler).reduce((s, f) => s + (f.vadeli - f.nakit), 0);
+            let muhCari = document.getElementById('muh-cari-toplam');
+            if(muhCari) muhCari.innerText = toplamCari.toFixed(2) + ' ₺';
+
+            // Firma bakiye tablosu
+            let tbody = document.getElementById('cariBakiyeTablosu');
+            if(tbody) {
+                if(Object.keys(firmaBakiyeler).length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#555;padding:20px;">Henüz cari hareket yok.</td></tr>';
+                } else {
+                    tbody.innerHTML = Object.entries(firmaBakiyeler).map(([firma, fb]) => {
+                        let net = fb.vadeli - fb.nakit;
+                        let netRenk = net > 0 ? '#e74c3c' : net < 0 ? '#27ae60' : '#888';
+                        let netLabel = net > 0 ? 'Alacak' : net < 0 ? 'Fazla Ödeme' : 'Kapalı';
+                        let adminOrMuh = aktifKullanici && (aktifKullanici.yetki === 'Admin' || aktifKullanici.yetki === 'Muhasebe');
+                        let islemBtn = adminOrMuh ? `<button class="btn-sm btn-duzenle" onclick="cariModalAc('${firma.replace(/'/g,'&#39;')}')">Hareket Ekle</button>` : '-';
+                        return `<tr>
+                            <td><b>${firma}</b></td>
+                            <td><b style="color:#f39c12;">${fb.vadeli.toFixed(2)} ₺</b></td>
+                            <td><b style="color:#27ae60;">${fb.nakit.toFixed(2)} ₺</b></td>
+                            <td><b style="color:${netRenk};">${Math.abs(net).toFixed(2)} ₺ <span style="font-size:10px;">(${netLabel})</span></b></td>
+                            <td style="color:#555;">${fb.sonHareket}</td>
+                            <td class="no-excel">${islemBtn}</td>
+                        </tr>`;
+                    }).join('');
+                }
+            }
+
+            // Cari hareket tablosu
+            let hTbody = document.getElementById('cariHareketTablosu');
+            if(hTbody) {
+                const turLabel = { 'vadeli-satis': 'Vadeli Satış', 'nakit-tahsilat': 'Nakit Tahsilat', 'vadeli-tahsilat': 'Vadeli Tahsilat', 'duzeltme': 'Düzeltme' };
+                const turRenk = { 'vadeli-satis': '#e74c3c', 'nakit-tahsilat': '#27ae60', 'vadeli-tahsilat': '#2980b9', 'duzeltme': '#888' };
+                hTbody.innerHTML = cariHareketler.map(h => `<tr>
+                    <td>${h.tarih}</td>
+                    <td><b>${h.firma}</b></td>
+                    <td><span style="color:${turRenk[h.tur]||'#888'};font-weight:700;">${turLabel[h.tur]||h.tur}</span></td>
+                    <td><b>${h.tutar.toFixed(2)} ₺</b></td>
+                    <td>${h.aciklama}</td>
+                    <td>${h.kaydeden}</td>
+                </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#555;">Kayıt yok.</td></tr>';
+            }
+        }
+
+        // ===== MAĞAZA YÖNETİMİ =====
+        function magazaTab(tab) {
+            ['listele','ekle','perf'].forEach(t => {
+                let el = document.getElementById('magaza-' + t + '-tab');
+                let btn = document.getElementById('btn-magaza-' + t);
+                if(el) el.style.display = t === tab ? '' : 'none';
+                if(btn) btn.style.background = t === tab ? 'var(--kirmizi)' : '#333';
+            });
+            if(tab === 'listele') magazaListesiniGoster();
+            if(tab === 'perf') { magazaPerfAylariniDoldur(); magazaPerfGoster(); }
+        }
+
+        function magazaListesiniGoster() {
+            let el = document.getElementById('magaza-listesi-html');
+            if(!el) return;
+            if(magazalar.length === 0) {
+                el.innerHTML = '<div style="color:#555;font-size:13px;text-align:center;padding:20px;grid-column:1/-1;">Henüz mağaza eklenmedi.</div>';
+                return;
+            }
+            el.innerHTML = magazalar.map(m => {
+                let personeller = sistemKullanicilari.filter(k => k.magaza === m.ad);
+                return `<div class="magaza-sec-kart">
+                    <div class="magaza-sec-adi">${m.ad}</div>
+                    <div class="magaza-sec-personel">${personeller.map(p=>p.ad).join(', ') || 'Personel atanmadı'}</div>
+                    <div style="font-size:10px;color:#444;margin-top:4px;">${m.adres||''}</div>
+                    <button class="btn-sm btn-iptal" style="margin-top:8px;padding:4px 8px;" onclick="magazaSil('${m.id}')">Sil</button>
+                </div>`;
+            }).join('');
+        }
+
+        function magazaEkle() {
+            let ad = document.getElementById('yeni-magaza-ad').value.trim();
+            let adres = document.getElementById('yeni-magaza-adres').value.trim();
+            if(!ad) { showToast("Mağaza adı zorunludur!", "error"); return; }
+            if(magazalar.find(m => m.ad === ad)) { showToast("Bu mağaza zaten mevcut!", "error"); return; }
+            magazalar.push({ id: Date.now(), ad: ad, adres: adres });
+            document.getElementById('yeni-magaza-ad').value = '';
+            document.getElementById('yeni-magaza-adres').value = '';
+            verileriKaydet();
+            magazaDropdownlariGuncelle();
+            showToast(`${ad} eklendi.`, "success");
+            magazaTab('listele');
+        }
+
+        function magazaSil(id) {
+            if(!confirm("Mağaza silinecek. Emin misiniz?")) return;
+            magazalar = magazalar.filter(m => m.id != id);
+            verileriKaydet();
+            magazaListesiniGoster();
+            showToast("Mağaza silindi.", "info");
+        }
+
+        function magazaDropdownlariGuncelle() {
+            // Personel ekleme modalındaki mağaza dropdown'ı güncelle
+            let sel = document.getElementById('uMagaza');
+            if(sel) {
+                sel.innerHTML = '<option value="">— Merkez / Genel —</option>' +
+                    magazalar.map(m => `<option value="${m.ad}">${m.ad}</option>`).join('');
+            }
+        }
+
+        function magazaPerfAylariniDoldur() {
+            let aylar = ayListesiniAl();
+            let sel = document.getElementById('perf-ay-secim');
+            if(!sel) return;
+            sel.innerHTML = aylar.map((a,i) => `<option value="${a}" ${i===0?'selected':''}>${a}</option>`).join('');
+        }
+
+        function magazaPerfGoster() {
+            let sel = document.getElementById('perf-ay-secim');
+            if(!sel) return;
+            let secAy = sel.value;
+            let el = document.getElementById('magaza-perf-icerik');
+            if(!el) return;
+
+            let satisVerisi = {};
+            // Cikan ve magazaSatislar'dan seçili ay verisini al
+            let ayVerisi = [...cikanlar.filter(c=>c.tur==='Müşteri'), ...magazaSatislar].filter(s => {
+                let tarih = s.tarih || '';
+                let parcalar = tarih.split('.').length >= 3 ? tarih.split('.') : tarih.split(' - ')[0].split('.');
+                if(parcalar.length < 3) return false;
+                let ayYil = parcalar[1].padStart(2,'0') + '.' + parcalar[2].substring(0,4);
+                return ayYil === secAy;
+            });
+
+            if(magazalar.length === 0) { el.innerHTML = '<div style="color:#555;font-size:13px;">Mağaza eklenmemiş.</div>'; return; }
+
+            el.innerHTML = magazalar.map(m => {
+                let personeller = sistemKullanicilari.filter(k => k.magaza === m.ad);
+                let persIds = personeller.map(p => p.ad);
+                let magazaSatisi = ayVerisi.filter(s => persIds.includes(s.personel));
+                let toplamKg = magazaSatisi.reduce((s, x) => s + (parseFloat(x.miktar)||0), 0);
+                return `<div style="background:#161616;border:1px solid #252525;border-radius:10px;padding:14px;margin-bottom:10px;">
+                    <div style="font-size:14px;font-weight:700;color:white;margin-bottom:4px;">${m.ad}</div>
+                    <div style="font-size:11px;color:#666;margin-bottom:8px;">${personeller.map(p=>p.ad).join(', ')||'Personel yok'}</div>
+                    <div style="font-size:20px;font-weight:900;color:var(--altin);">${toplamKg.toFixed(1)} KG</div>
+                    <div style="font-size:10px;color:#555;margin-top:2px;">${secAy} satış toplamı</div>
+                </div>`;
+            }).join('');
+        }
+
+        // ===== PERSONEL PERFORMANS =====
+        function ayListesiniAl() {
+            let aylar = new Set();
+            [...cikanlar, ...magazaSatislar, ...girenler].forEach(s => {
+                let tarih = s.tarih || '';
+                let parcalar = tarih.split(' - ')[0].split('.');
+                if(parcalar.length >= 3) {
+                    let ay = parcalar[1].padStart(2,'0') + '.' + parcalar[2].substring(0,4);
+                    aylar.add(ay);
+                }
+            });
+            let liste = [...aylar].sort((a,b) => {
+                let [am, ay] = a.split('.'); let [bm, by] = b.split('.');
+                return new Date(by, bm-1) - new Date(ay, am-1);
+            });
+            if(liste.length === 0) {
+                let now = new Date();
+                liste.push(String(now.getMonth()+1).padStart(2,'0') + '.' + now.getFullYear());
+                let prev = new Date(now.getFullYear(), now.getMonth()-1);
+                liste.push(String(prev.getMonth()+1).padStart(2,'0') + '.' + prev.getFullYear());
+            }
+            return liste;
+        }
+
+        function personelPerfModalAc() {
+            if(aktifKullanici && aktifKullanici.yetki !== 'Admin') return;
+            let aylar = ayListesiniAl();
+            let ref = document.getElementById('perf-ref-ay');
+            let kars = document.getElementById('perf-kars-ay');
+            if(ref) ref.innerHTML = aylar.map((a,i) => `<option value="${a}" ${i===0?'selected':''}>${a}</option>`).join('');
+            if(kars) kars.innerHTML = aylar.map((a,i) => `<option value="${a}" ${i===1?'selected':''}>${a}</option>`).join('');
+            personelPerfGoster();
+            openModal('personelPerfModal');
+        }
+
+        function personelPerfGoster() {
+            let refAy = document.getElementById('perf-ref-ay').value;
+            let karsAy = document.getElementById('perf-kars-ay').value;
+            let el = document.getElementById('personel-perf-icerik');
+            if(!el) return;
+
+            function ayVerisiAl(ay) {
+                return [...cikanlar.filter(c=>c.tur==='Müşteri'), ...magazaSatislar].filter(s => {
+                    let tarih = s.tarih || '';
+                    let p = tarih.split(' - ')[0].split('.');
+                    if(p.length < 3) return false;
+                    return p[1].padStart(2,'0') + '.' + p[2].substring(0,4) === ay;
+                });
+            }
+
+            let refVeri = ayVerisiAl(refAy);
+            let karsVeri = ayVerisiAl(karsAy);
+
+            // Personel bazlı topla
+            let personeller = [...new Set([...refVeri, ...karsVeri].map(s => s.personel).filter(Boolean))];
+
+            if(personeller.length === 0) { el.innerHTML = '<div style="color:#555;font-size:13px;text-align:center;padding:20px;">Seçilen aylarda işlem yapan personel bulunamadı.</div>'; return; }
+
+            el.innerHTML = '<div class="perf-kart-grid">' + personeller.map(p => {
+                let refKg = refVeri.filter(s=>s.personel===p).reduce((s,x)=>s+(parseFloat(x.miktar)||0),0);
+                let karsKg = karsVeri.filter(s=>s.personel===p).reduce((s,x)=>s+(parseFloat(x.miktar)||0),0);
+                let fark = refKg - karsKg;
+                let yuzde = karsKg > 0 ? Math.round((fark/karsKg)*100) : (refKg > 0 ? 100 : 0);
+                let trendClass = fark > 0 ? 'trend-yukari' : fark < 0 ? 'trend-asagi' : 'trend-esit';
+                let trendIkon = fark > 0 ? '▲' : fark < 0 ? '▼' : '—';
+                let kullanici = sistemKullanicilari.find(k => k.ad === p);
+                let magaza = kullanici ? (kullanici.magaza || 'Merkez') : '-';
+                return `<div class="perf-kart">
+                    <div class="perf-kart-adi">${p}</div>
+                    <div style="font-size:9px;color:#444;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">${magaza}</div>
+                    <div class="perf-kart-val">${refKg.toFixed(1)}</div>
+                    <div class="perf-kart-alt">${refAy} / KG</div>
+                    <div class="perf-trend ${trendClass}">${trendIkon} %${Math.abs(yuzde)}</div>
+                    <div style="font-size:9px;color:#555;margin-top:4px;">Önceki: ${karsKg.toFixed(1)} KG (${karsAy})</div>
+                </div>`;
+            }).join('') + '</div>';
+        }
+
+        // ===== ŞİRKET PERFORMANSI =====
+        function sirketPerfModalAc() {
+            if(aktifKullanici && aktifKullanici.yetki !== 'Admin') return;
+            let aylar = ayListesiniAl();
+            let a1 = document.getElementById('sirket-ay1');
+            let a2 = document.getElementById('sirket-ay2');
+            if(a1) a1.innerHTML = aylar.map((a,i) => `<option value="${a}" ${i===0?'selected':''}>${a}</option>`).join('');
+            if(a2) a2.innerHTML = aylar.map((a,i) => `<option value="${a}" ${i===1?'selected':''}>${a}</option>`).join('');
+            sirketPerfGoster();
+            openModal('sirketPerfModal');
+        }
+
+        function sirketPerfGoster() {
+            let ay1 = document.getElementById('sirket-ay1').value;
+            let ay2 = document.getElementById('sirket-ay2').value;
+            let el = document.getElementById('sirket-perf-icerik');
+            if(!el) return;
+
+            function ayUrunleriAl(ay) {
+                let kayitlar = [...cikanlar.filter(c=>c.tur==='Müşteri'), ...magazaSatislar].filter(s => {
+                    let p = (s.tarih||'').split(' - ')[0].split('.');
+                    return p.length >= 3 && p[1].padStart(2,'0') + '.' + p[2].substring(0,4) === ay;
+                });
+                let urunler = {};
+                kayitlar.forEach(s => {
+                    let u = s.urun || 'Belirtilmemiş';
+                    urunler[u] = (urunler[u] || 0) + (parseFloat(s.miktar) || 0);
+                });
+                return urunler;
+            }
+
+            let u1 = ayUrunleriAl(ay1);
+            let u2 = ayUrunleriAl(ay2);
+            let tumUrunler = [...new Set([...Object.keys(u1), ...Object.keys(u2)])].sort();
+
+            let top1 = Object.values(u1).reduce((a,b)=>a+b,0);
+            let top2 = Object.values(u2).reduce((a,b)=>a+b,0);
+            let genelFark = top1 - top2;
+            let genelTrend = genelFark > 0 ? 'trend-yukari' : genelFark < 0 ? 'trend-asagi' : 'trend-esit';
+
+            el.innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+                    <div style="background:#161616;border:1px solid #252525;border-radius:10px;padding:14px;text-align:center;">
+                        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">${ay1}</div>
+                        <div style="font-size:26px;font-weight:900;color:var(--altin);">${top1.toFixed(1)}</div>
+                        <div style="font-size:10px;color:#555;">KG Toplam Satış</div>
+                    </div>
+                    <div style="background:#161616;border:1px solid #252525;border-radius:10px;padding:14px;text-align:center;">
+                        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">${ay2}</div>
+                        <div style="font-size:26px;font-weight:900;color:#aaa;">${top2.toFixed(1)}</div>
+                        <div style="font-size:10px;color:#555;">KG Toplam Satış</div>
+                    </div>
+                </div>
+                <div style="font-size:10px;color:#555;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">ÜRÜN KARŞILAŞTIRMASI</div>
+                <div style="max-height:320px;overflow-y:auto;">
+                ${tumUrunler.map(u => {
+                    let kg1 = u1[u] || 0;
+                    let kg2 = u2[u] || 0;
+                    let fark = kg1 - kg2;
+                    let renk = fark > 0 ? '#27ae60' : fark < 0 ? '#e74c3c' : '#888';
+                    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e1e1e;">
+                        <div style="font-size:12px;color:#ccc;flex:1;">${u}</div>
+                        <div style="font-size:12px;font-weight:700;color:var(--altin);width:70px;text-align:right;">${kg1.toFixed(1)}</div>
+                        <div style="font-size:12px;font-weight:700;color:#666;width:70px;text-align:right;">${kg2.toFixed(1)}</div>
+                        <div style="font-size:11px;font-weight:700;color:${renk};width:70px;text-align:right;">${fark > 0 ? '+' : ''}${fark.toFixed(1)}</div>
+                    </div>`;
+                }).join('')}
+                </div>`;
+        }
+
+        // ===== sistemiBaslat güncelle: mağaza dropdown doldur =====
+        const _orijSistemBaslat = sistemiBaslat;
+
+        // verileriSifirla admin kontrolü
+        const _orijVeriSifirla = verileriSifirla;
+        window.verileriSifirla = function() {
+            if(!aktifKullanici || aktifKullanici.yetki !== 'Admin') { showToast("Bu işlem sadece Yönetici yetkisiyle yapılabilir!", "error"); return; }
+            _orijVeriSifirla();
+        };
 
         // PWA Service Worker — v13 (auto-update destekli)
         if ('serviceWorker' in navigator) {

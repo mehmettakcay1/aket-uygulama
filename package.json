@@ -1,0 +1,7 @@
+{
+  "name": "aket-uygulama",
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "wrangler pages deploy . --project-name=aket-uygulama --commit-dirty=true"
+  }
+}
