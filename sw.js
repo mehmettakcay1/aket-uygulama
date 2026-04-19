@@ -1,4 +1,4 @@
-const CACHE_NAME = "aket-v23";
+const CACHE_NAME = "aket-v24";
 
 const offlineResponse = () => new Response(
   '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AK ET</title><style>body{background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;text-align:center}h2{margin-bottom:8px}p{color:#aaa;font-size:14px}</style></head><body><div><h2>Bağlantı Yok</h2><p>İnternet bağlantınızı kontrol edip sayfayı yenileyin.</p></div></body></html>',
@@ -13,7 +13,12 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME).then(cache =>
       cache.addAll([
         './manifest.json',
-        './AK-ET%20KURUMSAL%20LOGO.png'
+        './AK-ET%20KURUMSAL%20LOGO.png',
+        './icon-512.png',
+        './icon-192.png',
+        './icon-180.png',
+        './icon-167.png',
+        './icon-152.png'
       ])
     ).catch(() => {})
   );

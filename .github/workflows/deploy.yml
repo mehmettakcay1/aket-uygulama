@@ -21,6 +21,11 @@ jobs:
           cp sw.js web-deploy/
           cp _headers web-deploy/
           cp "AK-ET KURUMSAL LOGO.png" web-deploy/
+          cp icon-512.png web-deploy/
+          cp icon-192.png web-deploy/
+          cp icon-180.png web-deploy/
+          cp icon-167.png web-deploy/
+          cp icon-152.png web-deploy/
 
       - name: Cloudflare Pages'e deploy et
         uses: cloudflare/wrangler-action@v3
