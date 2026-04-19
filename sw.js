@@ -13,12 +13,7 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME).then(cache =>
       cache.addAll([
         './manifest.json',
-        './AK-ET%20KURUMSAL%20LOGO.png',
-        './icons/icon-192.png',
-        './icons/icon-512.png',
-        './icons/icon-180.png',
-        './icons/icon-167.png',
-        './icons/icon-152.png'
+        './AK-ET%20KURUMSAL%20LOGO.png'
       ])
     ).catch(() => {})
   );

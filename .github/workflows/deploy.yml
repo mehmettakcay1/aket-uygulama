@@ -15,54 +15,12 @@ jobs:
 
       - name: Deploy dosyalarını hazırla
         run: |
-          mkdir -p web-deploy/icons
-
-          # Ana statik dosyalar
+          mkdir -p web-deploy
           cp index.html web-deploy/
           cp manifest.json web-deploy/
           cp sw.js web-deploy/
           cp _headers web-deploy/
           cp "AK-ET KURUMSAL LOGO.png" web-deploy/
-
-          # ImageMagick ile her platform için doğru boyutlarda ikon üret
-          # Kırmızı arka plan (#7b2c24) üzerine logo ortala — kare ikon
-          convert "AK-ET KURUMSAL LOGO.png" \
-            -background "#7b2c24" \
-            -gravity center \
-            -resize 420x420 \
-            -extent 512x512 \
-            web-deploy/icons/icon-512.png
-
-          convert "AK-ET KURUMSAL LOGO.png" \
-            -background "#7b2c24" \
-            -gravity center \
-            -resize 155x155 \
-            -extent 192x192 \
-            web-deploy/icons/icon-192.png
-
-          convert "AK-ET KURUMSAL LOGO.png" \
-            -background "#7b2c24" \
-            -gravity center \
-            -resize 145x145 \
-            -extent 180x180 \
-            web-deploy/icons/icon-180.png
-
-          convert "AK-ET KURUMSAL LOGO.png" \
-            -background "#7b2c24" \
-            -gravity center \
-            -resize 130x130 \
-            -extent 167x167 \
-            web-deploy/icons/icon-167.png
-
-          convert "AK-ET KURUMSAL LOGO.png" \
-            -background "#7b2c24" \
-            -gravity center \
-            -resize 125x125 \
-            -extent 152x152 \
-            web-deploy/icons/icon-152.png
-
-          echo "İkonlar oluşturuldu:"
-          ls -lh web-deploy/icons/
 
       - name: Cloudflare Pages'e deploy et
         uses: cloudflare/wrangler-action@v3

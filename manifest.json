@@ -9,20 +9,14 @@
   "theme_color": "#7b2c24",
   "icons": [
     {
-      "src": "./icons/icon-192.png",
-      "sizes": "192x192",
+      "src": "./AK-ET%20KURUMSAL%20LOGO.png",
+      "sizes": "any",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-512.png",
-      "sizes": "512x512",
+      "src": "./AK-ET%20KURUMSAL%20LOGO.png",
+      "sizes": "any",
       "type": "image/png",
       "purpose": "maskable"
     }
