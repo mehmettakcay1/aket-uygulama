@@ -4,14 +4,27 @@
   "description": "AK ET Et Entegre Tesisleri ve Mağaza Yönetim Otomasyonu",
   "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#7b2c24",
   "theme_color": "#7b2c24",
   "icons": [
     {
-      "src": "./AK-ET%20KURUMSAL%20LOGO.png",
-      "sizes": "any",
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
