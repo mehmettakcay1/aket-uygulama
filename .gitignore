@@ -1,3 +1,7 @@
 node_modules/
 .wrangler/
 dist/
+web-deploy/
+*.log
+.DS_Store
+Thumbs.db
