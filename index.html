@@ -2497,7 +2497,7 @@
                 <h2>Müşteri Yönetimi</h2>
                 <div class="header-actions">
                     <button class="btn btn-excel yetki-rapor" onclick="exportExcel('Müşteri Listesi Raporu')">Excel</button>
-                    <button class="btn" style="background:var(--yesil);" onclick="musteriModalAc()">+ Yeni Müşteri</button>
+                    <button class="btn yetki-admin" style="background:var(--yesil);display:none;" onclick="musteriModalAc()">+ Yeni Müşteri</button>
                 </div>
             </div>
             <div class="tablo-arama-wrap">
@@ -4078,6 +4078,15 @@
             let mTar = document.getElementById('mnav-tarifler');
             if(mMuh) mMuh.style.display = (y === 'Admin' || y === 'Muhasebe') ? 'flex' : 'none';
             if(mTar) mTar.style.display = (y === 'Admin' || y === 'Kasap') ? 'flex' : 'none';
+
+            // Müşteriler: Admin + Muhasebe görebilir (Muhasebe sadece görüntüler)
+            let musteriGorebilir = (y === 'Admin' || y === 'Muhasebe');
+            let navMus = document.getElementById('nav-musteri');
+            let mnavMus = document.getElementById('mnav-musteri');
+            let mcardMus = document.getElementById('mcard-musteri');
+            if(navMus) navMus.style.display = musteriGorebilir ? '' : 'none';
+            if(mnavMus) mnavMus.style.display = musteriGorebilir ? 'flex' : 'none';
+            if(mcardMus) mcardMus.style.display = musteriGorebilir ? '' : 'none';
 
             // Dashboard kart görünürlükleri
             let cardMuh = document.getElementById('mcard-muhasebe');
@@ -6910,8 +6919,9 @@
                     </div>
                     <div class="musteri-satir-butonlar">
                         <button class="btn-sm btn-islem" onclick="musteriGecmisGoster(${m.id})" title="Sipariş geçmişi">Geçmiş</button>
+                        ${aktifKullanici?.yetki === 'Admin' ? `
                         <button class="btn-sm btn-duzenle" onclick="musteriModalAc(${m.id})" title="Düzenle">Düzenle</button>
-                        <button class="btn-sm btn-iptal" onclick="musteriSil(${m.id})" title="Sil">Sil</button>
+                        <button class="btn-sm btn-iptal" onclick="musteriSil(${m.id})" title="Sil">Sil</button>` : ''}
                         <button class="btn-sm btn-onay" onclick="siparisModalAcMusteri('${m.firmaAdi}')" title="Yeni sipariş">+ Sipariş</button>
                     </div>
                 </div>`;
