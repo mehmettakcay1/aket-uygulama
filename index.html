@@ -2497,7 +2497,7 @@
                 <h2>Müşteri Yönetimi</h2>
                 <div class="header-actions">
                     <button class="btn btn-excel yetki-rapor" onclick="exportExcel('Müşteri Listesi Raporu')">Excel</button>
-                    <button class="btn yetki-admin" style="background:var(--yesil);display:none;" onclick="musteriModalAc()">+ Yeni Müşteri</button>
+                    <button class="btn" style="background:var(--yesil);" onclick="musteriModalAc()">+ Yeni Müşteri</button>
                 </div>
             </div>
             <div class="tablo-arama-wrap">
@@ -6919,9 +6919,8 @@
                     </div>
                     <div class="musteri-satir-butonlar">
                         <button class="btn-sm btn-islem" onclick="musteriGecmisGoster(${m.id})" title="Sipariş geçmişi">Geçmiş</button>
-                        ${aktifKullanici?.yetki === 'Admin' ? `
                         <button class="btn-sm btn-duzenle" onclick="musteriModalAc(${m.id})" title="Düzenle">Düzenle</button>
-                        <button class="btn-sm btn-iptal" onclick="musteriSil(${m.id})" title="Sil">Sil</button>` : ''}
+                        <button class="btn-sm btn-iptal" onclick="musteriSil(${m.id})" title="Sil">Sil</button>
                         <button class="btn-sm btn-onay" onclick="siparisModalAcMusteri('${m.firmaAdi}')" title="Yeni sipariş">+ Sipariş</button>
                     </div>
                 </div>`;
