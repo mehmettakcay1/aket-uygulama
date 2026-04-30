@@ -9,8 +9,12 @@
   },
   "scripts": {
     "start": "electron .",
-    "deploy": "npx wrangler pages deploy . --project-name=aket-uygulama --commit-dirty=true",
+    "serve": "node server.js",
+    "deploy": "mkdir web-deploy 2>/dev/null & copy index.html web-deploy\\ & copy manifest.json web-deploy\\ & copy sw.js web-deploy\\ & copy _headers web-deploy\\ & copy \"AK-ET KURUMSAL LOGO.png\" web-deploy\\ & npx wrangler pages deploy web-deploy --project-name=aket-yonetim --commit-dirty=true --branch=master & rmdir /s /q web-deploy",
     "build:win": "electron-builder --win"
+  },
+  "dependencies": {
+    "express": "^4.22.1"
   },
   "build": {
     "appId": "com.aket.kurumsal",
