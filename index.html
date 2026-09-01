@@ -982,6 +982,7 @@
         .analiz-blok h3 { margin: 0 0 4px; color: var(--yazi); font-size: 15px; }
         .analiz-blok .alt { color: #666; font-size: 11px; margin-bottom: 14px; }
         .abc-A { color: var(--yesil); font-weight: 800; } .abc-B { color: var(--altin); font-weight: 800; } .abc-C { color: #888; font-weight: 800; }
+        @media(max-width:768px){ .abc-grid { grid-template-columns: 1fr !important; } }
 
         /* ── MÜŞTERİ MODÜLÜ ── */
         /* Müşteri Listesi (alfabetik) */
@@ -2968,6 +2969,32 @@
                         <thead><tr><th>Tarih</th><th>Ürün</th><th>Karkas</th><th>Tür</th><th>Miktar</th><th>Açıklama</th><th>Kaydeden</th><th class="no-excel">İşlem</th></tr></thead>
                         <tbody id="fireKayitTablo"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- ── SATIŞ HACMİ & ABC ANALİZİ ── -->
+            <div class="analiz-blok">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+                    <div>
+                        <h3>Satış Hacmi &amp; ABC Analizi</h3>
+                        <div class="alt">Ürün ve müşteri bazında satış hacmi (kg). A = ilk %80, B = %80–95, C = kalan.</div>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <input type="date" id="abc-bas" onchange="hacimAbcCiz()">
+                        <span style="color:#444;">—</span>
+                        <input type="date" id="abc-bit" onchange="hacimAbcCiz()">
+                    </div>
+                </div>
+                <div class="dash-chart-wrap" style="margin-top:16px;"><canvas id="chart-abc-urun"></canvas></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;" class="abc-grid">
+                    <div style="overflow-x:auto;">
+                        <h4 style="color:var(--yazi-soluk);font-size:12px;margin:0 0 8px;">Ürün Bazında</h4>
+                        <table><thead><tr><th>Ürün</th><th>Toplam KG</th><th>Pay %</th><th>Sınıf</th></tr></thead><tbody id="abcUrunTablo"></tbody></table>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <h4 style="color:var(--yazi-soluk);font-size:12px;margin:0 0 8px;">Müşteri Bazında</h4>
+                        <table><thead><tr><th>Müşteri</th><th>Toplam KG</th><th>Pay %</th><th>Sınıf</th></tr></thead><tbody id="abcMusteriTablo"></tbody></table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -8275,6 +8302,45 @@
             if (!confirm('Bu fire kaydını silmek istiyor musunuz?')) return;
             fireKayit = fireKayit.filter(f => String(f.id) !== String(id));
             dbKaydet('fire_kayit', 'aket_fire_kayit', fireKayit, fireRaporuCiz);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // F3 — SATIŞ HACMİ & ABC ANALİZİ  (para yok, sadece kg)
+        // ═══════════════════════════════════════════════════════════════
+        function hacimAbcCiz() {
+            let uT = document.getElementById('abcUrunTablo');
+            if (!uT) return;
+            let { bas, bit } = _gunAralik('abc-bas', 'abc-bit', 90);
+
+            let musteriSevk = cikanlar.filter(c => c.tur === 'Müşteri' && _araliktaMi(c.tarih, bas, bit));
+            let magazaSevk  = magazaSatislar.filter(s => _araliktaMi(s.tarih, bas, bit));
+
+            // Ürün bazında (müşteri sevkiyat + mağaza satışı)
+            let urunMap = {};
+            [...musteriSevk, ...magazaSevk].forEach(s => {
+                let u = s.urun || 'Diğer';
+                urunMap[u] = (urunMap[u] || 0) + (parseFloat(s.miktar) || 0);
+            });
+            let urunDizi = _abcSinifla(Object.entries(urunMap).map(([ad, kg]) => ({ ad, kg })).sort((a, b) => b.kg - a.kg));
+
+            // Müşteri bazında (yalnız müşteri sevkiyatları)
+            let musMap = {};
+            musteriSevk.forEach(s => {
+                let f = s.firma || s.talepEden || 'Bilinmiyor';
+                musMap[f] = (musMap[f] || 0) + (parseFloat(s.miktar) || 0);
+            });
+            let musDizi = _abcSinifla(Object.entries(musMap).map(([ad, kg]) => ({ ad, kg })).sort((a, b) => b.kg - a.kg));
+
+            let satir = x => `<tr><td>${x.ad}</td><td><b>${x.kg.toFixed(1)}</b></td><td>${x.pay.toFixed(1)}%</td><td class="abc-${x.sinif}">${x.sinif}</td></tr>`;
+            uT.innerHTML = urunDizi.length ? urunDizi.map(satir).join('') : '<tr><td colspan="4" style="text-align:center;color:#555;padding:16px;">Veri yok</td></tr>';
+            let mT = document.getElementById('abcMusteriTablo');
+            if (mT) mT.innerHTML = musDizi.length ? musDizi.map(satir).join('') : '<tr><td colspan="4" style="text-align:center;color:#555;padding:16px;">Veri yok</td></tr>';
+
+            let ilk10 = urunDizi.slice(0, 10);
+            _grafikOlustur('chart-abc-urun', 'bar', ilk10.map(x => x.ad), [
+                { label: 'Satış Hacmi (KG)', data: ilk10.map(x => +x.kg.toFixed(1)),
+                  backgroundColor: ilk10.map(x => x.sinif === 'A' ? '#27ae60' : x.sinif === 'B' ? '#f39c12' : '#7f8c8d'), borderRadius: 4 }
+            ], { indexAxis: 'y' });
         }
 
         // ─── ÇALIŞANLAR ─────────────────────────────────────────────
