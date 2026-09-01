@@ -3,10 +3,17 @@
   "short_name": "AK ET ERP",
   "description": "AK ET Et Entegre Tesisleri ve Mağaza Yönetim Otomasyonu",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#7b2c24",
+  "background_color": "#0b0b0b",
   "theme_color": "#7b2c24",
+  "lang": "tr",
+  "dir": "ltr",
+  "categories": [
+    "business",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "./icon-192.png",
@@ -25,6 +32,30 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mal Kabul",
+      "short_name": "Mal Kabul",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Stok",
+      "short_name": "Stok",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

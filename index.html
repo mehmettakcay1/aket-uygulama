@@ -694,6 +694,9 @@
         .perf-dropdown-item:last-child { border-bottom: none; }
         .perf-dropdown-item:hover { background: rgba(123,44,36,0.25); color: white; }
         .perf-dropdown-item .item-icon { font-size: 13px; width: 18px; text-align: center; flex-shrink: 0; opacity: 0.7; }
+        .perf-dropdown-divider { height: 1px; background: #2e2e2e; margin: 4px 0; }
+        .perf-dropdown-item.perf-dropdown-danger { color: #c0392b; }
+        .perf-dropdown-item.perf-dropdown-danger:hover { background: rgba(192,57,43,0.2); color: #e74c3c; }
 
         /* ===== TOGGLE SWITCH ===== */
         .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
@@ -710,22 +713,55 @@
             100% { filter: brightness(1) drop-shadow(0 0 0px transparent); }
         }
         @keyframes tabSlideIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px) scale(0.996); filter: blur(4px); }
+            40%  { filter: blur(0); }
+            to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
         @keyframes tabFadeIn {
             from { opacity: 0; }
             to   { opacity: 1; }
+        }
+        @keyframes tabProgressAnim {
+            from { transform: scaleX(0); opacity: 1; }
+            65%  { transform: scaleX(0.88); opacity: 1; }
+            to   { transform: scaleX(1); opacity: 0; }
+        }
+        @keyframes mobilePageIn {
+            from { opacity: 0; transform: translateX(18px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes mobileHomeIn {
+            from { opacity: 0; transform: translateX(-18px); }
+            to   { opacity: 1; transform: translateX(0); }
         }
         @keyframes premiumFadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to   { opacity: 1; transform: translateY(0); }
         }
         .logo-flash { animation: logoPulse 0.55s ease forwards !important; }
+        /* Sayfa geçiş progress bar */
+        #tab-progress-bar {
+            position: fixed; top: 0; left: 0; height: 2px; width: 100%;
+            background: linear-gradient(90deg, #7b2c24, #c0392b, #e74c3c);
+            z-index: 999999; pointer-events: none;
+            transform: scaleX(0); transform-origin: left center;
+            opacity: 0; box-shadow: 0 0 10px rgba(231,76,60,0.5);
+            border-radius: 0 2px 2px 0;
+        }
+        #tab-progress-bar.pg-run {
+            animation: tabProgressAnim 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        /* Mobile sayfa geçiş container */
+        #main-container.page-enter {
+            animation: mobilePageIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        #mobile-home.home-enter {
+            animation: mobileHomeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
         /* Masaüstünde slideIn kullan, mobilde transform YOK — iOS Safari scroll sorununu önler */
-        .tab-content.active { animation: tabSlideIn 0.22s ease forwards; }
+        .tab-content.active { animation: tabSlideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @media (max-width: 768px) {
-            .tab-content.active { animation: tabFadeIn 0.18s ease forwards; }
+            .tab-content.active { animation: tabFadeIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         }
 
         /* TARİFLER MODÜLÜ CSS */
@@ -885,7 +921,7 @@
         .muhasebe-card .deger { font-size: 24px; font-weight: bold; color: white; }
 
         /* FLOATING MENÜLER (SUNUM & RESTART) */
-        .restart-panel { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
+        .restart-panel { display: none !important; }
         .restart-panel button { background-color: #333; color: #aaa; border: 1px solid #555; padding: 10px 15px; border-radius: 4px; font-size: 11px; cursor: pointer; }
         .restart-panel button:hover { background-color: #e74c3c; color: white; border-color: #e74c3c; }
 
@@ -1040,13 +1076,19 @@
             position: sticky;
             top: 0;
             z-index: 300;
-            background: linear-gradient(180deg, #1c1c1c 0%, #141414 100%);
-            border-bottom: 1px solid rgba(123,44,36,0.45);
-            padding: 0 14px;
-            height: 62px;
-            align-items: center;
+            background: linear-gradient(180deg, #1e1a1a 0%, #161212 100%);
+            border-bottom: 1px solid rgba(123,44,36,0.55);
+            padding: env(safe-area-inset-top, 0px) 14px 0;
+            height: calc(62px + env(safe-area-inset-top, 0px));
+            min-height: calc(62px + env(safe-area-inset-top, 0px));
+            align-items: flex-end;
             justify-content: space-between;
-            box-shadow: 0 4px 28px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.03);
+            padding-bottom: 0;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.85), 0 1px 0 rgba(255,255,255,0.04);
+            flex-shrink: 0;
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-tap-highlight-color: transparent;
         }
         .m-app-header::after {
             content: '';
@@ -1055,6 +1097,19 @@
             background: linear-gradient(90deg, transparent, rgba(123,44,36,0.6) 30%, rgba(160,50,40,0.7) 50%, rgba(123,44,36,0.6) 70%, transparent);
             pointer-events: none;
         }
+        /* ── Android & tüm mobil: dokunma optimizasyonu ── */
+        @media (hover: none) and (pointer: coarse) {
+            button, .btn, .nav-btn, .mnav-item, .m-back-btn, .m-user-dot, .m-logout-btn {
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+                cursor: pointer;
+            }
+            .m-card, .ik-stat, .ik-card, .m-stat-card {
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(123,44,36,0.1);
+            }
+        }
+
         .m-back-btn {
             display: flex;
             align-items: center;
@@ -1071,6 +1126,11 @@
             visibility: hidden;
             transition: background 0.2s;
             min-width: 72px;
+            min-height: 40px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
         }
         .m-back-btn.visible { visibility: visible; }
         .m-back-btn:active { background: rgba(123,44,36,0.35); }
@@ -1094,7 +1154,7 @@
             justify-content: flex-end;
         }
         .m-user-dot {
-            width: 34px; height: 34px;
+            width: 38px; height: 38px;
             border-radius: 50%;
             background: rgba(123,44,36,0.25);
             border: 1.5px solid rgba(123,44,36,0.5);
@@ -1109,6 +1169,8 @@
             background-size: cover;
             background-position: center;
             flex-shrink: 0;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         .m-logout-btn {
             background: transparent;
@@ -1341,13 +1403,16 @@
             display: none;
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            background: rgba(13,13,13,0.97);
-            border-top: 1px solid rgba(255,255,255,0.055);
+            background: rgba(12,10,10,0.98);
+            border-top: 1px solid rgba(123,44,36,0.22);
             z-index: 400;
-            box-shadow: 0 -8px 32px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.75), 0 -1px 0 rgba(123,44,36,0.1), inset 0 1px 0 rgba(255,255,255,0.035);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding-bottom: max(env(safe-area-inset-bottom, 0px), 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
+            will-change: transform;
+            transform: translateZ(0);
         }
         .mnav-items {
             display: flex;
@@ -1359,7 +1424,8 @@
         .mnav-items::-webkit-scrollbar { display: none; }
         .mnav-item {
             flex: 1;
-            min-width: 58px;
+            min-width: 54px;
+            min-height: 52px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1377,9 +1443,12 @@
             border-top: 2px solid transparent;
             gap: 4px;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
             position: relative;
         }
-        .mnav-item .mni { font-size: 20px; line-height: 1; }
+        .mnav-item .mni { font-size: 20px; line-height: 1; display: flex; align-items: center; justify-content: center; }
         .mnav-item.active {
             color: #fff;
             border-top-color: var(--kirmizi);
@@ -1392,27 +1461,29 @@
             /* ── TAM EKRAN NATIVE APP LAYOUT ── */
             html {
                 height: 100%;
+                height: -webkit-fill-available;
                 height: 100dvh;
-                overflow: hidden;
                 overflow-x: hidden;
             }
             body {
                 height: 100%;
+                height: -webkit-fill-available;
                 height: 100dvh;
-                overflow: hidden;
                 overflow-x: hidden;
                 overscroll-behavior: none;
+                overscroll-behavior-y: none;
                 padding-bottom: 0 !important;
                 width: 100%;
                 max-width: 100vw;
-                /* position: fixed kaldırıldı — yatay kayma sebebiydi */
+                -webkit-tap-highlight-color: transparent;
+                touch-action: pan-x pan-y;
             }
             #app-body {
                 display: flex;
                 flex-direction: column;
                 height: 100%;
+                height: -webkit-fill-available;
                 height: 100dvh;
-                overflow: hidden;
                 overflow-x: hidden;
                 width: 100%;
             }
@@ -1420,28 +1491,34 @@
             .container {
                 flex: 1;
                 min-height: 0;
-                overflow-y: scroll;
+                overflow-y: auto;
                 overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior-y: contain;
-                padding: 14px 12px !important;
-                padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px) !important;
+                scroll-behavior: auto;
+                padding: 16px 14px !important;
+                padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 88px) !important;
                 width: 100%;
                 box-sizing: border-box;
+                position: relative;
+                isolation: isolate;
+                transform: translateZ(0);
             }
-            /* Tab içerikleri transform kullanmaz — iOS scroll bloğunu önle */
-            .tab-content, .tab-content.active, .ik-section, .ik-section.active {
+            /* Tab içerikleri transform kullanmaz — iOS/Android scroll bloğunu önle */
+            .tab-content, .tab-content.active {
                 transform: none !important;
                 will-change: auto !important;
+                -webkit-transform: none !important;
             }
             #mobile-home {
                 flex: 1;
                 min-height: 0;
-                overflow-y: scroll;
+                overflow-y: auto;
                 overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior-y: contain;
-                padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+                padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 88px);
+                transform: translateZ(0);
             }
             /* Alt nav: base CSS'teki position:fixed korunur — override etme */
             .mobile-bottom-nav {
@@ -1894,9 +1971,19 @@
             .ik-section.active {
                 animation: none !important;
                 -webkit-animation: none !important;
+                overflow: visible !important;
+                height: auto !important;
+                transform: translateZ(0);
             }
             #ik.tab-content, .ik-section {
                 touch-action: pan-y;
+                overflow: visible !important;
+                height: auto !important;
+            }
+            #ik.tab-content.active {
+                display: block;
+                min-height: auto;
+                padding-bottom: 0;
             }
             .ik-stat-row { grid-template-columns: repeat(2,1fr); gap: 10px; }
             .ik-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
@@ -2102,6 +2189,14 @@
                     </div>
                     <div class="m-card-arrow">›</div>
                 </div>
+                <div id="mcard-musteri" class="m-card" style="--c-accent:#1abc9c;" onclick="mobileOpenTab('musteri')">
+                    <div class="m-card-icon" style="background:rgba(26,188,156,0.12);color:#1abc9c;">MÜŞ</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Müşteriler</div>
+                        <div class="m-card-sub">CRM &amp; firma listesi</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
                 <div id="mcard-cikan" class="m-card" style="--c-accent:#8e44ad;" onclick="mobileOpenTab('cikan')">
                     <div class="m-card-icon" style="background:rgba(142,68,173,0.12);color:#8e44ad;">SEV</div>
                     <div class="m-card-body">
@@ -2147,14 +2242,6 @@
                     <div class="m-card-body">
                         <div class="m-card-title">Personel Yönetimi</div>
                         <div class="m-card-sub">Kullanıcılar &amp; yetkiler</div>
-                    </div>
-                    <div class="m-card-arrow">›</div>
-                </div>
-                <div id="mcard-musteri" class="m-card" style="--c-accent:#1abc9c;" onclick="mobileOpenTab('musteri')">
-                    <div class="m-card-icon" style="background:rgba(26,188,156,0.12);color:#1abc9c;">MÜŞ</div>
-                    <div class="m-card-body">
-                        <div class="m-card-title">Müşteriler</div>
-                        <div class="m-card-sub">CRM &amp; firma listesi</div>
                     </div>
                     <div class="m-card-arrow">›</div>
                 </div>
@@ -2219,6 +2306,8 @@
                         <button class="perf-dropdown-item" onclick="sirketPerfModalAc(); closePerfDropdown()"><span class="item-icon">📈</span>Aylık Analiz</button>
                         <button class="perf-dropdown-item" onclick="openModal('kullaniciModal'); closePerfDropdown()"><span class="item-icon">👥</span>Personel Yönetimi</button>
                         <button class="perf-dropdown-item" onclick="yetkiTaleplerModalAc(); closePerfDropdown()"><span class="item-icon">📋</span>Yetki Talepleri</button>
+                        <div class="perf-dropdown-divider"></div>
+                        <button class="perf-dropdown-item perf-dropdown-danger" onclick="verileriSifirlaModalAc(); closePerfDropdown()"><span class="item-icon">🔄</span>Sistemi Sıfırla</button>
                     </div>
                 </div>
                 <button class="btn-logout" onclick="cikisYap()">Çıkış</button>
@@ -2229,51 +2318,51 @@
         <div class="mobile-bottom-nav" id="mobile-bottom-nav">
             <div class="mnav-items">
                 <button class="mnav-item" id="mnav-home-btn" onclick="goMobileHome()">
-                    <span class="mni" style="font-size:16px; font-weight:900; letter-spacing:-0.5px;">ANA</span>
-                    <span>Menü</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                    <span>Ana Menü</span>
                 </button>
                 <button class="mnav-item" id="mnav-giren" onclick="mobileOpenTab('giren')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">MK</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3l-4 4-4-4"/></svg></span>
                     <span>Mal Kabul</span>
                 </button>
                 <button class="mnav-item" id="mnav-stok" onclick="mobileOpenTab('stok')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">STK<span id="stok-alarm-badge-m" class="nav-alarm-badge" style="display:none; font-size:8px; padding:0 3px; margin-left:2px;">!</span></span>
+                    <span class="mni" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span id="stok-alarm-badge-m" class="nav-alarm-badge" style="display:none; font-size:8px; padding:0 3px; position:absolute; top:-4px; right:-4px;">!</span></span>
                     <span>Stok</span>
                 </button>
                 <button class="mnav-item" id="mnav-siparis" onclick="mobileOpenTab('siparis')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">SİP</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
                     <span>Siparişler</span>
                 </button>
                 <button class="mnav-item" id="mnav-cikan" onclick="mobileOpenTab('cikan')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">SEV</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
                     <span>Sevkiyat</span>
                 </button>
                 <button class="mnav-item yetki-kemik-nav" id="mnav-kemik" onclick="mobileOpenTab('kemik')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">KEM</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.5 5.5a2.5 2.5 0 0 0-3.54 0l-9.9 9.9a2.5 2.5 0 1 0 3.54 3.54l9.9-9.9a2.5 2.5 0 0 0 0-3.54z"/><path d="M5.5 5.5a2.5 2.5 0 0 1 3.54 0"/><path d="M18.5 18.5a2.5 2.5 0 0 1-3.54 0"/></svg></span>
                     <span>Kemik</span>
                 </button>
                 <button class="mnav-item" id="mnav-tarifler" onclick="mobileOpenTab('tarifler')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">TAR</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
                     <span>Tarifler</span>
                 </button>
                 <button class="mnav-item" id="mnav-perakende" onclick="mobileOpenTab('perakende')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">MAĞ</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
                     <span>Mağaza</span>
                 </button>
                 <button class="mnav-item" id="mnav-muhasebe" onclick="mobileOpenTab('muhasebe')">
-                    <span class="mni" style="font-size:13px; font-weight:900;">MUH</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></span>
                     <span>Muhasebe</span>
                 </button>
                 <button class="mnav-item yetki-admin" id="mnav-musteri" onclick="mobileOpenTab('musteri')" style="display:none;">
-                    <span class="mni" style="font-size:12px; font-weight:900;">MÜŞ</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
                     <span>Müşteri</span>
                 </button>
                 <button class="mnav-item yetki-admin" id="mnav-dashboard" onclick="mobileOpenTab('dashboard')" style="display:none;">
-                    <span class="mni" style="font-size:12px; font-weight:900;">GRF</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
                     <span>Analiz</span>
                 </button>
                 <button class="mnav-item" id="mnav-ik" onclick="mobileOpenTab('ik'); ikIkTabAc();" style="display:none;">
-                    <span class="mni" style="font-size:12px; font-weight:900;">İK</span>
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
                     <span>İnsan K.</span>
                 </button>
             </div>
@@ -3015,10 +3104,6 @@
     </div>
     </div>
 
-    <div class="restart-panel">
-        <button onclick="verileriSifirlaModalAc()">Sistemi Sıfırla (Restart)</button>
-    </div>
-
     <!-- İK: GÖREV MODALI -->
     <div id="ikGorevModal" class="modal" onclick="if(event.target===this)closeModal('ikGorevModal')">
         <div class="modal-content" style="width:480px;">
@@ -3400,7 +3485,7 @@
             
             <div id="pers-cikar-tab" style="display:none;">
                 <table style="width:100%; font-size:12px; margin-bottom:0;">
-                    <thead><tr><th>Ad Soyad</th><th>Kullanıcı No</th><th>Yetki</th><th>Yetki Kodu</th><th style="text-align:center;" title="Sözleşme Durumu">Sözleşme</th><th class="no-excel">İşlem</th></tr></thead>
+                    <thead><tr><th>Ad Soyad</th><th>Kullanıcı No</th><th>Yetki</th><th>Yetki Kodu</th><th style="text-align:center;" title="Sözleşme Durumu">Sözleşme</th><th style="text-align:center;" title="Çevrimiçi Durum">Durum</th><th class="no-excel">İşlem</th></tr></thead>
                     <tbody id="kullaniciListesiTablo"></tbody>
                 </table>
                 <p style="font-size:11px; color:#aaa; margin-top:10px;">* Yeşil Onay (✅) simgesine tıklayarak personelin sözleşme tasdik belgesinin resmi (PDF) dökümünü alabilirsiniz.</p>
@@ -4072,6 +4157,7 @@
                 } else {
                     localStorage.setItem('aket_current_user', JSON.stringify(user));
                     sistemiBaslat();
+                    bildirimIzniAl();
                     showToast(`Sisteme Giriş Yapıldı: ${user.ad}`, "success");
                 }
             } else {
@@ -4093,6 +4179,7 @@
             localStorage.setItem('aket_current_user', JSON.stringify(aktifKullanici));
             document.getElementById('agreement-screen').style.display = 'none';
             sistemiBaslat();
+            bildirimIzniAl();
             showToast(`Sözleşme Onaylandı. Hoş geldiniz, ${aktifKullanici.ad}`, "success");
         }
 
@@ -4104,9 +4191,10 @@
         }
 
         function cikisYap() {
+            if(firebaseDB && aktifKullanici) {
+                try { firebaseDB.ref('aket_data/presence/' + aktifKullanici.id).set({online: false, lastSeen: Date.now()}); } catch(e) {}
+            }
             localStorage.removeItem('aket_current_user');
-            // Safari PWA'da location.reload() "sayfayı açamıyor" hatasına yol açabilir.
-            // location.assign ile aynı URL'e yönlendirmek bu sorunu çözer.
             try {
                 let url = location.pathname + (location.search || '');
                 location.assign(url);
@@ -4152,7 +4240,6 @@
             tarifListesiniDoldur();
             yetkileriUygula();
             ekranlariGuncelle();
-            bildirimIzniAl();
             firebaseBaslat();
             otomatikCikisBaslat();
             setTimeout(vadeBildirimKontrol, 4000);
@@ -4175,9 +4262,6 @@
             let y = aktifKullanici.yetki;
             // Admin-only butonları
             document.querySelectorAll('.yetki-admin').forEach(b => { b.style.display = y === 'Admin' ? '' : 'none'; });
-            let restartPanel = document.querySelector('.restart-panel');
-            if(restartPanel) restartPanel.style.display = y === 'Admin' ? 'block' : 'none';
-
             // LOGO DEĞİŞTİRME YETKİSİ SADECE ADMİNDE
             let navLogoContainer = document.getElementById('nav-logo-container');
             if (y === 'Admin') {
@@ -4285,6 +4369,19 @@
             // Vadeli borç paneli: sadece Admin ve Muhasebe görebilir
             let vbPanel = document.getElementById('vadeBorcPanel');
             if(vbPanel) { vbPanel.style.display = (y === 'Admin' || y === 'Muhasebe') ? '' : 'none'; }
+
+            // Kart gridi hizala: tek kalan kart varsa tam genişliğe yay
+            (function() {
+                const grid = document.querySelector('.m-card-grid');
+                if (!grid) return;
+                const cards = Array.from(grid.children);
+                const visible = cards.filter(c => c.style.display !== 'none');
+                const singles = visible.filter(c => !c.style.gridColumn.includes('span 2'));
+                singles.forEach(c => { c.style.gridColumn = ''; });
+                if (singles.length % 2 === 1) {
+                    singles[singles.length - 1].style.gridColumn = 'span 2';
+                }
+            })();
         }
 
         function personelTab(tab) {
@@ -4353,11 +4450,15 @@
                 let onayDurumu = k.sozlesmeOnay 
                     ? `<span style="cursor:pointer; font-size:16px;" title="Sözleşme Onay Belgesini Yazdır" onclick="sozlesmeBelgesiYazdir('${k.id}')">✅</span>`
                     : `<span style="font-size:16px;" title="Henüz Onaylanmadı">❌</span>`;
+                let pData = onlineKullanicilar[k.id];
+                let isOnline = pData && pData.online === true;
+                let durumHtml = `<span title="${isOnline ? 'Çevrimiçi' : 'Çevrimdışı'}" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:${isOnline ? '#2ecc71' : '#555'};"><span style="width:8px;height:8px;border-radius:50%;background:${isOnline ? '#2ecc71' : '#444'};display:inline-block;${isOnline ? 'box-shadow:0 0 6px rgba(46,204,113,0.7);' : ''}"></span>${isOnline ? 'Çevrimiçi' : 'Çevrimdışı'}</span>`;
                 
                 return `
                 <tr>
                     <td>${k.ad}</td><td>${k.id}</td><td>${rolGoster(k.yetki)}</td><td><b style="color:var(--altin);">${k.sifre}</b></td>
                     <td style="text-align:center;">${onayDurumu}</td>
+                    <td style="text-align:center;">${durumHtml}</td>
                     <td class="no-excel">${(k.id !== 'admin' && k.id !== '36685042936') ? `<button class="btn-sm btn-iptal" onclick="kullaniciSil('${k.id}')">Sil</button>` : '-'}</td>
                 </tr>
                 `;
@@ -4509,6 +4610,9 @@
             document.querySelectorAll('.mnav-item').forEach(l => l.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
             document.getElementById(tabName).classList.add('active');
+            // Scroll sıfırla — tab değişiminde en üste dön
+            let mc = document.getElementById('main-container');
+            if(mc) mc.scrollTop = 0;
             let dBtn = document.getElementById('nav-' + tabName);
             if(dBtn) dBtn.classList.add('active');
             let mBtn = document.getElementById('mnav-' + tabName);
@@ -5714,6 +5818,7 @@
         const ANA_STOK_URUNLER = ['Dana Karkas', 'Kuzu Karkas', 'Beyaz Et (Piliç)'];
 
         function stokAlarmiKontrol() {
+            if(!aktifKullanici) return;
             let esikler = JSON.parse(localStorage.getItem('aket_stok_esik') || '{}');
             let alarmVar = false;
 
@@ -5981,6 +6086,7 @@
         };
 
         let firebaseDB = null;
+        let onlineKullanicilar = {};
         let firebaseYaziyoruz = false;
         let firebaseSonYaziTs = 0;
         let _firebaseRetryPending = false;
@@ -6077,6 +6183,21 @@
                         verileriKaydet();
                         showToast('Bağlantı yeniden sağlandı, veriler senkronize edildi.', 'success');
                     }
+                });
+
+                // Presence tracking: Bu cihazın çevrimiçi/çevrimdışı durumunu yaz
+                let presenceRef = firebaseDB.ref('aket_data/presence/' + aktifKullanici.id);
+                firebaseDB.ref('.info/connected').on('value', function(snap) {
+                    if(snap.val() === true) {
+                        presenceRef.onDisconnect().set({online: false, lastSeen: Date.now()});
+                        presenceRef.set({online: true, lastSeen: Date.now(), ad: aktifKullanici.ad});
+                    }
+                });
+                // Tüm kullanıcıların varlık durumunu dinle
+                firebaseDB.ref('aket_data/presence').on('value', function(snap) {
+                    onlineKullanicilar = snap.val() || {};
+                    let tbody = document.getElementById('kullaniciListesiTablo');
+                    if(tbody && tbody.innerHTML.trim()) kullaniciListesiniCiz();
                 });
 
                 console.log('✅ Firebase — çevrimiçi senkron aktif');
@@ -7401,6 +7522,8 @@
         }
 
         function ikSayfaAc(sayfa) {
+            let mc2 = document.getElementById('main-container');
+            if(mc2) mc2.scrollTop = 0;
             document.querySelectorAll('.ik-section').forEach(s => s.classList.remove('active'));
             document.getElementById('ik-' + (sayfa === 'home' ? 'home' : sayfa)).classList.add('active');
             let isAdmin = aktifKullanici?.yetki === 'Admin';
@@ -7848,6 +7971,19 @@
         function ikTarihFmt(t){if(!t)return'';try{return new Date(t+(t.length===10?'T00:00:00':'')).toLocaleDateString('tr-TR',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return t;}}
 
         // PWA Service Worker — v13 (auto-update destekli)
+        // ── Android adres çubuğu yükseklik düzeltmesi ──
+        (function() {
+            function fixViewportHeight() {
+                let vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', vh + 'px');
+            }
+            fixViewportHeight();
+            window.addEventListener('resize', fixViewportHeight);
+            window.addEventListener('orientationchange', function() {
+                setTimeout(fixViewportHeight, 300);
+            });
+        })();
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').then(reg => {
                 // Periyodik güncelleme kontrolü (5 dakikada bir)
