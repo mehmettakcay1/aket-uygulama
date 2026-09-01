@@ -3195,7 +3195,42 @@
                         <div class="ik-card-name">Aktivite Kaydı</div>
                         <div class="ik-card-sub">İşlem geçmişi & log</div>
                     </div>
+                    <div class="ik-card yetki-admin" onclick="ikSayfaAc('performans')">
+                        <div class="ik-card-top-bar" style="background:#16a085;"></div>
+                        <div class="ik-card-icon" style="background:rgba(22,160,133,0.12);color:#16a085;">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 4-6"/></svg>
+                        </div>
+                        <div class="ik-card-name">Personel Performansı</div>
+                        <div class="ik-card-sub">İş hacmi & hata takibi</div>
+                    </div>
                 </div>
+            </div>
+
+            <!-- PERSONEL PERFORMANSI -->
+            <div id="ik-performans" class="ik-section">
+                <div class="ik-subpage-header">
+                    <button class="ik-back-btn" onclick="ikSayfaAc('home')">← Geri</button>
+                    <div class="ik-subpage-title">Personel Performansı</div>
+                    <button class="btn" onclick="ikHataModalAc()" style="background:#c0392b;white-space:nowrap;">+ Hata Kaydı</button>
+                </div>
+                <div class="tarih-filtre-wrap">
+                    <label>Tarih:</label>
+                    <input type="date" id="perf-bas" onchange="ikPerformansCiz()">
+                    <span style="color:#444;">—</span>
+                    <input type="date" id="perf-bit" onchange="ikPerformansCiz()">
+                    <button class="btn-tarih-sifirla" onclick="document.getElementById('perf-bas').value='';document.getElementById('perf-bit').value='';ikPerformansCiz()">× Temizle</button>
+                </div>
+                <div style="font-size:11px;color:#666;margin-bottom:10px;">* "İş Hacmi KG" personelin adının geçtiği mal kabul / kemik / sevkiyat / satış / üretim kayıtlarının toplamıdır — kesin işlenen et miktarı değil, iş yoğunluğu göstergesidir.</div>
+                <div class="dash-chart-wrap" style="height:200px;margin-bottom:16px;"><canvas id="chart-perf"></canvas></div>
+                <table>
+                    <thead><tr><th>Personel</th><th>Rol</th><th>Toplam İşlem</th><th>İş Hacmi (KG)</th><th>Hata Sayısı</th><th>Son Aktivite</th></tr></thead>
+                    <tbody id="ikPerformansTablo"></tbody>
+                </table>
+                <h4 style="color:var(--yazi-soluk);font-size:12px;margin:20px 0 8px;">Hata Kayıtları</h4>
+                <table>
+                    <thead><tr><th>Tarih</th><th>Personel</th><th>Açıklama</th><th>Ağırlık Etkisi</th><th>Kaydeden</th><th class="no-excel">İşlem</th></tr></thead>
+                    <tbody id="ikHataTablo"></tbody>
+                </table>
             </div>
 
             <!-- ÇALIŞANLAR -->
@@ -4121,6 +4156,18 @@
             </div>
             <input type="hidden" id="aracEditId">
             <table><thead><tr><th>Plaka</th><th>Şoför</th><th>Kapasite</th><th class="no-excel">İşlem</th></tr></thead><tbody id="aracTablo"></tbody></table>
+        </div>
+    </div>
+
+    <!-- İK: HATA KAYDI MODALI -->
+    <div id="ikHataModal" class="modal" onclick="if(event.target===this)closeModal('ikHataModal')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('ikHataModal')">×</span>
+            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Personel Hata Kaydı</h3>
+            <div class="form-group"><label>Personel</label><select id="hataPersonel"></select></div>
+            <div class="form-group"><label>Açıklama</label><input type="text" id="hataAciklama" placeholder="Ne oldu?" autocomplete="off"></div>
+            <div class="form-group"><label>Ağırlık Etkisi (KG — isteğe bağlı)</label><input type="number" id="hataAgirlik" step="0.1" placeholder="0"></div>
+            <button class="btn btn-success" style="background:#c0392b; width:100%; padding:13px; font-size:15px;" onclick="ikHataKaydet()">Kaydet</button>
         </div>
     </div>
 
@@ -8064,6 +8111,7 @@
             else if(sayfa === 'vardiya') ikVardiyaBugune();
             else if(sayfa === 'belgeler') ikBelgelerCiz();
             else if(sayfa === 'hareketler') ikHareketlerCiz();
+            else if(sayfa === 'performans') ikPerformansCiz();
         }
 
         function ikHomeStat() {
@@ -8779,6 +8827,100 @@
                 <p style="margin-top:24px;font-size:12px;">Teslim Alan İmza: ____________________</p>
                 <script>window.onload=function(){window.print();}<\/script></body></html>`);
             w.document.close();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // F7 — İK PERSONEL PERFORMANSI  (prim yok — iş hacmi + hata takibi)
+        // ═══════════════════════════════════════════════════════════════
+        let ikHata = guvenliParse('aket_ik_hata', []);
+
+        function ikPerformansHesapla(bas, bit) {
+            let ara = (t) => {
+                let iso = _trTarihISO(t);
+                return iso && iso >= bas && iso <= bit;
+            };
+            let ue = (typeof uretimEmri !== 'undefined') ? uretimEmri : [];
+            let sonuc = sistemKullanicilari.map(k => {
+                let ad = k.ad;
+                let kayitlar = [];
+                girenler.forEach(g => { if (g.personel === ad && ara(g.tarih)) kayitlar.push({ t: g.tarih, kg: parseFloat(g.miktar) || 0, k: 'Mal Kabul' }); });
+                kemikler.forEach(x => { if (x.kaydeden === ad && ara(x.tarih)) kayitlar.push({ t: x.tarih, kg: parseFloat(x.miktar) || 0, k: 'Kemik' }); });
+                cikanlar.forEach(c => { if ((c.personel === ad || c.onaylayan === ad) && ara(c.tarih)) kayitlar.push({ t: c.tarih, kg: parseFloat(c.miktar) || 0, k: 'Sevkiyat' }); });
+                magazaSatislar.forEach(s => { if (s.personel === ad && ara(s.tarih)) kayitlar.push({ t: s.tarih, kg: parseFloat(s.miktar) || 0, k: 'Satış' }); });
+                ue.forEach(e => { if (e.kaydeden === ad && e.durum === 'Tamamlandı' && ara(e.tamamTarih || e.tarih)) kayitlar.push({ t: e.tamamTarih || e.tarih, kg: parseFloat(e.hedefKg) || 0, k: 'Üretim' }); });
+                let hatalar = ikHata.filter(h => (h.personelId === k.id || h.personelAd === ad) && ara(h.tarih));
+                let sonT = kayitlar.map(x => _trTarihISO(x.t)).sort().pop() || '';
+                return {
+                    id: k.id, ad, rol: rolGoster(k.yetki),
+                    islem: kayitlar.length,
+                    kg: kayitlar.reduce((s, x) => s + x.kg, 0),
+                    hata: hatalar.length,
+                    son: sonT ? sonT.split('-').reverse().join('.') : '-'
+                };
+            }).filter(r => r.islem > 0 || r.hata > 0);
+            return sonuc.sort((a, b) => b.kg - a.kg);
+        }
+
+        function ikPerformansCiz() {
+            let tb = document.getElementById('ikPerformansTablo');
+            if (!tb) return;
+            dbYukle('ik_hata', 'aket_ik_hata', d => {
+                ikHata = d;
+                let bEl = document.getElementById('perf-bas'), eEl = document.getElementById('perf-bit');
+                let bas = (bEl && bEl.value) || '0000-01-01';
+                let bit = (eEl && eEl.value) || '9999-12-31';
+                let veri = ikPerformansHesapla(bas, bit);
+                tb.innerHTML = veri.length === 0
+                    ? '<tr><td colspan="6" style="text-align:center;color:#555;padding:20px;">Seçili aralıkta aktivite yok</td></tr>'
+                    : veri.map(r => `<tr>
+                        <td><b>${r.ad}</b></td><td style="color:#888;">${r.rol}</td>
+                        <td>${r.islem}</td><td><b style="color:var(--yesil);">${r.kg.toFixed(0)}</b></td>
+                        <td style="color:${r.hata > 0 ? '#e74c3c' : '#555'};font-weight:${r.hata > 0 ? '700' : '400'};">${r.hata}</td>
+                        <td style="color:#999;">${r.son}</td>
+                    </tr>`).join('');
+
+                let ilk8 = veri.slice(0, 8);
+                _grafikOlustur('chart-perf', 'bar', ilk8.map(r => r.ad), [
+                    { label: 'İş Hacmi (KG)', data: ilk8.map(r => +r.kg.toFixed(0)), backgroundColor: '#16a085', borderRadius: 4 }
+                ], { indexAxis: 'y' });
+
+                let ht = document.getElementById('ikHataTablo');
+                if (ht) ht.innerHTML = ikHata.length === 0
+                    ? '<tr><td colspan="6" style="text-align:center;color:#555;padding:16px;">Hata kaydı yok</td></tr>'
+                    : ikHata.slice(0, 40).map(h => `<tr>
+                        <td>${h.tarih}</td><td><b>${h.personelAd}</b></td><td style="color:#999;">${h.aciklama || '-'}</td>
+                        <td>${h.agirlikEtki ? h.agirlikEtki + ' KG' : '-'}</td><td>${h.kaydeden || '-'}</td>
+                        <td class="no-excel"><button class="btn-sm btn-iptal" onclick="ikHataSil('${h.id}')">Sil</button></td>
+                    </tr>`).join('');
+            });
+        }
+
+        function ikHataModalAc() {
+            let sel = document.getElementById('hataPersonel');
+            sel.innerHTML = sistemKullanicilari.map(k => `<option value="${k.id}">${k.ad} (${rolGoster(k.yetki)})</option>`).join('');
+            document.getElementById('hataAciklama').value = '';
+            document.getElementById('hataAgirlik').value = '';
+            openModal('ikHataModal');
+        }
+        function ikHataKaydet() {
+            let pid = document.getElementById('hataPersonel').value;
+            let k = sistemKullanicilari.find(x => String(x.id) === String(pid));
+            if (!k) { showToast('Personel seçin.', 'error'); return; }
+            let acik = document.getElementById('hataAciklama').value.trim();
+            if (!acik) { showToast('Açıklama zorunludur.', 'error'); return; }
+            ikHata.unshift({
+                id: Date.now(), tarih: anlikTarihSaat(), personelId: k.id, personelAd: k.ad,
+                aciklama: acik, agirlikEtki: parseFloat(document.getElementById('hataAgirlik').value) || 0,
+                kaydeden: aktifKullanici.ad
+            });
+            dbKaydet('ik_hata', 'aket_ik_hata', ikHata, ikPerformansCiz);
+            closeModal('ikHataModal');
+            showToast('Hata kaydı eklendi.', 'success');
+        }
+        function ikHataSil(id) {
+            if (!confirm('Bu hata kaydı silinsin mi?')) return;
+            ikHata = ikHata.filter(h => String(h.id) !== String(id));
+            dbKaydet('ik_hata', 'aket_ik_hata', ikHata, ikPerformansCiz);
         }
 
         // ─── ÇALIŞANLAR ─────────────────────────────────────────────
