@@ -1,0 +1,35 @@
+{
+  "//": "AK ET — Firebase Realtime Database güvenlik kuralları.",
+  "//kurulum": "Firebase Console → Realtime Database → Rules → bu içeriği yapıştır → Publish.",
+  "//onemli": "auth != null tek başına yeterli DEĞİL: anonim giriş herkese token verir. Asıl koruma App Check enforcement (Console → App Check → Realtime Database → Enforce). İkisi birlikte: yalnız gerçek uygulamadan gelen, kimliği olan istekler geçer.",
+  "//sonraki-adim": "PIN hash migrasyonundan sonra sistemKullanicilari altında alan-bazlı kural: sifreHash yalnız kendi kaydına veya admin'e yazılabilir.",
+
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+
+    "aket_data": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+
+      "presence": {
+        "$uid": {
+          ".write": "auth != null"
+        }
+      },
+
+      "hatalar": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "$log": {
+          ".validate": "newData.hasChildren(['ts'])"
+        }
+      }
+    },
+
+    "ik": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}
