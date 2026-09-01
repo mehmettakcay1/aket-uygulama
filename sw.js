@@ -1,4 +1,4 @@
-const CACHE_NAME = "aket-v25";
+const CACHE_NAME = "aket-v26";
 
 const CDN_URLS = [
   'https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js',
@@ -12,10 +12,12 @@ const LOCAL_ASSETS = [
   './manifest.json',
   './AK-ET%20KURUMSAL%20LOGO.png',
   './icon-512.png',
+  './icon-512-maskable.png',
   './icon-192.png',
   './icon-180.png',
   './icon-167.png',
-  './icon-152.png'
+  './icon-152.png',
+  './favicon.ico'
 ];
 
 const offlineResponse = () => new Response(
