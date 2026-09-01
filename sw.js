@@ -1,4 +1,4 @@
-const CACHE_NAME = "aket-v26";
+const CACHE_NAME = "aket-v27";
 
 const CDN_URLS = [
   'https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js',
