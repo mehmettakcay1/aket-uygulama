@@ -8350,13 +8350,18 @@
             let m = (t || '').match(/(\d{2})\.(\d{2})\.(\d{4})/);
             return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
         }
+        // YEREL tarih → "YYYY-MM-DD" (toISOString UTC olduğu için gün kayması yaşatır)
+        function _localISO(d) {
+            d = d || new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
         // Tarih aralığı input'larını oku; boşsa son `gun` günü varsayılan uygula ve input'lara yaz
         function _gunAralik(basId, bitId, gun) {
             let bEl = document.getElementById(basId), eEl = document.getElementById(bitId);
             let bas = bEl && bEl.value, bit = eEl && eEl.value;
             if (!bas && !bit) {
-                let d = new Date(); let e = d.toISOString().slice(0, 10);
-                d.setDate(d.getDate() - (gun || 90)); let b = d.toISOString().slice(0, 10);
+                let d = new Date(); let e = _localISO(d);
+                d.setDate(d.getDate() - (gun || 90)); let b = _localISO(d);
                 if (bEl) bEl.value = b; if (eEl) eEl.value = e;
                 return { bas: b, bit: e };
             }
@@ -8700,8 +8705,8 @@
 
         function _rotaGunTR() {
             let g = document.getElementById('rota-gun');
-            if (g && !g.value) g.value = new Date().toISOString().slice(0, 10);
-            let iso = g ? g.value : new Date().toISOString().slice(0, 10);
+            if (g && !g.value) g.value = _localISO();
+            let iso = g ? g.value : _localISO();
             let p = iso.split('-');
             return `${p[2]}.${p[1]}.${p[0]}`;
         }
