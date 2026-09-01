@@ -2511,6 +2511,7 @@
                 <div class="table-header">
                     <h2>🚚 Sevkiyat Yönetimi</h2>
                     <div class="header-actions">
+                        <button class="btn yetki-sevkiyat" style="background:#16a085;" onclick="aracModalAc()">🚛 Araç Yönetimi</button>
                         <button class="btn btn-excel yetki-rapor" onclick="exportExcel('Sevkiyat Yönetimi Raporu')">Excel</button>
                         <button class="btn btn-pdf yetki-rapor" onclick="printReport('Sevkiyat Yönetimi Raporu')">PDF</button>
                     </div>
@@ -2518,6 +2519,21 @@
 
                 <!-- PIPELINE BOARD -->
                 <div id="cikanPipeline" class="pipeline-board-wrap"></div>
+
+                <!-- ── ROTA PLANLAMA ── -->
+                <div class="analiz-blok" style="margin-top:24px;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+                        <div>
+                            <h3>Rota Planlama</h3>
+                            <div class="alt">Seçili günün müşteri sevkiyatlarını bölgeye göre grupla, araç ata, sırala ve araç listesi yazdır.</div>
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="date" id="rota-gun" onchange="rotaPlanlaCiz()">
+                            <button class="btn" style="background:#333;border:1px solid #555;" onclick="rotaPlanlaCiz()">Yenile</button>
+                        </div>
+                    </div>
+                    <div id="rotaPlanlaIcerik" style="margin-top:14px;"></div>
+                </div>
 
                 <!-- DETAY TABLO -->
                 <div class="pipeline-table-title">Tüm Sevkiyat Kayıtları</div>
@@ -3820,6 +3836,11 @@
                 <label>Adres</label>
                 <textarea id="mAdres" rows="2" style="width:92%;padding:10px;border-radius:4px;border:1px solid #444;background:var(--bg-dark);color:white;font-family:inherit;resize:vertical;" placeholder="Açık adres..."></textarea>
             </div>
+            <div class="form-group">
+                <label>Bölge / Semt (rota planlama için)</label>
+                <input type="text" id="mBolge" list="bolge-datalist" placeholder="Ör. Merkez, Bahçelievler, Sanayi" autocomplete="off">
+                <datalist id="bolge-datalist"></datalist>
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                 <div class="form-group" style="margin-bottom:0;">
                     <label>Vergi No</label>
@@ -4084,6 +4105,22 @@
             <div id="urtMalzemeler"></div>
             <button class="btn" style="background:#333;border:1px solid #555;width:100%;padding:9px;font-size:12px;margin-bottom:14px;" onclick="uretimMalzemeSatirEkle()">+ Hammadde Satırı</button>
             <button class="btn btn-success" style="background:#d35400; width:100%; padding:13px; font-size:15px;" onclick="uretimEmriKaydet()">Üretim Emrini Oluştur (Planlı)</button>
+        </div>
+    </div>
+
+    <!-- ARAÇ YÖNETİMİ MODALI -->
+    <div id="aracModal" class="modal" onclick="if(event.target===this)closeModal('aracModal')">
+        <div class="modal-content" style="max-width:520px;">
+            <span class="close-btn" onclick="closeModal('aracModal')">×</span>
+            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Araç Yönetimi</h3>
+            <div style="display:grid;grid-template-columns:1.2fr 1.5fr 1fr auto;gap:8px;align-items:end;margin-bottom:14px;">
+                <div class="form-group" style="margin:0;"><label>Plaka</label><input type="text" id="aracPlaka" placeholder="15 AK 123" autocomplete="off"></div>
+                <div class="form-group" style="margin:0;"><label>Şoför</label><input type="text" id="aracSofor" autocomplete="off"></div>
+                <div class="form-group" style="margin:0;"><label>Kapasite (KG)</label><input type="number" id="aracKapasite" step="50" placeholder="1000"></div>
+                <button class="btn btn-success" style="background:#16a085;padding:10px 14px;" onclick="aracKaydet()">Ekle</button>
+            </div>
+            <input type="hidden" id="aracEditId">
+            <table><thead><tr><th>Plaka</th><th>Şoför</th><th>Kapasite</th><th class="no-excel">İşlem</th></tr></thead><tbody id="aracTablo"></tbody></table>
         </div>
     </div>
 
@@ -4667,6 +4704,7 @@
             yetkileriUygula();
             ekranlariGuncelle();
             firebaseBaslat();
+            if(typeof _araclarYukle === 'function') _araclarYukle(function(){ if(typeof rotaPlanlaCiz==='function') rotaPlanlaCiz(); });
             otomatikCikisBaslat();
             setTimeout(vadeBildirimKontrol, 4000);
             setInterval(vadeBildirimKontrol, 60 * 60 * 1000); // Her saat kontrol et
@@ -5492,6 +5530,7 @@
 
             // Pipeline board'u güncelle
             cikanPipelineCiz();
+            if(typeof rotaPlanlaCiz === 'function') rotaPlanlaCiz();
 
             // Sevkiyat tablo
             document.getElementById("cikanTablosu").innerHTML = cikanlar.filter(c=>c.tur==="Müşteri").map(c => {
@@ -7514,10 +7553,13 @@
             document.getElementById('mTelefon').value = '';
             document.getElementById('mEposta').value = '';
             document.getElementById('mAdres').value = '';
+            document.getElementById('mBolge').value = '';
             document.getElementById('mVergiNo').value = '';
             document.getElementById('mNot').value = '';
             document.getElementById('mTip').value = 'Restoran';
             document.getElementById('musteri-modal-baslik').textContent = 'Yeni Müşteri Ekle';
+            let bdl = document.getElementById('bolge-datalist');
+            if(bdl) bdl.innerHTML = [...new Set(musteriler.map(m => m.bolge).filter(Boolean))].map(b => `<option value="${b}">`).join('');
 
             if(id) {
                 let m = musteriler.find(x => x.id === id);
@@ -7528,6 +7570,7 @@
                 document.getElementById('mTelefon').value  = m.telefon  || '';
                 document.getElementById('mEposta').value   = m.eposta   || '';
                 document.getElementById('mAdres').value    = m.adres    || '';
+                document.getElementById('mBolge').value    = m.bolge    || '';
                 document.getElementById('mVergiNo').value  = m.vergiNo  || '';
                 document.getElementById('mNot').value      = m.not      || '';
                 document.getElementById('mTip').value      = m.tip      || 'Restoran';
@@ -7546,6 +7589,7 @@
                 telefon : document.getElementById('mTelefon').value.trim(),
                 eposta  : document.getElementById('mEposta').value.trim(),
                 adres   : document.getElementById('mAdres').value.trim(),
+                bolge   : document.getElementById('mBolge').value.trim(),
                 vergiNo : document.getElementById('mVergiNo').value.trim(),
                 not     : document.getElementById('mNot').value.trim(),
                 tip     : document.getElementById('mTip').value,
@@ -8548,6 +8592,193 @@
                         <td class="yetki-uretim no-excel">${islem}</td>
                     </tr>`;
                 }).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // F5 — ROTA PLANLAMA + ARAÇ YÖNETİMİ (Sevkiyat)
+        // ═══════════════════════════════════════════════════════════════
+        let araclar = guvenliParse('aket_araclar', []);
+
+        function _araclarYukle(cb) { dbYukle('araclar', 'aket_araclar', d => { araclar = d; if (cb) cb(); }); }
+
+        function aracModalAc() {
+            _araclarYukle(aracTabloCiz);
+            document.getElementById('aracEditId').value = '';
+            ['aracPlaka', 'aracSofor', 'aracKapasite'].forEach(i => document.getElementById(i).value = '');
+            aracTabloCiz();
+            openModal('aracModal');
+        }
+        function aracKaydet() {
+            let plaka = document.getElementById('aracPlaka').value.trim().toUpperCase();
+            if (!plaka) { showToast('Plaka zorunludur.', 'error'); return; }
+            let sofor = document.getElementById('aracSofor').value.trim();
+            let kap = parseFloat(document.getElementById('aracKapasite').value) || 0;
+            let eid = document.getElementById('aracEditId').value;
+            if (eid) {
+                let a = araclar.find(x => String(x.id) === String(eid));
+                if (a) { a.plaka = plaka; a.sofor = sofor; a.kapasiteKg = kap; }
+            } else {
+                if (araclar.some(a => a.plaka === plaka)) { showToast('Bu plaka zaten kayıtlı.', 'error'); return; }
+                araclar.unshift({ id: Date.now(), plaka, sofor, kapasiteKg: kap, aktif: true });
+            }
+            dbKaydet('araclar', 'aket_araclar', araclar, () => { aracTabloCiz(); rotaPlanlaCiz(); });
+            document.getElementById('aracEditId').value = '';
+            ['aracPlaka', 'aracSofor', 'aracKapasite'].forEach(i => document.getElementById(i).value = '');
+            showToast('Araç kaydedildi.', 'success');
+        }
+        function aracDuzenle(id) {
+            let a = araclar.find(x => String(x.id) === String(id));
+            if (!a) return;
+            document.getElementById('aracEditId').value = a.id;
+            document.getElementById('aracPlaka').value = a.plaka;
+            document.getElementById('aracSofor').value = a.sofor || '';
+            document.getElementById('aracKapasite').value = a.kapasiteKg || '';
+        }
+        function aracSil(id) {
+            if (!confirm('Bu araç silinsin mi?')) return;
+            araclar = araclar.filter(x => String(x.id) !== String(id));
+            dbKaydet('araclar', 'aket_araclar', araclar, () => { aracTabloCiz(); rotaPlanlaCiz(); });
+        }
+        function aracTabloCiz() {
+            let tb = document.getElementById('aracTablo');
+            if (!tb) return;
+            tb.innerHTML = araclar.length === 0
+                ? '<tr><td colspan="4" style="text-align:center;color:#555;padding:16px;">Araç kaydı yok</td></tr>'
+                : araclar.map(a => `<tr>
+                    <td><b>${a.plaka}</b></td><td>${a.sofor || '-'}</td><td>${a.kapasiteKg || 0} KG</td>
+                    <td class="no-excel"><button class="btn-sm btn-islem" onclick="aracDuzenle('${a.id}')">Düzenle</button> <button class="btn-sm btn-iptal" onclick="aracSil('${a.id}')">Sil</button></td>
+                </tr>`).join('');
+        }
+
+        function _rotaGunTR() {
+            let g = document.getElementById('rota-gun');
+            if (g && !g.value) g.value = new Date().toISOString().slice(0, 10);
+            let iso = g ? g.value : new Date().toISOString().slice(0, 10);
+            let p = iso.split('-');
+            return `${p[2]}.${p[1]}.${p[0]}`;
+        }
+
+        function rotaPlanlaCiz() {
+            let el = document.getElementById('rotaPlanlaIcerik');
+            if (!el) return;
+            if (araclar.length === 0 && guvenliParse('aket_araclar', []).length === 0) { _araclarYukle(rotaPlanlaCiz); }
+            let gunTR = _rotaGunTR();
+            let duraklar = cikanlar.filter(c => c.tur === 'Müşteri'
+                && ['İşlem Bekliyor', 'Sevkiyat Yapılıyor'].includes(c.durum)
+                && (c.tarih || '').startsWith(gunTR));
+
+            if (duraklar.length === 0) {
+                el.innerHTML = '<div style="color:#555;font-size:13px;padding:20px;text-align:center;">Seçili günde planlanacak müşteri sevkiyatı yok.</div>';
+                return;
+            }
+
+            // bölgeye göre grupla
+            let gruplar = {};
+            duraklar.forEach(d => {
+                let m = musteriler.find(x => (x.firmaAdi || '').toLowerCase() === (d.firma || '').toLowerCase());
+                let bolge = (m && m.bolge) ? m.bolge : 'Bölge Girilmemiş';
+                d._adres = m ? (m.adres || '') : '';
+                (gruplar[bolge] = gruplar[bolge] || []).push(d);
+            });
+
+            let aracOpts = '<option value="">— Araç —</option>' + araclar.map(a => `<option value="${a.plaka}">${a.plaka}${a.sofor ? ' · ' + a.sofor : ''}</option>`).join('');
+            let html = '';
+            Object.keys(gruplar).sort().forEach(bolge => {
+                let liste = gruplar[bolge].sort((a, b) => (a.rotaSira || 999) - (b.rotaSira || 999));
+                html += `<div style="margin-bottom:16px;">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#16a085;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid #2a2a2a;padding-bottom:5px;">${bolge} <span style="color:#555;">(${liste.length} durak)</span></div>`;
+                liste.forEach((d, i) => {
+                    html += `<div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;background:#161616;border:1px solid #262626;border-radius:8px;padding:9px 12px;margin-bottom:6px;">
+                        <div style="display:flex;flex-direction:column;gap:2px;">
+                            <button class="btn-sm" style="background:#2a2a2a;border:1px solid #444;padding:1px 6px;font-size:10px;" onclick="rotaSiraDegistir('${d.id}',-1)">▲</button>
+                            <button class="btn-sm" style="background:#2a2a2a;border:1px solid #444;padding:1px 6px;font-size:10px;" onclick="rotaSiraDegistir('${d.id}',1)">▼</button>
+                        </div>
+                        <div>
+                            <div style="font-weight:700;color:#fff;font-size:13px;">${i + 1}. ${d.firma}</div>
+                            <div style="font-size:11px;color:#888;">${d.urun} — ${d.miktar} KG${d._adres ? ' · ' + d._adres : ''}</div>
+                        </div>
+                        <select onchange="rotaAracAta('${d.id}', this.value)" style="padding:7px;font-size:12px;min-width:120px;">${aracOpts.replace(`value="${d.arac || ''}"`, `value="${d.arac || ''}" selected`)}</select>
+                        <span style="font-size:10px;color:${d.durum === 'Sevkiyat Yapılıyor' ? '#2980b9' : '#f39c12'};font-weight:700;white-space:nowrap;">${d.durum}</span>
+                    </div>`;
+                });
+                html += `</div>`;
+            });
+
+            // araç bazlı özet + yazdır
+            let aracGrup = {};
+            duraklar.filter(d => d.arac).forEach(d => (aracGrup[d.arac] = aracGrup[d.arac] || []).push(d));
+            if (Object.keys(aracGrup).length) {
+                html += `<div style="margin-top:18px;border-top:1px dashed #333;padding-top:14px;"><div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#888;text-transform:uppercase;margin-bottom:10px;">Araç Yükleri</div>`;
+                Object.keys(aracGrup).forEach(plaka => {
+                    let toplam = aracGrup[plaka].reduce((s, d) => s + (parseFloat(d.miktar) || 0), 0);
+                    let arac = araclar.find(a => a.plaka === plaka);
+                    let kap = arac ? (arac.kapasiteKg || 0) : 0;
+                    let asim = kap > 0 && toplam > kap;
+                    html += `<div style="display:flex;justify-content:space-between;align-items:center;background:#161616;border:1px solid #262626;border-radius:8px;padding:9px 12px;margin-bottom:6px;">
+                        <div><b style="color:#fff;">${plaka}</b> <span style="color:#888;font-size:12px;">— ${aracGrup[plaka].length} durak</span></div>
+                        <div style="display:flex;gap:12px;align-items:center;">
+                            <span style="font-weight:800;color:${asim ? '#e74c3c' : 'var(--yesil)'};">${toplam.toFixed(0)} / ${kap || '—'} KG${asim ? ' ⚠' : ''}</span>
+                            <button class="btn-sm btn-onay" onclick="aracRotaYazdir('${plaka}')">Yazdır</button>
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+            el.innerHTML = html;
+        }
+
+        function rotaAracAta(cikanId, plaka) {
+            let c = cikanlar.find(x => String(x.id) === String(cikanId));
+            if (!c) return;
+            c.arac = plaka;
+            verileriKaydet();
+            rotaPlanlaCiz();
+        }
+        function rotaSiraDegistir(cikanId, yon) {
+            let c = cikanlar.find(x => String(x.id) === String(cikanId));
+            if (!c) return;
+            // aynı gün + aynı bölge grubundaki komşuyla yer değiştir
+            let gunTR = _rotaGunTR();
+            let m = musteriler.find(x => (x.firmaAdi || '').toLowerCase() === (c.firma || '').toLowerCase());
+            let bolge = (m && m.bolge) ? m.bolge : 'Bölge Girilmemiş';
+            let grup = cikanlar.filter(x => x.tur === 'Müşteri' && ['İşlem Bekliyor', 'Sevkiyat Yapılıyor'].includes(x.durum) && (x.tarih || '').startsWith(gunTR))
+                .filter(x => {
+                    let mm = musteriler.find(y => (y.firmaAdi || '').toLowerCase() === (x.firma || '').toLowerCase());
+                    return ((mm && mm.bolge) ? mm.bolge : 'Bölge Girilmemiş') === bolge;
+                })
+                .sort((a, b) => (a.rotaSira || 999) - (b.rotaSira || 999));
+            grup.forEach((x, i) => x.rotaSira = i + 1);
+            let idx = grup.findIndex(x => String(x.id) === String(cikanId));
+            let hedef = idx + yon;
+            if (hedef < 0 || hedef >= grup.length) return;
+            [grup[idx].rotaSira, grup[hedef].rotaSira] = [grup[hedef].rotaSira, grup[idx].rotaSira];
+            verileriKaydet();
+            rotaPlanlaCiz();
+        }
+
+        function aracRotaYazdir(plaka) {
+            let gunTR = _rotaGunTR();
+            let arac = araclar.find(a => a.plaka === plaka);
+            let duraklar = cikanlar.filter(c => c.tur === 'Müşteri' && c.arac === plaka
+                && ['İşlem Bekliyor', 'Sevkiyat Yapılıyor'].includes(c.durum) && (c.tarih || '').startsWith(gunTR))
+                .sort((a, b) => (a.rotaSira || 999) - (b.rotaSira || 999));
+            let toplam = duraklar.reduce((s, d) => s + (parseFloat(d.miktar) || 0), 0);
+            let satirlar = duraklar.map((d, i) => {
+                let m = musteriler.find(x => (x.firmaAdi || '').toLowerCase() === (d.firma || '').toLowerCase());
+                return `<tr><td style="text-align:center;">${i + 1}</td><td><b>${d.firma}</b></td><td>${m ? (m.adres || '-') : '-'}</td><td>${m ? (m.telefon || '-') : '-'}</td><td>${d.urun}</td><td style="text-align:right;"><b>${d.miktar} KG</b></td></tr>`;
+            }).join('');
+            let w = window.open('', '_blank');
+            w.document.write(`<html><head><meta charset="utf-8"><title>Sevkiyat Listesi ${plaka}</title>
+                <style>body{font-family:Arial;padding:24px;color:#000;} h2{margin:0 0 4px;} .meta{color:#555;font-size:13px;margin-bottom:16px;}
+                table{border-collapse:collapse;width:100%;} th,td{border:1px solid #000;padding:8px;font-size:13px;text-align:left;}
+                th{background:#eee;} .tot{margin-top:12px;font-size:14px;font-weight:bold;}</style></head><body>
+                <h2>AK ET — Araç Sevkiyat Listesi</h2>
+                <div class="meta">Plaka: <b>${plaka}</b>${arac && arac.sofor ? ' &nbsp;·&nbsp; Şoför: <b>' + arac.sofor + '</b>' : ''} &nbsp;·&nbsp; Tarih: <b>${gunTR}</b> &nbsp;·&nbsp; Kapasite: ${arac ? (arac.kapasiteKg || '—') : '—'} KG</div>
+                <table><thead><tr><th>Sıra</th><th>Firma</th><th>Adres</th><th>Telefon</th><th>Ürün</th><th style="text-align:right;">Miktar</th></tr></thead><tbody>${satirlar || '<tr><td colspan="6" style="text-align:center;">Durak yok</td></tr>'}</tbody></table>
+                <div class="tot">Toplam: ${toplam.toFixed(0)} KG${arac && arac.kapasiteKg && toplam > arac.kapasiteKg ? ' — KAPASİTE AŞIMI!' : ''}</div>
+                <p style="margin-top:24px;font-size:12px;">Teslim Alan İmza: ____________________</p>
+                <script>window.onload=function(){window.print();}<\/script></body></html>`);
+            w.document.close();
         }
 
         // ─── ÇALIŞANLAR ─────────────────────────────────────────────
