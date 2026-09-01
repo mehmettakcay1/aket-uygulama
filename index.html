@@ -2301,6 +2301,14 @@
                     </div>
                     <div class="m-card-arrow">›</div>
                 </div>
+                <div id="mcard-uretim" class="m-card yetki-uretim" style="--c-accent:#d35400;display:none;" onclick="mobileOpenTab('uretim')">
+                    <div class="m-card-icon" style="background:rgba(211,84,0,0.12);color:#d35400;">ÜRT</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">Üretim Emri</div>
+                        <div class="m-card-sub">Reçeteli üretim + stok hareketi</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
                 <div id="mcard-dashboard" class="m-card" style="--c-accent:#9b59b6;grid-column:span 2;" onclick="mobileOpenTab('dashboard')">
                     <div class="m-card-icon" style="background:rgba(155,89,182,0.12);color:#9b59b6;">GRF</div>
                     <div class="m-card-body">
@@ -2340,6 +2348,7 @@
                 <button class="tab-link yetki-admin" id="nav-dashboard" onclick="openTab('dashboard', this)" style="display:none;">Analiz</button>
                 <button class="tab-link" id="nav-ik" onclick="openTab('ik', this); ikIkTabAc();" style="display:none;">İK</button>
                 <button class="tab-link yetki-haccp" id="nav-haccp" onclick="openTab('haccp', this)" style="display:none;">HACCP</button>
+                <button class="tab-link yetki-uretim" id="nav-uretim" onclick="openTab('uretim', this)" style="display:none;">Üretim Emri</button>
             </div>
             <div class="user-actions">
                 <div id="sync-indicator" title="Firebase çevrimiçi senkron aktif"><div class="sync-dot"></div><span>Çevrimiçi</span></div>
@@ -2417,6 +2426,10 @@
                 <button class="mnav-item yetki-haccp" id="mnav-haccp" onclick="mobileOpenTab('haccp')" style="display:none;">
                     <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg></span>
                     <span>HACCP</span>
+                </button>
+                <button class="mnav-item yetki-uretim" id="mnav-uretim" onclick="mobileOpenTab('uretim')" style="display:none;">
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9l-6 4V9l-6 4V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z"/></svg></span>
+                    <span>Üretim</span>
                 </button>
             </div>
         </div>
@@ -2824,6 +2837,36 @@
                         <tbody id="haccpKknTablo"></tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- ÜRETİM EMRİ MODÜLÜ                                           -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <div id="uretim" class="tab-content">
+                <div class="table-header">
+                    <h2>🏭 Üretim Emri</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-excel" onclick="exportExcel('Üretim Emirleri')">Excel</button>
+                        <button class="btn btn-pdf" onclick="printReport('Üretim Emirleri')">PDF</button>
+                        <button class="btn yetki-uretim" style="background:#d35400;" onclick="uretimEmriModalAc()">+ Üretim Emri</button>
+                    </div>
+                </div>
+                <div class="dash-stat-row" style="margin-bottom:16px;">
+                    <div class="dash-stat"><div class="dash-stat-val" id="urt-planli" style="color:var(--altin);">0</div><div class="dash-stat-lbl">Planlı Emir</div></div>
+                    <div class="dash-stat"><div class="dash-stat-val" id="urt-bugun-kg" style="color:var(--yesil);">0</div><div class="dash-stat-lbl">Bugün Üretilen (KG)</div></div>
+                    <div class="dash-stat"><div class="dash-stat-val" id="urt-toplam" >0</div><div class="dash-stat-lbl">Toplam Emir</div></div>
+                </div>
+                <div class="tarih-filtre-wrap">
+                    <label>Tarih:</label>
+                    <input type="date" id="tf-urt-bas" onchange="tarihFiltrele('uretimTablo','tf-urt-bas','tf-urt-bit','x')">
+                    <span style="color:#444;">—</span>
+                    <input type="date" id="tf-urt-bit" onchange="tarihFiltrele('uretimTablo','tf-urt-bas','tf-urt-bit','x')">
+                    <button class="btn-tarih-sifirla" onclick="tarihFiltreSifirla('uretimTablo','tf-urt-bas','tf-urt-bit','x')">× Temizle</button>
+                </div>
+                <table>
+                    <thead><tr><th>Tarih</th><th>Ürün</th><th>Hedef KG</th><th>Reçete</th><th>Kullanılan Hammadde</th><th>Durum</th><th>Kaydeden</th><th class="yetki-uretim no-excel">İşlem</th></tr></thead>
+                    <tbody id="uretimTablo"></tbody>
+                </table>
             </div>
 
         </div>
@@ -4020,6 +4063,27 @@
             </div>
             <div class="form-group"><label>Açıklama</label><input type="text" id="fireAciklama" placeholder="Sebep / not" autocomplete="off"></div>
             <button class="btn btn-success" style="background:#e67e22; width:100%; padding:13px; font-size:15px;" onclick="fireKaydiKaydet()">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- ÜRETİM EMRİ MODALI -->
+    <div id="uretimEmriModal" class="modal" onclick="if(event.target===this)closeModal('uretimEmriModal')">
+        <div class="modal-content" style="max-width:520px;">
+            <span class="close-btn" onclick="closeModal('uretimEmriModal')">×</span>
+            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Yeni Üretim Emri</h3>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
+                <div class="form-group"><label>Üretilecek Ürün</label><input type="text" id="urtUrun" list="urt-urun-list" placeholder="Ör. İnegöl Köfte" autocomplete="off"><datalist id="urt-urun-list"></datalist></div>
+                <div class="form-group"><label>Hedef Miktar (KG)</label><input type="number" id="urtHedef" step="0.1" placeholder="0.0" oninput="uretimReceteOnizle()"></div>
+            </div>
+            <div class="form-group">
+                <label>Reçete (isteğe bağlı — ölçeklenmiş malzeme önizlemesi)</label>
+                <select id="urtRecete" onchange="uretimReceteOnizle()"><option value="">— Reçete yok —</option></select>
+            </div>
+            <div id="urtReceteOnizle" style="display:none;background:#161616;border:1px solid #2a2a2a;border-radius:8px;padding:10px 12px;font-size:12px;color:#aaa;margin-bottom:14px;"></div>
+            <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#666;text-transform:uppercase;margin-bottom:8px;">Kullanılan Hammadde (Stoktan Düşülecek)</div>
+            <div id="urtMalzemeler"></div>
+            <button class="btn" style="background:#333;border:1px solid #555;width:100%;padding:9px;font-size:12px;margin-bottom:14px;" onclick="uretimMalzemeSatirEkle()">+ Hammadde Satırı</button>
+            <button class="btn btn-success" style="background:#d35400; width:100%; padding:13px; font-size:15px;" onclick="uretimEmriKaydet()">Üretim Emrini Oluştur (Planlı)</button>
         </div>
     </div>
 
@@ -8341,6 +8405,149 @@
                 { label: 'Satış Hacmi (KG)', data: ilk10.map(x => +x.kg.toFixed(1)),
                   backgroundColor: ilk10.map(x => x.sinif === 'A' ? '#27ae60' : x.sinif === 'B' ? '#f39c12' : '#7f8c8d'), borderRadius: 4 }
             ], { indexAxis: 'y' });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // F4 — ÜRETİM EMRİ  (sade, maliyetsiz — reçete önizleme + stok hareketi)
+        // ═══════════════════════════════════════════════════════════════
+        let uretimEmri = guvenliParse('aket_uretim_emri', []);
+
+        function uretimYenile() {
+            dbYukle('uretim_emri', 'aket_uretim_emri', d => { uretimEmri = d; uretimTabloCiz(); });
+        }
+
+        function _stokKalemleri() {
+            return [...new Set([...Object.keys(stok || {}), ...ANA_STOK_URUNLER])].sort();
+        }
+
+        function uretimEmriModalAc() {
+            let dl = document.getElementById('urt-urun-list');
+            let urunler = [...new Set([...(typeof danaUrunleri !== 'undefined' ? danaUrunleri : []), ...Object.keys(tariflerData), ..._stokKalemleri()])].sort();
+            dl.innerHTML = urunler.map(u => `<option value="${u}">`).join('');
+            let rs = document.getElementById('urtRecete');
+            rs.innerHTML = '<option value="">— Reçete yok —</option>' + Object.keys(tariflerData).map(r => `<option value="${r}">${r}</option>`).join('');
+            document.getElementById('urtUrun').value = '';
+            document.getElementById('urtHedef').value = '';
+            document.getElementById('urtReceteOnizle').style.display = 'none';
+            document.getElementById('urtMalzemeler').innerHTML = '';
+            uretimMalzemeSatirEkle();
+            openModal('uretimEmriModal');
+        }
+
+        function uretimMalzemeSatirEkle(kalem, kg) {
+            let wrap = document.getElementById('urtMalzemeler');
+            let row = document.createElement('div');
+            row.className = 'urt-malzeme-satir';
+            row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;';
+            let opts = _stokKalemleri().map(k => `<option value="${k}" ${k === kalem ? 'selected' : ''}>${k}</option>`).join('');
+            row.innerHTML = `
+                <select class="urt-mlz-kalem" style="width:100%;padding:9px;">${opts}</select>
+                <input type="number" class="urt-mlz-kg" step="0.1" placeholder="KG" value="${kg != null ? kg : ''}" style="width:100%;padding:9px;">
+                <button type="button" class="btn-sm btn-iptal" onclick="this.closest('.urt-malzeme-satir').remove()">×</button>`;
+            wrap.appendChild(row);
+        }
+
+        function uretimReceteOnizle() {
+            let recete = document.getElementById('urtRecete').value;
+            let hedef = parseFloat(document.getElementById('urtHedef').value) || 0;
+            let el = document.getElementById('urtReceteOnizle');
+            if (!recete || !hedef || !tariflerData[recete]) { el.style.display = 'none'; return; }
+            let satirlar = tariflerData[recete].map(m => {
+                let mik = (m.mik * hedef);
+                return `${m.isim}: <b style="color:#ddd;">${mik % 1 === 0 ? mik : mik.toFixed(2)} ${m.brim}</b>`;
+            });
+            el.innerHTML = `<b style="color:#d35400;">${hedef} KG ${recete}</b> için:<br>` + satirlar.join(' &nbsp;·&nbsp; ');
+            el.style.display = 'block';
+        }
+
+        function _uretimMalzemeleriTopla() {
+            let out = [];
+            document.querySelectorAll('#urtMalzemeler .urt-malzeme-satir').forEach(r => {
+                let kalem = r.querySelector('.urt-mlz-kalem').value;
+                let kg = parseFloat(r.querySelector('.urt-mlz-kg').value);
+                if (kalem && kg > 0) out.push({ kalem, kg });
+            });
+            return out;
+        }
+
+        function uretimEmriKaydet() {
+            let urun = document.getElementById('urtUrun').value.trim();
+            let hedef = parseFloat(document.getElementById('urtHedef').value);
+            if (!urun) { showToast('Üretilecek ürünü girin.', 'error'); return; }
+            if (!hedef || hedef <= 0) { showToast('Geçerli bir hedef miktar girin.', 'error'); return; }
+            let malzemeler = _uretimMalzemeleriTopla();
+            uretimEmri.unshift({
+                id: Date.now(), tarih: anlikTarihSaat(), urun, hedefKg: hedef,
+                recete: document.getElementById('urtRecete').value || '',
+                malzemeler, kaydeden: aktifKullanici.ad, durum: 'Planlandı', tamamTarih: ''
+            });
+            dbKaydet('uretim_emri', 'aket_uretim_emri', uretimEmri, uretimTabloCiz);
+            closeModal('uretimEmriModal');
+            showToast('Üretim emri oluşturuldu (Planlı). Tamamlandığında stoğa işleyin.', 'success');
+        }
+
+        function uretimTamamla(id) {
+            let e = uretimEmri.find(x => String(x.id) === String(id));
+            if (!e || e.durum !== 'Planlandı') return;
+            // Hammadde yeterliliği kontrolü
+            for (let m of e.malzemeler) {
+                if ((stok[m.kalem] || 0) < m.kg) {
+                    showToast(`Yetersiz stok: ${m.kalem} (mevcut ${stok[m.kalem] || 0} KG, gereken ${m.kg} KG)`, 'error');
+                    return;
+                }
+            }
+            if (!confirm(`${e.hedefKg} KG "${e.urun}" üretimi tamamlanacak. Hammaddeler stoktan düşülüp ürün stoğa eklenecek. Onaylıyor musunuz?`)) return;
+            e.malzemeler.forEach(m => { stok[m.kalem] = (stok[m.kalem] || 0) - m.kg; });
+            stok[e.urun] = (stok[e.urun] || 0) + e.hedefKg;
+            sonİslemYapan[e.urun] = `Üretim -> ${e.recete || e.urun} -> ${aktifKullanici.ad}`;
+            e.durum = 'Tamamlandı';
+            e.tamamTarih = anlikTarihSaat();
+            verileriKaydet();
+            dbKaydet('uretim_emri', 'aket_uretim_emri', uretimEmri, uretimTabloCiz);
+            ekranlariGuncelle();
+            showToast(`Üretim tamamlandı: ${e.hedefKg} KG ${e.urun} stoğa eklendi.`, 'success');
+            bildirimGonder('Üretim Tamamlandı', `${e.hedefKg} KG ${e.urun}`, 'success');
+        }
+
+        function uretimIptal(id) {
+            let e = uretimEmri.find(x => String(x.id) === String(id));
+            if (!e || e.durum !== 'Planlandı') { showToast('Yalnız planlı emirler iptal edilebilir.', 'error'); return; }
+            if (!confirm('Bu üretim emri iptal edilsin mi?')) return;
+            e.durum = 'İptal';
+            dbKaydet('uretim_emri', 'aket_uretim_emri', uretimEmri, uretimTabloCiz);
+        }
+
+        function uretimSil(id) {
+            if (!aktifKullanici || aktifKullanici.yetki !== 'Admin') { showToast('Silme yalnız yöneticide.', 'error'); return; }
+            if (!confirm('Kayıt kalıcı olarak silinsin mi?')) return;
+            uretimEmri = uretimEmri.filter(x => String(x.id) !== String(id));
+            dbKaydet('uretim_emri', 'aket_uretim_emri', uretimEmri, uretimTabloCiz);
+        }
+
+        function uretimTabloCiz() {
+            let tb = document.getElementById('uretimTablo');
+            if (!tb) return;
+            let bugun = new Date().toLocaleDateString('tr-TR');
+            document.getElementById('urt-planli').textContent = uretimEmri.filter(e => e.durum === 'Planlandı').length;
+            document.getElementById('urt-bugun-kg').textContent = uretimEmri
+                .filter(e => e.durum === 'Tamamlandı' && (e.tamamTarih || '').startsWith(bugun))
+                .reduce((s, e) => s + (parseFloat(e.hedefKg) || 0), 0).toFixed(0);
+            document.getElementById('urt-toplam').textContent = uretimEmri.length;
+            tb.innerHTML = uretimEmri.length === 0
+                ? '<tr><td colspan="8" style="text-align:center;color:#555;padding:20px;">Üretim emri yok</td></tr>'
+                : uretimEmri.map(e => {
+                    let mlz = (e.malzemeler || []).map(m => `${m.kalem} ${m.kg}kg`).join(', ') || '-';
+                    let dRenk = e.durum === 'Tamamlandı' ? 'var(--yesil)' : e.durum === 'İptal' ? '#e74c3c' : 'var(--altin)';
+                    let islem = e.durum === 'Planlandı'
+                        ? `<button class="btn-sm btn-onay" onclick="uretimTamamla('${e.id}')">Tamamla</button> <button class="btn-sm btn-iptal" onclick="uretimIptal('${e.id}')">İptal</button>`
+                        : `<button class="btn-sm btn-iptal yetki-admin" onclick="uretimSil('${e.id}')">Sil</button>`;
+                    return `<tr>
+                        <td>${e.tarih}</td><td><b>${e.urun}</b></td><td>${e.hedefKg} KG</td>
+                        <td>${e.recete || '-'}</td><td style="color:#999;font-size:11px;">${mlz}</td>
+                        <td style="color:${dRenk};font-weight:700;">${e.durum}</td><td>${e.kaydeden || '-'}</td>
+                        <td class="yetki-uretim no-excel">${islem}</td>
+                    </tr>`;
+                }).join('');
         }
 
         // ─── ÇALIŞANLAR ─────────────────────────────────────────────
