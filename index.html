@@ -970,6 +970,19 @@
         .dash-chart-wrap { position: relative; height: 220px; }
         @media(max-width:768px) { .dash-stat-row { grid-template-columns: repeat(2, 1fr); } .dash-grid { grid-template-columns: 1fr; } }
 
+        /* ── HACCP / ÜRETİM SEKME ÇUBUĞU ── */
+        .haccp-tabbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+        .haccp-tab { background: #1a1a1a; border: 1px solid #333; color: var(--yazi-soluk); font-size: 12px; font-weight: 700; padding: 9px 16px; border-radius: 7px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .haccp-tab:hover { color: white; border-color: #16a085; }
+        .haccp-tab.active { background: #16a085; color: white; border-color: #16a085; }
+        .haccp-durum-ok { color: var(--yesil); font-weight: 700; }
+        .haccp-durum-risk { color: #e74c3c; font-weight: 700; }
+        /* ── ANALİZ EK BÖLÜM (fire / hacim) ── */
+        .analiz-blok { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .analiz-blok h3 { margin: 0 0 4px; color: var(--yazi); font-size: 15px; }
+        .analiz-blok .alt { color: #666; font-size: 11px; margin-bottom: 14px; }
+        .abc-A { color: var(--yesil); font-weight: 800; } .abc-B { color: var(--altin); font-weight: 800; } .abc-C { color: #888; font-weight: 800; }
+
         /* ── MÜŞTERİ MODÜLÜ ── */
         /* Müşteri Listesi (alfabetik) */
         .musteri-liste { margin-top: 14px; }
@@ -2279,6 +2292,14 @@
                     </div>
                     <div class="m-card-arrow">›</div>
                 </div>
+                <div id="mcard-haccp" class="m-card yetki-haccp" style="--c-accent:#16a085;display:none;" onclick="mobileOpenTab('haccp')">
+                    <div class="m-card-icon" style="background:rgba(22,160,133,0.12);color:#16a085;">HAC</div>
+                    <div class="m-card-body">
+                        <div class="m-card-title">HACCP Kayıtları</div>
+                        <div class="m-card-sub">Sıcaklık · temizlik · KKN</div>
+                    </div>
+                    <div class="m-card-arrow">›</div>
+                </div>
                 <div id="mcard-dashboard" class="m-card" style="--c-accent:#9b59b6;grid-column:span 2;" onclick="mobileOpenTab('dashboard')">
                     <div class="m-card-icon" style="background:rgba(155,89,182,0.12);color:#9b59b6;">GRF</div>
                     <div class="m-card-body">
@@ -2317,6 +2338,7 @@
                 <button class="tab-link yetki-admin" id="nav-musteri" onclick="openTab('musteri', this)" style="display:none;">Müşteriler</button>
                 <button class="tab-link yetki-admin" id="nav-dashboard" onclick="openTab('dashboard', this)" style="display:none;">Analiz</button>
                 <button class="tab-link" id="nav-ik" onclick="openTab('ik', this); ikIkTabAc();" style="display:none;">İK</button>
+                <button class="tab-link yetki-haccp" id="nav-haccp" onclick="openTab('haccp', this)" style="display:none;">HACCP</button>
             </div>
             <div class="user-actions">
                 <div id="sync-indicator" title="Firebase çevrimiçi senkron aktif"><div class="sync-dot"></div><span>Çevrimiçi</span></div>
@@ -2390,6 +2412,10 @@
                 <button class="mnav-item" id="mnav-ik" onclick="mobileOpenTab('ik'); ikIkTabAc();" style="display:none;">
                     <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
                     <span>İnsan K.</span>
+                </button>
+                <button class="mnav-item yetki-haccp" id="mnav-haccp" onclick="mobileOpenTab('haccp')" style="display:none;">
+                    <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg></span>
+                    <span>HACCP</span>
                 </button>
             </div>
         </div>
@@ -2714,6 +2740,87 @@
                     <table>
                         <thead><tr><th>Tarih</th><th>Mağaza / Talep Eden</th><th>Ürün</th><th>Miktar</th><th>Durum</th></tr></thead>
                         <tbody id="muh-magaza-talep-tablosu"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- HACCP KAYITLARI MODÜLÜ                                       -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <div id="haccp" class="tab-content">
+                <div class="table-header">
+                    <h2>🧪 HACCP Kayıtları</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-excel" onclick="exportExcel('HACCP Kayıtları')">Excel</button>
+                        <button class="btn btn-pdf" onclick="printReport('HACCP Kayıtları')">PDF</button>
+                    </div>
+                </div>
+
+                <div class="haccp-tabbar">
+                    <button class="haccp-tab active" data-hb="sicaklik" onclick="haccpBolumAc('sicaklik')">Sıcaklık Takibi</button>
+                    <button class="haccp-tab" data-hb="temizlik" onclick="haccpBolumAc('temizlik')">Temizlik Çizelgesi</button>
+                    <button class="haccp-tab" data-hb="kkn" onclick="haccpBolumAc('kkn')">Kritik Kontrol Noktaları</button>
+                </div>
+
+                <!-- SICAKLIK -->
+                <div id="haccp-bolum-sicaklik" class="haccp-bolum">
+                    <div class="dash-stat-row" style="margin-bottom:16px;">
+                        <div class="dash-stat"><div class="dash-stat-val" id="hac-sic-bugun">0</div><div class="dash-stat-lbl">Bugün Ölçüm</div></div>
+                        <div class="dash-stat"><div class="dash-stat-val" id="hac-sic-uygun" style="color:var(--yesil);">0</div><div class="dash-stat-lbl">Uygun</div></div>
+                        <div class="dash-stat"><div class="dash-stat-val" id="hac-sic-riskli" style="color:#e74c3c;">0</div><div class="dash-stat-lbl">Uygun Değil</div></div>
+                    </div>
+                    <div class="table-header" style="border:none;padding:0;margin-bottom:12px;">
+                        <h3 style="color:var(--yazi-soluk);margin:0;">Sıcaklık Ölçüm Kayıtları</h3>
+                        <button class="btn yetki-haccp" style="background:#16a085;" onclick="haccpSicaklikModalAc()">+ Sıcaklık Ölçümü Ekle</button>
+                    </div>
+                    <div class="tarih-filtre-wrap">
+                        <label>Tarih:</label>
+                        <input type="date" id="tf-hacsic-bas" onchange="tarihFiltrele('haccpSicaklikTablo','tf-hacsic-bas','tf-hacsic-bit','tablo-ara-hacsic')">
+                        <span style="color:#444;">—</span>
+                        <input type="date" id="tf-hacsic-bit" onchange="tarihFiltrele('haccpSicaklikTablo','tf-hacsic-bas','tf-hacsic-bit','tablo-ara-hacsic')">
+                        <button class="btn-tarih-sifirla" onclick="tarihFiltreSifirla('haccpSicaklikTablo','tf-hacsic-bas','tf-hacsic-bit','tablo-ara-hacsic')">× Temizle</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Tarih</th><th>Ölçüm Noktası</th><th>Sıcaklık</th><th>Aralık (°C)</th><th>Sonuç</th><th>Ölçen</th><th>Not</th><th class="yetki-haccp no-excel">İşlem</th></tr></thead>
+                        <tbody id="haccpSicaklikTablo"></tbody>
+                    </table>
+                </div>
+
+                <!-- TEMİZLİK -->
+                <div id="haccp-bolum-temizlik" class="haccp-bolum" style="display:none;">
+                    <div class="table-header" style="border:none;padding:0;margin-bottom:12px;">
+                        <h3 style="color:var(--yazi-soluk);margin:0;">Temizlik Çizelgesi</h3>
+                        <button class="btn yetki-haccp" style="background:#16a085;" onclick="haccpTemizlikModalAc()">+ Temizlik Kaydı Ekle</button>
+                    </div>
+                    <div class="tarih-filtre-wrap">
+                        <label>Tarih:</label>
+                        <input type="date" id="tf-hactem-bas" onchange="tarihFiltrele('haccpTemizlikTablo','tf-hactem-bas','tf-hactem-bit','tablo-ara-hactem')">
+                        <span style="color:#444;">—</span>
+                        <input type="date" id="tf-hactem-bit" onchange="tarihFiltrele('haccpTemizlikTablo','tf-hactem-bas','tf-hactem-bit','tablo-ara-hactem')">
+                        <button class="btn-tarih-sifirla" onclick="tarihFiltreSifirla('haccpTemizlikTablo','tf-hactem-bas','tf-hactem-bit','tablo-ara-hactem')">× Temizle</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Tarih</th><th>Alan / Ekipman</th><th>Sıklık</th><th>Durum</th><th>Yapan</th><th>Onaylayan</th><th class="yetki-haccp no-excel">İşlem</th></tr></thead>
+                        <tbody id="haccpTemizlikTablo"></tbody>
+                    </table>
+                </div>
+
+                <!-- KKN -->
+                <div id="haccp-bolum-kkn" class="haccp-bolum" style="display:none;">
+                    <div class="table-header" style="border:none;padding:0;margin-bottom:12px;">
+                        <h3 style="color:var(--yazi-soluk);margin:0;">Kritik Kontrol Noktaları</h3>
+                        <button class="btn yetki-haccp" style="background:#16a085;" onclick="haccpKknModalAc()">+ KKN Kaydı Ekle</button>
+                    </div>
+                    <div class="tarih-filtre-wrap">
+                        <label>Tarih:</label>
+                        <input type="date" id="tf-hackkn-bas" onchange="tarihFiltrele('haccpKknTablo','tf-hackkn-bas','tf-hackkn-bit','tablo-ara-hackkn')">
+                        <span style="color:#444;">—</span>
+                        <input type="date" id="tf-hackkn-bit" onchange="tarihFiltrele('haccpKknTablo','tf-hackkn-bas','tf-hackkn-bit','tablo-ara-hackkn')">
+                        <button class="btn-tarih-sifirla" onclick="tarihFiltreSifirla('haccpKknTablo','tf-hackkn-bas','tf-hackkn-bit','tablo-ara-hackkn')">× Temizle</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Tarih</th><th>Kontrol Noktası</th><th>Ölçüm</th><th>Limit</th><th>Sonuç</th><th>Düzeltici Faaliyet</th><th>Sorumlu</th><th class="yetki-haccp no-excel">İşlem</th></tr></thead>
+                        <tbody id="haccpKknTablo"></tbody>
                     </table>
                 </div>
             </div>
@@ -3787,6 +3894,60 @@
         </div>
     </div>
 
+    <!-- HACCP: SICAKLIK ÖLÇÜMÜ MODALI -->
+    <div id="haccpSicaklikModal" class="modal" onclick="if(event.target===this)closeModal('haccpSicaklikModal')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('haccpSicaklikModal')">×</span>
+            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Sıcaklık Ölçümü</h3>
+            <div class="form-group">
+                <label>Ölçüm Noktası</label>
+                <select id="hacSicNokta" onchange="haccpSicNoktaDegisti()"></select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group"><label>Ölçülen Sıcaklık (°C)</label><input type="number" id="hacSicDeger" step="0.1" placeholder="0.0"></div>
+                <div class="form-group"><label>Uygun Aralık</label><input type="text" id="hacSicAralik" readonly style="opacity:0.7;"></div>
+            </div>
+            <input type="hidden" id="hacSicAlt"><input type="hidden" id="hacSicUst">
+            <div class="form-group"><label>Not (isteğe bağlı)</label><input type="text" id="hacSicNot" placeholder="Ek bilgi / düzeltici işlem..." autocomplete="off"></div>
+            <button class="btn btn-success" style="background:#16a085; width:100%; padding:13px; font-size:15px;" onclick="haccpSicaklikKaydet()">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- HACCP: TEMİZLİK KAYDI MODALI -->
+    <div id="haccpTemizlikModal" class="modal" onclick="if(event.target===this)closeModal('haccpTemizlikModal')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('haccpTemizlikModal')">×</span>
+            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Temizlik Kaydı</h3>
+            <div class="form-group"><label>Alan / Ekipman</label><select id="hacTemAlan"></select></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group"><label>Sıklık</label><select id="hacTemSiklik"><option>Günlük</option><option>Haftalık</option><option>Aylık</option></select></div>
+                <div class="form-group"><label>Durum</label><select id="hacTemDurum"><option>Yapıldı</option><option>Aksadı</option></select></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group"><label>Yapan</label><input type="text" id="hacTemYapan" autocomplete="off"></div>
+                <div class="form-group"><label>Onaylayan</label><input type="text" id="hacTemOnay" autocomplete="off"></div>
+            </div>
+            <button class="btn btn-success" style="background:#16a085; width:100%; padding:13px; font-size:15px;" onclick="haccpTemizlikKaydet()">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- HACCP: KKN KAYDI MODALI -->
+    <div id="haccpKknModal" class="modal" onclick="if(event.target===this)closeModal('haccpKknModal')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('haccpKknModal')">×</span>
+            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Kritik Kontrol Noktası Kaydı</h3>
+            <div class="form-group"><label>Kontrol Noktası</label><input type="text" id="hacKknNokta" placeholder="Ör. Şoklama çıkış sıcaklığı" autocomplete="off"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group"><label>Ölçüm / Gözlem</label><input type="text" id="hacKknOlcum" autocomplete="off"></div>
+                <div class="form-group"><label>Kritik Limit</label><input type="text" id="hacKknLimit" placeholder="Ör. ≤ 4 °C" autocomplete="off"></div>
+            </div>
+            <div class="form-group"><label>Sonuç</label><select id="hacKknUygun"><option value="Uygun">Uygun</option><option value="Uygun Değil">Uygun Değil</option></select></div>
+            <div class="form-group"><label>Düzeltici Faaliyet</label><input type="text" id="hacKknDf" placeholder="Uygunsuzluk varsa yapılan işlem" autocomplete="off"></div>
+            <div class="form-group"><label>Sorumlu</label><input type="text" id="hacKknSorumlu" autocomplete="off"></div>
+            <button class="btn btn-success" style="background:#16a085; width:100%; padding:13px; font-size:15px;" onclick="haccpKknKaydet()">Kaydet</button>
+        </div>
+    </div>
+
     <div id="perakendeTalepModal" class="modal">
         <div class="modal-content" style="width:460px;"><span class="close-btn" onclick="closeModal('perakendeTalepModal')">×</span>
             <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Eksik Ürün Talebi (Merkezden)</h3>
@@ -4485,6 +4646,12 @@
             if(mnavIk)  mnavIk.style.display  = 'flex';
             if(mcardIk) mcardIk.style.display = '';
 
+            // HACCP + Üretim Emri — Admin + Kasap
+            let uretimKaliteYetkili = (y === 'Admin' || y === 'Kasap');
+            document.querySelectorAll('.yetki-haccp, .yetki-uretim').forEach(el => {
+                el.style.display = uretimKaliteYetkili ? (el.classList.contains('mnav-item') ? 'flex' : '') : 'none';
+            });
+
             // Kasap Hızlı Eylem FAB — sadece Kasap rolünde görünür
             let sesliMod = document.getElementById('sesli-mod-fab');
             if(sesliMod) sesliMod.style.display = (y === 'Kasap') ? 'flex' : 'none';
@@ -4756,6 +4923,8 @@
             // Dashboard / Müşteri hook
             if(tabName === 'dashboard') setTimeout(function(){ if(typeof dashboardYenile==='function') dashboardYenile(); }, 80);
             if(tabName === 'musteri')   setTimeout(function(){ if(typeof musteriListesiniCiz==='function') musteriListesiniCiz(); }, 40);
+            if(tabName === 'haccp')     setTimeout(function(){ if(typeof haccpYenile==='function') haccpYenile(); }, 40);
+            if(tabName === 'uretim')    setTimeout(function(){ if(typeof uretimYenile==='function') uretimYenile(); }, 40);
         }
 
         function mobileOpenTab(tabName) {
@@ -7758,6 +7927,186 @@
                 let obj = {}; data.forEach(i => { obj[i.id] = i; });
                 firebaseDB.ref('ik/'+yol).set(obj).then(() => { if(cb) cb(); }).catch(() => { if(cb) cb(); });
             } else { if(cb) cb(); }
+        }
+
+        // ─── GENEL KOLEKSİYON DB HELPER'I (yeni modüller: haccp, fire, uretim, rota, ik_hata) ───
+        // ref: kök seviye Firebase yolu (ör. 'haccp_sicaklik'). Veri: [{id, ...}] dizisi.
+        function dbYukle(ref, localKey, cb) {
+            let local = guvenliParse(localKey, []);
+            if(firebaseDB) {
+                firebaseDB.ref(ref).once('value', snap => {
+                    let d = snap.val() ? Object.values(snap.val()) : [];
+                    try { localStorage.setItem(localKey, JSON.stringify(d)); } catch(e) {}
+                    cb(d);
+                }).catch(() => cb(local));
+            } else cb(local);
+        }
+        function dbKaydet(ref, localKey, data, cb) {
+            try { localStorage.setItem(localKey, JSON.stringify(data)); } catch(e) {}
+            if(firebaseDB) {
+                let obj = {}; data.forEach(i => { obj[i.id] = i; });
+                firebaseDB.ref(ref).set(obj).then(() => { if(cb) cb(); }).catch(() => { if(cb) cb(); });
+            } else { if(cb) cb(); }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // HACCP KAYITLARI MODÜLÜ  (sıcaklık / temizlik / KKN)
+        // ═══════════════════════════════════════════════════════════════
+        const HACCP_NOKTALAR = {
+            'Soğuk Depo 1 (Karkas)':   { alt: 0,  ust: 4 },
+            'Soğuk Depo 2 (Ürün)':     { alt: 0,  ust: 4 },
+            'Şoklama Ünitesi':         { alt: -25, ust: -18 },
+            'Dondurucu Depo':          { alt: -25, ust: -18 },
+            'Üretim / Parçalama Alanı':{ alt: 0,  ust: 12 },
+            'Sevkiyat Aracı':          { alt: 0,  ust: 4 },
+            'Perakende Vitrin':        { alt: 0,  ust: 4 }
+        };
+        const HACCP_ALANLAR = ['Üretim / Parçalama Salonu','Soğuk Depo','Kesimhane','Şoklama Ünitesi','Ekipman / Bıçaklar','Sevkiyat Aracı','Personel Soyunma / Tuvalet','Perakende Vitrin'];
+
+        let haccpSicaklik = guvenliParse('aket_haccp_sicaklik', []);
+        let haccpTemizlik = guvenliParse('aket_haccp_temizlik', []);
+        let haccpKkn      = guvenliParse('aket_haccp_kkn', []);
+        let haccpAktifBolum = 'sicaklik';
+
+        function haccpYenile() {
+            dbYukle('haccp_sicaklik', 'aket_haccp_sicaklik', d => { haccpSicaklik = d; haccpSicaklikCiz(); });
+            dbYukle('haccp_temizlik', 'aket_haccp_temizlik', d => { haccpTemizlik = d; haccpTemizlikCiz(); });
+            dbYukle('haccp_kkn',      'aket_haccp_kkn',      d => { haccpKkn = d;      haccpKknCiz(); });
+        }
+
+        function haccpBolumAc(b) {
+            haccpAktifBolum = b;
+            document.querySelectorAll('.haccp-tab').forEach(t => t.classList.toggle('active', t.dataset.hb === b));
+            document.querySelectorAll('.haccp-bolum').forEach(s => s.style.display = 'none');
+            document.getElementById('haccp-bolum-' + b).style.display = '';
+        }
+
+        function haccpSicNoktaDegisti() {
+            let n = document.getElementById('hacSicNokta').value;
+            let lim = HACCP_NOKTALAR[n] || { alt: '', ust: '' };
+            document.getElementById('hacSicAlt').value = lim.alt;
+            document.getElementById('hacSicUst').value = lim.ust;
+            document.getElementById('hacSicAralik').value = (lim.alt === '' ? '—' : `${lim.alt} … ${lim.ust} °C`);
+        }
+
+        function haccpSicaklikModalAc() {
+            let sel = document.getElementById('hacSicNokta');
+            sel.innerHTML = Object.keys(HACCP_NOKTALAR).map(n => `<option value="${n}">${n}</option>`).join('');
+            haccpSicNoktaDegisti();
+            document.getElementById('hacSicDeger').value = '';
+            document.getElementById('hacSicNot').value = '';
+            openModal('haccpSicaklikModal');
+        }
+        function haccpSicaklikKaydet() {
+            let nokta = document.getElementById('hacSicNokta').value;
+            let deger = parseFloat(document.getElementById('hacSicDeger').value);
+            if (isNaN(deger)) { showToast('Geçerli bir sıcaklık girin.', 'error'); return; }
+            let alt = parseFloat(document.getElementById('hacSicAlt').value);
+            let ust = parseFloat(document.getElementById('hacSicUst').value);
+            let sonuc = (!isNaN(alt) && !isNaN(ust) && (deger < alt || deger > ust)) ? 'Uygun Değil' : 'Uygun';
+            haccpSicaklik.unshift({
+                id: Date.now(), tarih: anlikTarihSaat(), nokta, sicaklik: deger,
+                altLimit: isNaN(alt) ? '' : alt, ustLimit: isNaN(ust) ? '' : ust,
+                sonuc, olcen: aktifKullanici.ad, not: document.getElementById('hacSicNot').value.trim()
+            });
+            dbKaydet('haccp_sicaklik', 'aket_haccp_sicaklik', haccpSicaklik, haccpSicaklikCiz);
+            closeModal('haccpSicaklikModal');
+            showToast('Sıcaklık ölçümü kaydedildi.', 'success');
+            if (sonuc === 'Uygun Değil') bildirimGonder('HACCP Uyarısı', `${nokta}: ${deger}°C — sınır dışı!`, 'error');
+        }
+        function haccpSicaklikCiz() {
+            let tb = document.getElementById('haccpSicaklikTablo');
+            if (!tb) return;
+            let bugun = new Date().toLocaleDateString('tr-TR');
+            let bugunKayit = haccpSicaklik.filter(k => (k.tarih || '').startsWith(bugun));
+            document.getElementById('hac-sic-bugun').textContent = bugunKayit.length;
+            document.getElementById('hac-sic-uygun').textContent = bugunKayit.filter(k => k.sonuc === 'Uygun').length;
+            document.getElementById('hac-sic-riskli').textContent = bugunKayit.filter(k => k.sonuc !== 'Uygun').length;
+            tb.innerHTML = haccpSicaklik.length === 0
+                ? '<tr><td colspan="8" style="text-align:center;color:#555;padding:20px;">Kayıt yok</td></tr>'
+                : haccpSicaklik.map(k => `<tr>
+                    <td>${k.tarih}</td><td>${k.nokta}</td>
+                    <td><b>${k.sicaklik} °C</b></td>
+                    <td style="color:#888;">${k.altLimit === '' ? '—' : k.altLimit + ' … ' + k.ustLimit}</td>
+                    <td class="${k.sonuc === 'Uygun' ? 'haccp-durum-ok' : 'haccp-durum-risk'}">${k.sonuc}</td>
+                    <td>${k.olcen || '-'}</td><td style="color:#999;">${k.not || '-'}</td>
+                    <td class="yetki-haccp no-excel"><button class="btn-sm btn-iptal" onclick="haccpKayitSil('sicaklik','${k.id}')">Sil</button></td>
+                </tr>`).join('');
+        }
+
+        function haccpTemizlikModalAc() {
+            document.getElementById('hacTemAlan').innerHTML = HACCP_ALANLAR.map(a => `<option>${a}</option>`).join('');
+            document.getElementById('hacTemYapan').value = aktifKullanici.ad;
+            document.getElementById('hacTemOnay').value = '';
+            openModal('haccpTemizlikModal');
+        }
+        function haccpTemizlikKaydet() {
+            haccpTemizlik.unshift({
+                id: Date.now(), tarih: anlikTarihSaat(),
+                alan: document.getElementById('hacTemAlan').value,
+                siklik: document.getElementById('hacTemSiklik').value,
+                durum: document.getElementById('hacTemDurum').value,
+                yapan: document.getElementById('hacTemYapan').value.trim(),
+                onaylayan: document.getElementById('hacTemOnay').value.trim()
+            });
+            dbKaydet('haccp_temizlik', 'aket_haccp_temizlik', haccpTemizlik, haccpTemizlikCiz);
+            closeModal('haccpTemizlikModal');
+            showToast('Temizlik kaydı eklendi.', 'success');
+        }
+        function haccpTemizlikCiz() {
+            let tb = document.getElementById('haccpTemizlikTablo');
+            if (!tb) return;
+            tb.innerHTML = haccpTemizlik.length === 0
+                ? '<tr><td colspan="7" style="text-align:center;color:#555;padding:20px;">Kayıt yok</td></tr>'
+                : haccpTemizlik.map(k => `<tr>
+                    <td>${k.tarih}</td><td>${k.alan}</td><td>${k.siklik}</td>
+                    <td class="${k.durum === 'Yapıldı' ? 'haccp-durum-ok' : 'haccp-durum-risk'}">${k.durum}</td>
+                    <td>${k.yapan || '-'}</td><td>${k.onaylayan || '-'}</td>
+                    <td class="yetki-haccp no-excel"><button class="btn-sm btn-iptal" onclick="haccpKayitSil('temizlik','${k.id}')">Sil</button></td>
+                </tr>`).join('');
+        }
+
+        function haccpKknModalAc() {
+            ['hacKknNokta','hacKknOlcum','hacKknLimit','hacKknDf'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('hacKknSorumlu').value = aktifKullanici.ad;
+            document.getElementById('hacKknUygun').value = 'Uygun';
+            openModal('haccpKknModal');
+        }
+        function haccpKknKaydet() {
+            let nokta = document.getElementById('hacKknNokta').value.trim();
+            if (!nokta) { showToast('Kontrol noktası zorunludur.', 'error'); return; }
+            haccpKkn.unshift({
+                id: Date.now(), tarih: anlikTarihSaat(), kkn: nokta,
+                olcum: document.getElementById('hacKknOlcum').value.trim(),
+                limit: document.getElementById('hacKknLimit').value.trim(),
+                uygunMu: document.getElementById('hacKknUygun').value,
+                duzelticiFaaliyet: document.getElementById('hacKknDf').value.trim(),
+                sorumlu: document.getElementById('hacKknSorumlu').value.trim()
+            });
+            dbKaydet('haccp_kkn', 'aket_haccp_kkn', haccpKkn, haccpKknCiz);
+            closeModal('haccpKknModal');
+            showToast('KKN kaydı eklendi.', 'success');
+        }
+        function haccpKknCiz() {
+            let tb = document.getElementById('haccpKknTablo');
+            if (!tb) return;
+            tb.innerHTML = haccpKkn.length === 0
+                ? '<tr><td colspan="8" style="text-align:center;color:#555;padding:20px;">Kayıt yok</td></tr>'
+                : haccpKkn.map(k => `<tr>
+                    <td>${k.tarih}</td><td>${k.kkn}</td><td>${k.olcum || '-'}</td><td>${k.limit || '-'}</td>
+                    <td class="${k.uygunMu === 'Uygun' ? 'haccp-durum-ok' : 'haccp-durum-risk'}">${k.uygunMu}</td>
+                    <td style="color:#999;">${k.duzelticiFaaliyet || '-'}</td><td>${k.sorumlu || '-'}</td>
+                    <td class="yetki-haccp no-excel"><button class="btn-sm btn-iptal" onclick="haccpKayitSil('kkn','${k.id}')">Sil</button></td>
+                </tr>`).join('');
+        }
+
+        function haccpKayitSil(kol, id) {
+            if (!aktifKullanici || (aktifKullanici.yetki !== 'Admin' && aktifKullanici.yetki !== 'Kasap')) { showToast('Yetkiniz yok.', 'error'); return; }
+            if (!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
+            if (kol === 'sicaklik') { haccpSicaklik = haccpSicaklik.filter(k => String(k.id) !== String(id)); dbKaydet('haccp_sicaklik','aket_haccp_sicaklik',haccpSicaklik,haccpSicaklikCiz); }
+            else if (kol === 'temizlik') { haccpTemizlik = haccpTemizlik.filter(k => String(k.id) !== String(id)); dbKaydet('haccp_temizlik','aket_haccp_temizlik',haccpTemizlik,haccpTemizlikCiz); }
+            else if (kol === 'kkn') { haccpKkn = haccpKkn.filter(k => String(k.id) !== String(id)); dbKaydet('haccp_kkn','aket_haccp_kkn',haccpKkn,haccpKknCiz); }
+            showToast('Kayıt silindi.', 'success');
         }
 
         // ─── ÇALIŞANLAR ─────────────────────────────────────────────
