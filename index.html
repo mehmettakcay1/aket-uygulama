@@ -2940,6 +2940,36 @@
                     <div id="db-top-musteri" style="margin-top:4px;"></div>
                 </div>
             </div>
+
+            <!-- ── FİRE / ZAİYAT RAPORU ── -->
+            <div class="analiz-blok">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+                    <div>
+                        <h3>Fire &amp; Zaiyat Raporu</h3>
+                        <div class="alt">Ürün tipi bazında giren karkas → kemik + fire → net et verimi</div>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <input type="date" id="fire-bas" onchange="fireRaporuCiz()">
+                        <span style="color:#444;">—</span>
+                        <input type="date" id="fire-bit" onchange="fireRaporuCiz()">
+                        <button class="btn" style="background:#e67e22;" onclick="fireKaydiModalAc()">+ Fire Kaydı</button>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;margin-top:14px;">
+                    <table>
+                        <thead><tr><th>Ürün Tipi</th><th>Giren (KG)</th><th>Kemik (KG)</th><th>Manuel Fire (KG)</th><th>Net Et (KG)</th><th>Kemik %</th><th>Fire %</th><th>Verim %</th></tr></thead>
+                        <tbody id="fireRaporTablo"></tbody>
+                    </table>
+                </div>
+                <div class="dash-chart-wrap" style="margin-top:16px;"><canvas id="chart-fire"></canvas></div>
+                <h4 style="color:var(--yazi-soluk);font-size:12px;margin:20px 0 8px;">Son Fire / Zaiyat Kayıtları</h4>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Tarih</th><th>Ürün</th><th>Karkas</th><th>Tür</th><th>Miktar</th><th>Açıklama</th><th>Kaydeden</th><th class="no-excel">İşlem</th></tr></thead>
+                        <tbody id="fireKayitTablo"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -3945,6 +3975,24 @@
             <div class="form-group"><label>Düzeltici Faaliyet</label><input type="text" id="hacKknDf" placeholder="Uygunsuzluk varsa yapılan işlem" autocomplete="off"></div>
             <div class="form-group"><label>Sorumlu</label><input type="text" id="hacKknSorumlu" autocomplete="off"></div>
             <button class="btn btn-success" style="background:#16a085; width:100%; padding:13px; font-size:15px;" onclick="haccpKknKaydet()">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- FİRE / ZAİYAT KAYDI MODALI -->
+    <div id="fireKaydiModal" class="modal" onclick="if(event.target===this)closeModal('fireKaydiModal')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('fireKaydiModal')">×</span>
+            <h3 style="color:white; border-bottom:1px solid #444; padding-bottom:10px;">Fire / Zaiyat Kaydı</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group"><label>Ürün Tipi</label><select id="fireUrun"><option>Dana</option><option>Kuzu</option><option>Piliç</option></select></div>
+                <div class="form-group"><label>Fire Türü</label><select id="fireTur"><option>Yağ</option><option>İşlem Firesi</option><option>Zaiyat</option><option>Diğer</option></select></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group"><label>Miktar (KG)</label><input type="number" id="fireMiktar" step="0.1" placeholder="0.0"></div>
+                <div class="form-group"><label>Karkas No (isteğe bağlı)</label><input type="text" id="fireKarkas" autocomplete="off"></div>
+            </div>
+            <div class="form-group"><label>Açıklama</label><input type="text" id="fireAciklama" placeholder="Sebep / not" autocomplete="off"></div>
+            <button class="btn btn-success" style="background:#e67e22; width:100%; padding:13px; font-size:15px;" onclick="fireKaydiKaydet()">Kaydet</button>
         </div>
     </div>
 
@@ -7580,6 +7628,8 @@
             dashboardSiparisDurum();
             dashboardUrunDagilim();
             dashboardTopMusteri();
+            if(typeof fireRaporuCiz === 'function') fireRaporuCiz();
+            if(typeof hacimAbcCiz === 'function') hacimAbcCiz();
         }
 
         function dashboardKpiGuncelle() {
@@ -8107,6 +8157,124 @@
             else if (kol === 'temizlik') { haccpTemizlik = haccpTemizlik.filter(k => String(k.id) !== String(id)); dbKaydet('haccp_temizlik','aket_haccp_temizlik',haccpTemizlik,haccpTemizlikCiz); }
             else if (kol === 'kkn') { haccpKkn = haccpKkn.filter(k => String(k.id) !== String(id)); dbKaydet('haccp_kkn','aket_haccp_kkn',haccpKkn,haccpKknCiz); }
             showToast('Kayıt silindi.', 'success');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // ANALİZ EKLERİ — ortak yardımcılar
+        // ═══════════════════════════════════════════════════════════════
+        // "DD.MM.YYYY - HH:MM" → "YYYY-MM-DD"
+        function _trTarihISO(t) {
+            let m = (t || '').match(/(\d{2})\.(\d{2})\.(\d{4})/);
+            return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
+        }
+        // Tarih aralığı input'larını oku; boşsa son `gun` günü varsayılan uygula ve input'lara yaz
+        function _gunAralik(basId, bitId, gun) {
+            let bEl = document.getElementById(basId), eEl = document.getElementById(bitId);
+            let bas = bEl && bEl.value, bit = eEl && eEl.value;
+            if (!bas && !bit) {
+                let d = new Date(); let e = d.toISOString().slice(0, 10);
+                d.setDate(d.getDate() - (gun || 90)); let b = d.toISOString().slice(0, 10);
+                if (bEl) bEl.value = b; if (eEl) eEl.value = e;
+                return { bas: b, bit: e };
+            }
+            return { bas: bas || '0000-01-01', bit: bit || '9999-12-31' };
+        }
+        function _araliktaMi(trTarih, bas, bit) {
+            let iso = _trTarihISO(trTarih);
+            return iso && iso >= bas && iso <= bit;
+        }
+        // girenler.urun / serbest → 'Dana' | 'Kuzu' | 'Piliç' | 'Diğer'
+        function _urunTipi(u) {
+            u = (u || '').toLowerCase();
+            if (u.includes('dana')) return 'Dana';
+            if (u.includes('kuzu')) return 'Kuzu';
+            if (u.includes('piliç') || u.includes('pilic') || u.includes('beyaz')) return 'Piliç';
+            return 'Diğer';
+        }
+        // Azalan sıralı [{ad, kg}] dizisine kümülatif % + ABC sınıfı ekler
+        function _abcSinifla(dizi) {
+            let toplam = dizi.reduce((s, x) => s + x.kg, 0) || 1;
+            let kum = 0;
+            return dizi.map(x => {
+                let pay = x.kg / toplam * 100;
+                kum += pay;
+                let sinif = kum <= 80 ? 'A' : kum <= 95 ? 'B' : 'C';
+                return { ...x, pay, kumulatif: kum, sinif };
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // F2 — FİRE / ZAİYAT RAPORU
+        // ═══════════════════════════════════════════════════════════════
+        let fireKayit = guvenliParse('aket_fire_kayit', []);
+
+        function fireRaporuCiz() {
+            let tb = document.getElementById('fireRaporTablo');
+            if (!tb) return;
+            dbYukle('fire_kayit', 'aket_fire_kayit', d => {
+                fireKayit = d;
+                let { bas, bit } = _gunAralik('fire-bas', 'fire-bit', 90);
+                let tipler = ['Dana', 'Kuzu', 'Piliç'];
+                let satirlar = tipler.map(tip => {
+                    let giren = girenler.filter(g => _urunTipi(g.urun) === tip && _araliktaMi(g.tarih, bas, bit))
+                        .reduce((s, g) => s + (parseFloat(g.miktar) || 0), 0);
+                    let kemik = kemikler.filter(k => (k.karkasTipi || _urunTipi(k.karkasNo)) === tip && _araliktaMi(k.tarih, bas, bit))
+                        .reduce((s, k) => s + (parseFloat(k.miktar) || 0), 0);
+                    let mFire = fireKayit.filter(f => f.urun === tip && _araliktaMi(f.tarih, bas, bit))
+                        .reduce((s, f) => s + (parseFloat(f.miktar) || 0), 0);
+                    let netEt = Math.max(0, giren - kemik - mFire);
+                    let p = v => giren > 0 ? (v / giren * 100).toFixed(1) : '0.0';
+                    return { tip, giren, kemik, mFire, netEt, kemikP: p(kemik), fireP: p(mFire), verimP: p(netEt) };
+                });
+                tb.innerHTML = satirlar.map(s => `<tr>
+                    <td><b>${s.tip}</b></td>
+                    <td>${s.giren.toFixed(1)}</td>
+                    <td style="color:#e0a060;">${s.kemik.toFixed(1)}</td>
+                    <td style="color:#e67e22;">${s.mFire.toFixed(1)}</td>
+                    <td style="color:var(--yesil);"><b>${s.netEt.toFixed(1)}</b></td>
+                    <td>${s.kemikP}%</td><td>${s.fireP}%</td>
+                    <td><b style="color:${parseFloat(s.verimP) >= 65 ? 'var(--yesil)' : parseFloat(s.verimP) >= 50 ? 'var(--altin)' : '#e74c3c'};">${s.verimP}%</b></td>
+                </tr>`).join('');
+
+                _grafikOlustur('chart-fire', 'bar', satirlar.map(s => s.tip), [
+                    { label: 'Net Et (KG)', data: satirlar.map(s => +s.netEt.toFixed(1)), backgroundColor: '#27ae60', borderRadius: 4 },
+                    { label: 'Kemik (KG)', data: satirlar.map(s => +s.kemik.toFixed(1)), backgroundColor: '#e0a060', borderRadius: 4 },
+                    { label: 'Fire (KG)', data: satirlar.map(s => +s.mFire.toFixed(1)), backgroundColor: '#e67e22', borderRadius: 4 }
+                ]);
+
+                let kt = document.getElementById('fireKayitTablo');
+                if (kt) kt.innerHTML = fireKayit.length === 0
+                    ? '<tr><td colspan="8" style="text-align:center;color:#555;padding:16px;">Fire kaydı yok</td></tr>'
+                    : fireKayit.slice(0, 30).map(f => `<tr>
+                        <td>${f.tarih}</td><td>${f.urun}</td><td>${f.karkasNo || '-'}</td><td>${f.tur}</td>
+                        <td><b>${f.miktar} KG</b></td><td style="color:#999;">${f.aciklama || '-'}</td><td>${f.kaydeden || '-'}</td>
+                        <td class="no-excel"><button class="btn-sm btn-iptal" onclick="fireKaydiSil('${f.id}')">Sil</button></td>
+                    </tr>`).join('');
+            });
+        }
+        function fireKaydiModalAc() {
+            ['fireMiktar', 'fireKarkas', 'fireAciklama'].forEach(id => document.getElementById(id).value = '');
+            openModal('fireKaydiModal');
+        }
+        function fireKaydiKaydet() {
+            let miktar = parseFloat(document.getElementById('fireMiktar').value);
+            if (!miktar || miktar <= 0) { showToast('Geçerli bir miktar girin.', 'error'); return; }
+            fireKayit.unshift({
+                id: Date.now(), tarih: anlikTarihSaat(),
+                urun: document.getElementById('fireUrun').value,
+                tur: document.getElementById('fireTur').value,
+                miktar, karkasNo: document.getElementById('fireKarkas').value.trim(),
+                aciklama: document.getElementById('fireAciklama').value.trim(),
+                kaydeden: aktifKullanici.ad
+            });
+            dbKaydet('fire_kayit', 'aket_fire_kayit', fireKayit, fireRaporuCiz);
+            closeModal('fireKaydiModal');
+            showToast('Fire kaydı eklendi.', 'success');
+        }
+        function fireKaydiSil(id) {
+            if (!confirm('Bu fire kaydını silmek istiyor musunuz?')) return;
+            fireKayit = fireKayit.filter(f => String(f.id) !== String(id));
+            dbKaydet('fire_kayit', 'aket_fire_kayit', fireKayit, fireRaporuCiz);
         }
 
         // ─── ÇALIŞANLAR ─────────────────────────────────────────────
