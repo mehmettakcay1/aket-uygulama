@@ -3249,7 +3249,7 @@
             <div style="font-size:9px;font-weight:800;letter-spacing:2px;color:#e74c3c;text-transform:uppercase;margin-bottom:8px;">Dikkat — Geri Alınamaz İşlem</div>
             <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">Sistem Sıfırlanacak</div>
             <div style="font-size:12px;color:#777;line-height:1.7;margin-bottom:20px;">
-                Aşağıdaki tüm veriler <b style="color:#e74c3c;">kalıcı olarak silinecektir:</b><br>
+                Aşağıdaki tüm veriler <b style="color:#e74c3c;">tüm cihazlarda kalıcı olarak silinecektir:</b><br>
                 Stok · Siparişler · Mal Kabul · Sevkiyat<br>
                 Cari Hesaplar · Muhasebe · Satışlar · Kemik<br><br>
                 <span style="color:#27ae60;font-size:11px;">&#10003; Personel listesi ve ayarları korunacak</span><br>
@@ -3985,6 +3985,59 @@
     </div>
 
     <script>
+        // ─────────────────────────────────────────────────────────────
+        // DAYANIKLILIK: bozuk localStorage'a karşı güvenli JSON okuma
+        // Tek bir bozuk anahtar tüm uygulamayı kilitlememeli.
+        // ─────────────────────────────────────────────────────────────
+        function guvenliParse(anahtar, varsayilan) {
+            try {
+                const ham = localStorage.getItem(anahtar);
+                if (ham === null || ham === undefined || ham === '') return varsayilan;
+                const v = JSON.parse(ham);
+                return (v === null || v === undefined) ? varsayilan : v;
+            } catch (e) {
+                console.warn('Bozuk localStorage anahtarı temizlendi:', anahtar, e.message);
+                try {
+                    localStorage.setItem(anahtar + '_bozuk_yedek', localStorage.getItem(anahtar) || '');
+                    localStorage.removeItem(anahtar);
+                } catch (_) {}
+                return varsayilan;
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // GLOBAL HATA YAKALAYICI: sessiz çökmeyi önle, kullanıcıya göster
+        // ─────────────────────────────────────────────────────────────
+        (function () {
+            let sonHata = 0;
+            function bildir(kaynak, mesaj) {
+                const now = Date.now();
+                if (now - sonHata < 4000) return; // spam koruması
+                sonHata = now;
+                try {
+                    if (typeof showToast === 'function') {
+                        showToast('Bir hata oluştu. İşleminiz kaydedilmemiş olabilir — sayfayı yenileyin.', 'error');
+                    }
+                } catch (_) {}
+                try {
+                    if (window.firebaseDB && window.aktifKullanici) {
+                        window.firebaseDB.ref('aket_data/hatalar').push({
+                            k: kaynak, m: String(mesaj).slice(0, 500),
+                            kul: window.aktifKullanici.id || '?',
+                            ua: navigator.userAgent.slice(0, 120),
+                            ts: Date.now()
+                        });
+                    }
+                } catch (_) {}
+            }
+            window.addEventListener('error', function (e) {
+                bildir('error', (e && e.message) || 'bilinmeyen');
+            });
+            window.addEventListener('unhandledrejection', function (e) {
+                bildir('promise', (e && e.reason && (e.reason.message || e.reason)) || 'bilinmeyen');
+            });
+        })();
+
         const danaUrunleri = [
             // İşlenmiş & Hazır Ürünler
             "Köfte", "Burger Köftesi", "Yaprak Döner (Dondurulmuş, Dönercilere)", "Dana Kıyma",
@@ -4047,7 +4100,7 @@
         function rolGoster(yetki) { return ROL_GORUNUM[yetki] || yetki; }
 
         // GÜVENLİK VE VERİTABANI ALTYAPISI
-        let sistemKullanicilari = JSON.parse(localStorage.getItem('aket_users')) || [];
+        let sistemKullanicilari = guvenliParse('aket_users', []);
 
         let hasAdmin = false;
         for(let i=0; i<sistemKullanicilari.length; i++) {
@@ -4067,7 +4120,7 @@
         }
         localStorage.setItem('aket_users', JSON.stringify(sistemKullanicilari));
 
-        let aktifKullanici = JSON.parse(localStorage.getItem('aket_current_user')) || null;
+        let aktifKullanici = guvenliParse('aket_current_user', null);
 
         document.getElementById("loginPassword").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
@@ -4076,20 +4129,20 @@
             }
         });
 
-        let stok = JSON.parse(localStorage.getItem('aket_stok')) || {};
-        let cariHareketler = JSON.parse(localStorage.getItem('aket_cari')) || [];
-        let magazalar = JSON.parse(localStorage.getItem('aket_magazalar')) || [];
-        let yetkiTalepleri = JSON.parse(localStorage.getItem('aket_yetki_talepler')) || [];
-        let perakendeStok = JSON.parse(localStorage.getItem('aket_perakende_stok')) || {};
-        let magazaStoklar = JSON.parse(localStorage.getItem('aket_magaza_stoklar')) || {};
-        let sonİslemYapan = JSON.parse(localStorage.getItem('aket_islem')) || {};
-        let siparisler = JSON.parse(localStorage.getItem('aket_siparis')) || [];
-        let girenler = JSON.parse(localStorage.getItem('aket_giren')) || [];
-        let cikanlar = JSON.parse(localStorage.getItem('aket_cikan')) || []; 
-        let magazaSatislar = JSON.parse(localStorage.getItem('aket_magaza_satis')) || [];
-        let muhasebeZ = JSON.parse(localStorage.getItem('aket_muhasebe_z')) || [];
-        let kemikler = JSON.parse(localStorage.getItem('aket_kemik')) || [];
-        let musteriler = JSON.parse(localStorage.getItem('aket_musteriler')) || [];
+        let stok = guvenliParse('aket_stok', {});
+        let cariHareketler = guvenliParse('aket_cari', []);
+        let magazalar = guvenliParse('aket_magazalar', []);
+        let yetkiTalepleri = guvenliParse('aket_yetki_talepler', []);
+        let perakendeStok = guvenliParse('aket_perakende_stok', {});
+        let magazaStoklar = guvenliParse('aket_magaza_stoklar', {});
+        let sonİslemYapan = guvenliParse('aket_islem', {});
+        let siparisler = guvenliParse('aket_siparis', []);
+        let girenler = guvenliParse('aket_giren', []);
+        let cikanlar = guvenliParse('aket_cikan', []); 
+        let magazaSatislar = guvenliParse('aket_magaza_satis', []);
+        let muhasebeZ = guvenliParse('aket_muhasebe_z', []);
+        let kemikler = guvenliParse('aket_kemik', []);
+        let musteriler = guvenliParse('aket_musteriler', []);
 
         window.onload = function() {
             // Kurumsal logo yenilendi (2026-09) — eski cihazlarda saklı eski logoyu temizle.
@@ -4439,7 +4492,7 @@
                 let gostergesi = document.getElementById('firebase-bagli-gostergesi');
                 if(gostergesi) gostergesi.style.display = firebaseDB ? 'block' : 'none';
                 // Mevcut eşik değerlerini yükle
-                let esikler = JSON.parse(localStorage.getItem('aket_stok_esik') || '{}');
+                let esikler = guvenliParse('aket_stok_esik', {});
                 let dE = document.getElementById('esik-dana'); if(dE) dE.value = esikler['Dana Karkas'] || 300;
                 let kE = document.getElementById('esik-kuzu'); if(kE) kE.value = esikler['Kuzu Karkas'] || 300;
                 let pE = document.getElementById('esik-pilis'); if(pE) pE.value = esikler['Beyaz Et (Piliç)'] || 300;
@@ -5058,7 +5111,7 @@
             
             let sHtml = "";
             const anaListe = ["Dana Karkas", "Kuzu Karkas", "Beyaz Et (Piliç)"];
-            let _esikler = JSON.parse(localStorage.getItem('aket_stok_esik') || '{}');
+            let _esikler = guvenliParse('aket_stok_esik', {});
 
             anaListe.forEach(u => {
                 if(!stok[u] && stok[u] !== 0) return;
@@ -5297,6 +5350,21 @@
             // Korunan verileri geri yaz
             Object.entries(korunanVeriler).forEach(([k, v]) => localStorage.setItem(k, v));
 
+            // Firebase bağlıysa: boş işlem verisini buluta da yaz — yoksa .on('value')
+            // dinleyicisi eski veriyi hemen geri indirir ve sıfırlama etkisiz kalır.
+            // Personel, profiller ve presence korunur (update ile dokunmuyoruz).
+            if (firebaseDB) {
+                let sifirTs = Date.now();
+                firebaseSonYaziTs = sifirTs;
+                firebaseDB.ref('aket_data').update({
+                    stok: {}, perakendeStok: {}, magazaStoklar: {},
+                    siparisler: [], girenler: [], cikanlar: [], magazaSatislar: [],
+                    muhasebeZ: [], kemikler: [], cariHareketler: [],
+                    yetkiTalepleri: [], musteriler: [],
+                    ts: sifirTs
+                }).catch(() => { firebaseSonYaziTs = 0; });
+            }
+
             closeModal('sifirlaOnayModal');
             showToast("Sistem sıfırlandı. Yönlendiriliyorsunuz...", "success");
             setTimeout(() => {
@@ -5367,7 +5435,7 @@
         }
 
         // ===== İÇ MESAJLAŞMA SİSTEMİ =====
-        let mesajlar = JSON.parse(localStorage.getItem('aket_mesajlar')) || [];
+        let mesajlar = guvenliParse('aket_mesajlar', []);
         let aktifMesajKanal = 'Genel';
         let mesajOkunmamis = {};
 
@@ -5852,7 +5920,7 @@
 
         function stokAlarmiKontrol() {
             if(!aktifKullanici) return;
-            let esikler = JSON.parse(localStorage.getItem('aket_stok_esik') || '{}');
+            let esikler = guvenliParse('aket_stok_esik', {});
             let alarmVar = false;
 
             // Yalnızca ana karkasları kontrol et — badge için
@@ -7606,7 +7674,7 @@
 
         // Firebase/localStorage senkron yardımcısı
         function ikFbYukle(yol, localKey, cb) {
-            let local = JSON.parse(localStorage.getItem(localKey)) || [];
+            let local = guvenliParse(localKey, []);
             if(firebaseDB) {
                 firebaseDB.ref('ik/'+yol).once('value', snap => {
                     let d = snap.val() ? Object.values(snap.val()) : [];
