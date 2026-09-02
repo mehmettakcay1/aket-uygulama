@@ -162,50 +162,58 @@
 
         /* NAVBAR — KURUMSAL ÜST BANT */
         .navbar {
-            background: linear-gradient(180deg, #262322 0%, #1a1717 55%, #151313 100%);
-            padding: 0 24px; height: 64px; display: flex; align-items: center;
-            border-bottom: 2px solid var(--kirmizi);
-            position: sticky; top: 0; z-index: 100; overflow-x: auto;
-            box-shadow: 0 6px 26px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+            background: linear-gradient(180deg, #211d1c 0%, #171313 100%);
+            padding: 0 18px; height: 56px; display: flex; align-items: center; gap: 14px;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 10px 26px -10px rgba(0,0,0,0.65);
         }
-        .navbar::-webkit-scrollbar { height: 0; }
+        .navbar::after {
+            content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+            background: linear-gradient(90deg, #5f2119, var(--kirmizi) 35%, #a5402f 50%, var(--kirmizi) 65%, #5f2119);
+        }
 
-        /* Marka kilidi: amblem + dikey ayraç + kelime markası */
+        /* Marka — yalnız amblem */
         .logo-container {
-            display: flex; align-items: center; gap: 13px;
-            margin-right: 22px; padding-right: 22px;
-            border-right: 1px solid rgba(255,255,255,0.09);
-            height: 40px; flex-shrink: 0; background: none; border-radius: 0;
-            perspective: 1000px; transition: 0.3s;
+            display: flex; align-items: center; flex-shrink: 0; height: 38px;
+            padding-right: 14px; border-right: 1px solid rgba(255,255,255,0.08);
+            background: none; border-radius: 0; transition: 0.3s;
         }
         .logo-container img {
-            height: 46px; width: auto; max-width: 130px; object-fit: contain;
-            display: block; filter: drop-shadow(0 2px 7px rgba(0,0,0,0.55));
+            height: 42px; width: auto; object-fit: contain; display: block;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
         }
-        .brand-lockup { display: flex; flex-direction: column; line-height: 1.18; }
-        .brand-name { font-size: 17px; font-weight: 800; letter-spacing: 3.5px; color: #fff; }
-        .brand-tag { font-size: 8px; font-weight: 700; letter-spacing: 2.2px; color: #9c8478; text-transform: uppercase; margin-top: 2px; white-space: nowrap; }
+        #nav-logo-container:hover img { filter: drop-shadow(0 2px 10px rgba(123,44,36,0.5)); }
+        .brand-lockup { display: none; }
 
-        .nav-links { display: flex; gap: 2px; flex-wrap: nowrap; align-items: center; }
+        .nav-links {
+            display: flex; gap: 2px; align-items: center; flex: 1; min-width: 0;
+            overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
+        }
+        .nav-links.tasar {
+            -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 26px), transparent 100%);
+                    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 26px), transparent 100%);
+        }
+        .nav-links::-webkit-scrollbar { display: none; }
         .nav-links button {
-            background: transparent; border: none; color: #b6b0ac;
-            font-size: 12px; padding: 8px 13px; cursor: pointer; border-radius: 7px;
-            font-weight: 600; white-space: nowrap; transition: 0.18s; letter-spacing: 0.2px;
+            background: transparent; border: none; color: #a8a19d;
+            font-size: 11.5px; padding: 7px 10px; cursor: pointer; border-radius: 7px;
+            font-weight: 600; white-space: nowrap; transition: 0.15s; flex-shrink: 0; line-height: 1.4;
         }
-        .nav-links button:hover { background-color: rgba(123, 44, 36, 0.22); color: #fff; }
+        .nav-links button:hover { background: rgba(255,255,255,0.055); color: #fff; }
         .nav-links button.active {
-            background: linear-gradient(180deg, var(--kirmizi-hover) 0%, var(--kirmizi) 100%);
-            color: #fff; box-shadow: 0 3px 12px rgba(123, 44, 36, 0.45);
+            background: var(--kirmizi); color: #fff;
+            box-shadow: 0 3px 10px -2px rgba(123,44,36,0.6);
         }
 
-        .user-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; padding-left: 18px; flex-shrink: 0; }
+        .user-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         /* KULLANICI BİLGİSİ (TIKLANABİLİR ŞİFRE DEĞİŞTİRME) */
         .user-info {
-            font-size: 11.5px; color: var(--altin); font-weight: 700;
-            background: rgba(243, 156, 18, 0.09); border: 1px solid rgba(243, 156, 18, 0.28);
-            padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: 0.2s; white-space: nowrap;
+            font-size: 11px; color: #e7bf7c; font-weight: 700;
+            background: rgba(243, 156, 18, 0.08); border: 1px solid rgba(243, 156, 18, 0.24);
+            padding: 6px 12px; border-radius: 18px; cursor: pointer; transition: 0.2s; white-space: nowrap;
+            max-width: 230px; overflow: hidden; text-overflow: ellipsis;
         }
-        .user-info:hover { color: #fff; background: rgba(243, 156, 18, 0.18); }
+        .user-info:hover { color: #fff; background: rgba(243, 156, 18, 0.16); }
         
         .btn-admin { background-color: #333; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;}
         .btn-admin:hover { background-color: var(--altin); color: black; border-color: var(--altin); }
@@ -2366,26 +2374,22 @@
         <div class="navbar">
             <div class="logo-container" id="nav-logo-container" title="AK ET Kurumsal">
                 <img id="nav-logo" class="spin-anim" src="./AK-ET KURUMSAL LOGO.png" alt="AK ET">
-                <div class="brand-lockup">
-                    <div class="brand-name" id="nav-text">AK ET</div>
-                    <div class="brand-tag">Kurumsal Yönetim Sistemi</div>
-                </div>
             </div>
 
             <div class="nav-links">
                 <button class="tab-link active" id="nav-giren" onclick="openTab('giren', this)">Mal Kabul</button>
-                <button class="tab-link" id="nav-stok" onclick="openTab('stok', this)">Merkez Stok <span id="stok-alarm-badge" class="nav-alarm-badge" style="display:none;">!</span></button>
+                <button class="tab-link" id="nav-stok" onclick="openTab('stok', this)">Stok <span id="stok-alarm-badge" class="nav-alarm-badge" style="display:none;">!</span></button>
                 <button class="tab-link" id="nav-siparis" onclick="openTab('siparis', this)">Siparişler</button>
                 <button class="tab-link" id="nav-cikan" onclick="openTab('cikan', this)">Sevkiyat</button>
-                <button class="tab-link" id="nav-kemik" onclick="openTab('kemik', this)">Kemik Tartımı</button>
-                <button class="tab-link" id="nav-tarifler" onclick="openTab('tarifler', this)">Üretim Tarifleri</button>
-                <button class="tab-link" id="nav-perakende" onclick="openTab('perakende', this)">Perakende Satış</button>
+                <button class="tab-link" id="nav-kemik" onclick="openTab('kemik', this)">Kemik</button>
+                <button class="tab-link" id="nav-tarifler" onclick="openTab('tarifler', this)">Reçeteler</button>
+                <button class="tab-link" id="nav-uretim" onclick="openTab('uretim', this)" style="display:none;">Üretim</button>
+                <button class="tab-link" id="nav-haccp" onclick="openTab('haccp', this)" style="display:none;">HACCP</button>
+                <button class="tab-link" id="nav-perakende" onclick="openTab('perakende', this)">Perakende</button>
                 <button class="tab-link" id="nav-muhasebe" onclick="openTab('muhasebe', this)">Muhasebe</button>
                 <button class="tab-link yetki-admin" id="nav-musteri" onclick="openTab('musteri', this)" style="display:none;">Müşteriler</button>
                 <button class="tab-link yetki-admin" id="nav-dashboard" onclick="openTab('dashboard', this)" style="display:none;">Analiz</button>
                 <button class="tab-link" id="nav-ik" onclick="openTab('ik', this); ikIkTabAc();" style="display:none;">İK</button>
-                <button class="tab-link" id="nav-haccp" onclick="openTab('haccp', this)" style="display:none;">HACCP</button>
-                <button class="tab-link" id="nav-uretim" onclick="openTab('uretim', this)" style="display:none;">Üretim Emri</button>
             </div>
             <div class="user-actions">
                 <div id="sync-indicator" title="Firebase çevrimiçi senkron aktif"><div class="sync-dot"></div><span>Çevrimiçi</span></div>
@@ -4900,7 +4904,17 @@
                     singles[singles.length - 1].style.gridColumn = 'span 2';
                 }
             })();
+
+            navTasmaKontrol();
         }
+
+        // Üst menü sığmıyorsa sağ kenara yumuşak geçiş (fade) uygula
+        function navTasmaKontrol() {
+            let nl = document.querySelector('.nav-links');
+            if (!nl) return;
+            nl.classList.toggle('tasar', nl.scrollWidth > nl.clientWidth + 4);
+        }
+        window.addEventListener('resize', () => { clearTimeout(window._navT); window._navT = setTimeout(navTasmaKontrol, 150); });
 
         function personelTab(tab) {
             document.getElementById('pers-ekle-tab').style.display = 'none';
@@ -5156,6 +5170,7 @@
             if(tabName === 'musteri')   setTimeout(function(){ if(typeof musteriListesiniCiz==='function') musteriListesiniCiz(); }, 40);
             if(tabName === 'haccp')     setTimeout(function(){ if(typeof haccpYenile==='function') haccpYenile(); }, 40);
             if(tabName === 'uretim')    setTimeout(function(){ if(typeof uretimYenile==='function') uretimYenile(); }, 40);
+            if(typeof navTasmaKontrol === 'function') setTimeout(navTasmaKontrol, 60);
         }
 
         function mobileOpenTab(tabName) {
