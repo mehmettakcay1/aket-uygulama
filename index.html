@@ -1006,6 +1006,8 @@
         .haccp-tab { background: #1a1a1a; border: 1px solid #333; color: var(--yazi-soluk); font-size: 12px; font-weight: 700; padding: 9px 16px; border-radius: 7px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .haccp-tab:hover { color: white; border-color: #16a085; }
         .haccp-tab.active { background: #16a085; color: white; border-color: #16a085; }
+        .z-raporu-vurgu { animation: zRaporuPulse 1.6s ease-in-out 3; box-shadow: 0 0 0 0 rgba(243,156,18,0.6); }
+        @keyframes zRaporuPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(243,156,18,0.55); } 50% { box-shadow: 0 0 0 8px rgba(243,156,18,0); } }
         .haccp-durum-ok { color: var(--yesil); font-weight: 700; }
         .haccp-durum-risk { color: #e74c3c; font-weight: 700; }
         /* ── ANALİZ EK BÖLÜM (fire / hacim) ── */
@@ -2325,7 +2327,7 @@
                     </div>
                     <div class="m-card-arrow">›</div>
                 </div>
-                <div id="mcard-haccp" class="m-card yetki-haccp" style="--c-accent:#16a085;display:none;" onclick="mobileOpenTab('haccp')">
+                <div id="mcard-haccp" class="m-card" style="--c-accent:#16a085;display:none;" onclick="mobileOpenTab('haccp')">
                     <div class="m-card-icon" style="background:rgba(22,160,133,0.12);color:#16a085;">HAC</div>
                     <div class="m-card-body">
                         <div class="m-card-title">HACCP Kayıtları</div>
@@ -2333,7 +2335,7 @@
                     </div>
                     <div class="m-card-arrow">›</div>
                 </div>
-                <div id="mcard-uretim" class="m-card yetki-uretim" style="--c-accent:#d35400;display:none;" onclick="mobileOpenTab('uretim')">
+                <div id="mcard-uretim" class="m-card" style="--c-accent:#d35400;display:none;" onclick="mobileOpenTab('uretim')">
                     <div class="m-card-icon" style="background:rgba(211,84,0,0.12);color:#d35400;">ÜRT</div>
                     <div class="m-card-body">
                         <div class="m-card-title">Üretim Emri</div>
@@ -2382,8 +2384,8 @@
                 <button class="tab-link yetki-admin" id="nav-musteri" onclick="openTab('musteri', this)" style="display:none;">Müşteriler</button>
                 <button class="tab-link yetki-admin" id="nav-dashboard" onclick="openTab('dashboard', this)" style="display:none;">Analiz</button>
                 <button class="tab-link" id="nav-ik" onclick="openTab('ik', this); ikIkTabAc();" style="display:none;">İK</button>
-                <button class="tab-link yetki-haccp" id="nav-haccp" onclick="openTab('haccp', this)" style="display:none;">HACCP</button>
-                <button class="tab-link yetki-uretim" id="nav-uretim" onclick="openTab('uretim', this)" style="display:none;">Üretim Emri</button>
+                <button class="tab-link" id="nav-haccp" onclick="openTab('haccp', this)" style="display:none;">HACCP</button>
+                <button class="tab-link" id="nav-uretim" onclick="openTab('uretim', this)" style="display:none;">Üretim Emri</button>
             </div>
             <div class="user-actions">
                 <div id="sync-indicator" title="Firebase çevrimiçi senkron aktif"><div class="sync-dot"></div><span>Çevrimiçi</span></div>
@@ -2458,11 +2460,11 @@
                     <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
                     <span>İnsan K.</span>
                 </button>
-                <button class="mnav-item yetki-haccp" id="mnav-haccp" onclick="mobileOpenTab('haccp')" style="display:none;">
+                <button class="mnav-item" id="mnav-haccp" onclick="mobileOpenTab('haccp')" style="display:none;">
                     <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg></span>
                     <span>HACCP</span>
                 </button>
-                <button class="mnav-item yetki-uretim" id="mnav-uretim" onclick="mobileOpenTab('uretim')" style="display:none;">
+                <button class="mnav-item" id="mnav-uretim" onclick="mobileOpenTab('uretim')" style="display:none;">
                     <span class="mni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9l-6 4V9l-6 4V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z"/></svg></span>
                     <span>Üretim</span>
                 </button>
@@ -4519,6 +4521,20 @@
         };
         function rolGoster(yetki) { return ROL_GORUNUM[yetki] || yetki; }
 
+        // ─── ROL → MODÜL ERİŞİM MATRİSİ (tek doğruluk kaynağı) ───────────
+        const TUM_MODULLER = ['giren','stok','siparis','cikan','kemik','tarifler','uretim','haccp','perakende','muhasebe','musteri','dashboard','ik'];
+        const ROL_MODUL = {
+            Admin:    ['giren','stok','siparis','cikan','kemik','tarifler','uretim','haccp','perakende','muhasebe','musteri','dashboard','ik'],
+            Kasap:    ['giren','stok','siparis','cikan','kemik','tarifler','uretim','haccp','ik'],
+            Kasa:     ['perakende','ik'],
+            Satis:    ['perakende','siparis','kemik','musteri','ik'],
+            Muhasebe: ['giren','stok','siparis','cikan','muhasebe','musteri','dashboard','ik']
+        };
+        function modulYetkili(tab) {
+            let y = aktifKullanici ? aktifKullanici.yetki : '';
+            return (ROL_MODUL[y] || []).includes(tab);
+        }
+
         // GÜVENLİK VE VERİTABANI ALTYAPISI
         let sistemKullanicilari = guvenliParse('aket_users', []);
 
@@ -4795,7 +4811,15 @@
                 goMobileHome();
             } else {
                 let y = aktifKullanici.yetki;
-                if(y === 'Kasa' || y === 'Satis') openTab('perakende', document.getElementById('nav-perakende'));
+                if(y === 'Kasa' || y === 'Satis') {
+                    openTab('perakende', document.getElementById('nav-perakende'));
+                    if(y === 'Kasa') {
+                        // Gün sonu kasa kapanışını hatırlat + butonu öne çıkar
+                        let zBtn = document.querySelector('#perakende .yetki-kasa');
+                        if(zBtn) { zBtn.classList.add('z-raporu-vurgu'); }
+                        setTimeout(() => showToast("Gün sonunda 'Gün Sonu Kasa Bildir' ile kasayı kapatmayı unutmayın.", "warning"), 1500);
+                    }
+                }
                 else if(y === 'Muhasebe') openTab('muhasebe', document.getElementById('nav-muhasebe'));
                 else openTab('giren', document.getElementById('nav-giren'));
             }
@@ -4822,89 +4846,36 @@
                 if(mLogoCenter) mLogoCenter.onclick = goMobileHome;
             }
             
-            document.getElementById('nav-muhasebe').style.display = (y === 'Admin' || y === 'Muhasebe') ? 'block' : 'none';
-            document.getElementById('nav-tarifler').style.display = (y === 'Admin' || y === 'Kasap') ? 'block' : 'none';
-            // Mal Kabul: Kasa rolü göremez
-            let malKabulGorebilir = (y !== 'Kasa');
-            document.getElementById('nav-giren').style.display = malKabulGorebilir ? 'block' : 'none';
-            let mcard_giren = document.getElementById('mcard-giren');
-            if(mcard_giren) mcard_giren.style.display = malKabulGorebilir ? '' : 'none';
-            // Mobil bottom nav görünürlükleri
-            let mMuh = document.getElementById('mnav-muhasebe');
-            let mTar = document.getElementById('mnav-tarifler');
-            let mGiren = document.getElementById('mnav-giren');
-            if(mMuh) mMuh.style.display = (y === 'Admin' || y === 'Muhasebe') ? 'flex' : 'none';
-            if(mTar) mTar.style.display = (y === 'Admin' || y === 'Kasap') ? 'flex' : 'none';
-            if(mGiren) mGiren.style.display = malKabulGorebilir ? 'flex' : 'none';
-
-            // Müşteriler görünürlüğü aşağıdaki musteriYetkili bloğunda yönetilir
-
-            // Dashboard kart görünürlükleri
-            let cardMuh = document.getElementById('mcard-muhasebe');
-            let cardTar = document.getElementById('mcard-tarifler');
+            // ── MODÜL GÖRÜNÜRLÜĞÜ (nav + alt nav + kart) — ROL_MODUL matrisi tek kaynak ──
+            TUM_MODULLER.forEach(t => {
+                let goster = modulYetkili(t);
+                let n  = document.getElementById('nav-' + t);
+                let mn = document.getElementById('mnav-' + t);
+                let mc = document.getElementById('mcard-' + t);
+                if(n)  n.style.display  = goster ? '' : 'none';
+                if(mn) mn.style.display = goster ? 'flex' : 'none';
+                if(mc) mc.style.display = goster ? '' : 'none';
+            });
+            // "Personel Yönetimi" kartı (modal açar, sekme değil) — sadece Admin
             let cardPers = document.getElementById('mcard-personel');
-            if(cardMuh) cardMuh.style.display = (y === 'Admin' || y === 'Muhasebe') ? '' : 'none';
-            if(cardTar) cardTar.style.display = (y === 'Admin' || y === 'Kasap') ? '' : 'none';
             if(cardPers) cardPers.style.display = (y === 'Admin') ? '' : 'none';
 
-            // Dashboard hoşgeldiniz alanını güncelle
+            // Mobil karşılama alanı
             let mName = document.getElementById('m-welcome-name');
-            let mBadge = document.getElementById('m-welcome-badge');
-            let mUserDot = document.getElementById('m-user-dot');
             if(mName) mName.innerText = aktifKullanici.ad;
             profilDotGuncelle();
-            
-            document.querySelectorAll('.yetki-depo').forEach(b => { b.style.display = (y === 'Admin' || y === 'Kasap' || y === 'Muhasebe') ? '' : 'none'; });
-            document.querySelectorAll('.yetki-sevkiyat').forEach(b => { b.style.display = (y === 'Admin' || y === 'Kasap') ? '' : 'none'; });
-            document.querySelectorAll('.yetki-magaza').forEach(b => { b.style.display = (y === 'Admin' || y === 'Satis' || y === 'Kasa') ? '' : 'none'; });
-            document.querySelectorAll('.yetki-kasa').forEach(b => { b.style.display = (y === 'Admin' || y === 'Kasa') ? '' : 'none'; });
 
-            // Kemik tartım: Kasap (merkez) + Satış (mağaza kemikleri) + Admin
-            let kemikYetkili = (y === 'Admin' || y === 'Kasap' || y === 'Satis');
-            document.querySelectorAll('.yetki-kemik').forEach(b => { b.style.display = kemikYetkili ? '' : 'none'; });
-            document.querySelectorAll('.yetki-kemik-nav').forEach(b => { b.style.display = kemikYetkili ? '' : 'none'; });
-            let kemikCard = document.getElementById('mcard-kemik');
-            if(kemikCard) kemikCard.style.display = kemikYetkili ? '' : 'none';
-            let kemikNavBtn = document.getElementById('nav-kemik');
-            if(kemikNavBtn) kemikNavBtn.style.display = kemikYetkili ? '' : 'none';
-            // Mağaza paneli: sadece kaynak Mağaza filtrele - Satış yalnızca Mağaza kayıtlarını yönetir
-            if(y === 'Satis') {
-                let kKaynak = document.getElementById('kKaynak');
-                if(kKaynak) { kKaynak.value = 'Mağaza'; kKaynak.disabled = true; }
-            } else {
-                let kKaynak = document.getElementById('kKaynak');
-                if(kKaynak) kKaynak.disabled = false;
-            }
+            // ── MODÜL İÇİ İŞLEM (ekle/düzenle/sil) BUTONU yetkileri ──
+            document.querySelectorAll('.yetki-depo').forEach(b => { b.style.display = ['Admin','Kasap','Muhasebe'].includes(y) ? '' : 'none'; });
+            document.querySelectorAll('.yetki-sevkiyat').forEach(b => { b.style.display = ['Admin','Kasap'].includes(y) ? '' : 'none'; });
+            document.querySelectorAll('.yetki-magaza').forEach(b => { b.style.display = ['Admin','Satis','Kasa'].includes(y) ? '' : 'none'; });
+            document.querySelectorAll('.yetki-kasa').forEach(b => { b.style.display = ['Admin','Kasa'].includes(y) ? '' : 'none'; });
+            document.querySelectorAll('.yetki-kemik').forEach(b => { b.style.display = ['Admin','Kasap','Satis'].includes(y) ? '' : 'none'; });
+            document.querySelectorAll('.yetki-haccp, .yetki-uretim').forEach(b => { b.style.display = ['Admin','Kasap'].includes(y) ? '' : 'none'; });
 
-            // Müşteri: Admin + Muhasebe yönetebilir | Dashboard: sadece Admin
-            let navMusteri  = document.getElementById('nav-musteri');
-            let navDashboard= document.getElementById('nav-dashboard');
-            let mnavMusteri = document.getElementById('mnav-musteri');
-            let mnavDashboard=document.getElementById('mnav-dashboard');
-            let mcardMusteri= document.getElementById('mcard-musteri');
-            let mcardDash   = document.getElementById('mcard-dashboard');
-            let isAdmin = (y === 'Admin');
-            let musteriYetkili = (y === 'Admin' || y === 'Muhasebe');
-            if(navMusteri)   navMusteri.style.display   = musteriYetkili ? '' : 'none';
-            if(navDashboard) navDashboard.style.display = isAdmin ? '' : 'none';
-            if(mnavMusteri)  mnavMusteri.style.display  = musteriYetkili ? 'flex' : 'none';
-            if(mnavDashboard)mnavDashboard.style.display= isAdmin ? 'flex' : 'none';
-            if(mcardMusteri) mcardMusteri.style.display = musteriYetkili ? '' : 'none';
-            if(mcardDash)    mcardDash.style.display    = isAdmin ? '' : 'none';
-
-            // İnsan Kaynakları — tüm giriş yapmış kullanıcılar
-            let navIk   = document.getElementById('nav-ik');
-            let mnavIk  = document.getElementById('mnav-ik');
-            let mcardIk = document.getElementById('mcard-ik');
-            if(navIk)   navIk.style.display   = '';
-            if(mnavIk)  mnavIk.style.display  = 'flex';
-            if(mcardIk) mcardIk.style.display = '';
-
-            // HACCP + Üretim Emri — Admin + Kasap
-            let uretimKaliteYetkili = (y === 'Admin' || y === 'Kasap');
-            document.querySelectorAll('.yetki-haccp, .yetki-uretim').forEach(el => {
-                el.style.display = uretimKaliteYetkili ? (el.classList.contains('mnav-item') ? 'flex' : '') : 'none';
-            });
+            // Mağaza kaynağı: Satış yalnızca Mağaza kayıtları
+            let kKaynak = document.getElementById('kKaynak');
+            if(kKaynak) { if(y === 'Satis') { kKaynak.value = 'Mağaza'; kKaynak.disabled = true; } else kKaynak.disabled = false; }
 
             // Kasap Hızlı Eylem FAB — sadece Kasap rolünde görünür
             let sesliMod = document.getElementById('sesli-mod-fab');
@@ -5154,6 +5125,12 @@
         }
 
         function openTab(tabName, btnElement) {
+            // Yetki güvenliği: rolü olmayan modüle geçişi engelle (kendi ilk modülüne yönlendir)
+            if (aktifKullanici && TUM_MODULLER.includes(tabName) && !modulYetkili(tabName)) {
+                let ilk = (ROL_MODUL[aktifKullanici.yetki] || ['ik'])[0];
+                if (ilk && ilk !== tabName) { openTab(ilk, document.getElementById('nav-' + ilk)); }
+                return;
+            }
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.mnav-item').forEach(l => l.classList.remove('active'));
@@ -5529,7 +5506,7 @@
             let y = aktifKullanici ? aktifKullanici.yetki : '';
             
             let girenBtnGorunur = (y === 'Admin' || y === 'Kasap' || y === 'Muhasebe') ? '' : 'display:none;';
-            let siparisBtnGorunur = (y === 'Admin' || y === 'Kasap' || y === 'Muhasebe') ? '' : 'display:none;';
+            let siparisBtnGorunur = (y === 'Admin' || y === 'Kasap' || y === 'Muhasebe' || y === 'Satis') ? '' : 'display:none;';
             let sevkBtnGorunur = (y === 'Admin' || y === 'Kasap') ? '' : 'display:none;';
             let magazaBtnGorunur = (y === 'Admin' || y === 'Satis' || y === 'Kasa') ? '' : 'display:none;';
 
