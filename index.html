@@ -2091,7 +2091,7 @@
     <!-- YENİ SÜRÜM BİLDİRİM BANNER -->
     <div id="update-banner">
         <span>🔄 Yeni sürüm mevcut. En son özellikleri almak için yenileyin.</span>
-        <button onclick="window.location.reload()">Yenile</button>
+        <button onclick="(window._swYenile ? window._swYenile() : window.location.reload())">Yenile</button>
     </div>
 
     <div id="toast-container"></div>
@@ -4579,32 +4579,43 @@
         let kemikler = guvenliParse('aket_kemik', []);
         let musteriler = guvenliParse('aket_musteriler', []);
 
-        window.onload = function() {
-            // Kurumsal logo yenilendi (2026-09) — eski cihazlarda saklı eski logoyu temizle.
-            // Admin gerçekten özel logo istiyorsa ayarlardan tekrar yükler.
-            const LOGO_SURUM = 2;
-            if (+(localStorage.getItem('aket_logo_surum') || 1) < LOGO_SURUM) {
-                localStorage.removeItem('aket_logo_base64');
-                localStorage.setItem('aket_logo_surum', String(LOGO_SURUM));
-            }
-            let logo = localStorage.getItem('aket_logo_base64') || './AK-ET KURUMSAL LOGO.png';
-            uygulaLogo(logo);
+        // Uygulama başlangıcı — window.onload DEĞİL: onload tüm resimlerin (ikonlar, ~1.4 MB
+        // splash görselleri) yüklenmesini bekler; yavaş mobil bağlantıda uygulama "açılmıyor"
+        // gibi görünür. DOM hazır olur olmaz başlat.
+        function _aketBaslat() {
+            try {
+                const LOGO_SURUM = 2;
+                if (+(localStorage.getItem('aket_logo_surum') || 1) < LOGO_SURUM) {
+                    localStorage.removeItem('aket_logo_base64');
+                    localStorage.setItem('aket_logo_surum', String(LOGO_SURUM));
+                }
+                let logo = localStorage.getItem('aket_logo_base64') || './AK-ET KURUMSAL LOGO.png';
+                uygulaLogo(logo);
 
-            kategoriDegisti('sKategori', 'sUrun'); kategoriDegisti('pKategori', 'pUrun'); kategoriDegisti('psKategori', 'psUrun');
-            
-            if(!aktifKullanici) {
-                document.getElementById('login-screen').style.display = 'flex';
-            } else {
-                if(!aktifKullanici.sozlesmeOnay) {
+                kategoriDegisti('sKategori', 'sUrun'); kategoriDegisti('pKategori', 'pUrun'); kategoriDegisti('psKategori', 'psUrun');
+
+                if(!aktifKullanici) {
+                    document.getElementById('login-screen').style.display = 'flex';
+                } else if(!aktifKullanici.sozlesmeOnay) {
                     document.getElementById('agreement-screen').style.display = 'flex';
                 } else {
-                    // Oturum açık — giriş/sözleşme ekranlarını kapat ve sisteme geç
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('agreement-screen').style.display = 'none';
                     sistemiBaslat();
                 }
+            } catch (e) {
+                console.error('Başlangıç hatası:', e);
+                // Son çare: en azından giriş ekranını göster ki kullanıcı takılıp kalmasın
+                try { document.getElementById('login-screen').style.display = 'flex'; } catch (_) {}
             }
-        };
+        }
+        // DOMContentLoaded, bu senkron script bitmeden TETİKLENMEZ → tüm let'ler hazır olur.
+        // Sayfa zaten yüklüyse (SW anlık servis) bir sonraki tick'e ertele (yine sıralama güvenli).
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', _aketBaslat);
+        } else {
+            setTimeout(_aketBaslat, 0);
+        }
 
         function logoKaydet(input) {
             if (input.files && input.files[0]) {
@@ -9344,31 +9355,35 @@
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').then(reg => {
-                // Periyodik güncelleme kontrolü (5 dakikada bir)
-                setInterval(() => reg.update(), 5 * 60 * 1000);
+                // Güncelleme kontrolü: sık değil (30 dk) + sekmeye dönünce — mobilde sürekli
+                // reg.update() ağ trafiği + yeniden yükleme riskini azaltır.
+                setInterval(() => { try { reg.update(); } catch (e) {} }, 30 * 60 * 1000);
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') { try { reg.update(); } catch (e) {} }
+                });
 
-                // Yeni SW bekliyorsa banner göster
-                function swBekleyenKontrol(r) {
-                    if(r.waiting) {
+                // Yeni sürüm indi → yalnızca bilgi banner'ı göster (otomatik yeniden YÜKLEME YOK).
+                // Kullanıcı hazır olduğunda "Yenile"ye basar.
+                function bekleyeniGoster() {
+                    if (reg.waiting) {
                         let b = document.getElementById('update-banner');
-                        if(b) b.style.display = 'flex';
+                        if (b) b.style.display = 'flex';
                     }
                 }
-                swBekleyenKontrol(reg);
+                bekleyeniGoster();
                 reg.addEventListener('updatefound', () => {
-                    reg.installing.addEventListener('statechange', () => {
-                        if(reg.installing && reg.installing.state === 'installed') swBekleyenKontrol(reg);
-                    });
+                    let sw = reg.installing;
+                    if (sw) sw.addEventListener('statechange', () => { if (sw.state === 'installed' && navigator.serviceWorker.controller) bekleyeniGoster(); });
                 });
             }).catch(() => {});
 
-            // Yeni SW aktif olduğunda sayfayı yenile
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if(!sessionStorage.getItem('aket-sw-reload')) {
-                    sessionStorage.setItem('aket-sw-reload', '1');
-                    window.location.reload();
-                }
-            });
+            // "Yenile" butonu bekleyen SW'yi devreye alır, sonra bir kez yeniden yükler
+            window._swYenile = function () {
+                navigator.serviceWorker.getRegistration().then(r => {
+                    if (r && r.waiting) r.waiting.postMessage({ type: 'SKIP_WAITING' });
+                });
+                setTimeout(() => location.reload(), 400);
+            };
         }
     </script>
 </body>
