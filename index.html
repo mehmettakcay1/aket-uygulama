@@ -1633,7 +1633,7 @@
             .kurulus-yazisi { font-size: 9px; margin-bottom: 16px; }
             .login-box input {
                 padding: 14px 16px !important;
-                font-size: 15px !important;
+                font-size: 16px !important; /* iOS Safari: <16px focus'ta otomatik zoom yapar */
                 border-radius: 11px !important;
                 margin-bottom: 10px !important;
             }
@@ -2109,8 +2109,8 @@
             <p class="kurulus-yazisi">Akçay Hayvancılık Kuruluşudur</p>
             
             <div class="login-divider"><span>Yetkili Giriş</span></div>
-            <input type="text" id="loginTc" placeholder="Kullanıcı Numaranız" maxlength="11" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-            <input type="password" id="loginPassword" placeholder="Yetki Kodunuz">
+            <input type="tel" id="loginTc" placeholder="Kullanıcı Numaranız" maxlength="11" inputmode="numeric" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.replace(/\D/g,'')">
+            <input type="password" id="loginPassword" placeholder="Yetki Kodunuz" inputmode="numeric" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();girisYap();}">
             <button onclick="girisYap()" style="letter-spacing:2px; text-transform:uppercase;">SİSTEME GİRİŞ</button>
             <span class="forgot-pw-link" onclick="toggleForgotPw(true)">Yetki Kodumu Unuttum</span>
             <p style="font-size:10px; color:#3a3a3a; margin-top:24px; letter-spacing:0.8px; border-top:1px solid #1e1e1e; padding-top:16px;">v2.0 &nbsp;·&nbsp; AKET ENTEGRE GIDA SAN. TİC. LTD. ŞTİ.</p>
@@ -2119,7 +2119,7 @@
         <div class="login-box" id="forgot-pw-box" style="display:none; border-top-color:var(--mavi);">
             <h2 style="color:var(--mavi);">ŞİFRE SIFIRLAMA</h2>
             <p style="font-size:12px; color:var(--yazi-soluk); margin-bottom:20px; line-height:1.5;">Kayıtlı Kullanıcı numaranızı giriniz. Yetki kodunuz sistemdeki telefon numaranıza SMS olarak gönderilecektir.</p>
-            <input type="text" id="forgotTc" placeholder="Kullanıcı Numaranız" maxlength="11" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+            <input type="tel" id="forgotTc" placeholder="Kullanıcı Numaranız" maxlength="11" inputmode="numeric" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.replace(/\D/g,'')">
             <button style="background-color: var(--mavi);" onclick="sifreHatirlat()">SMS Gönder</button>
             <span class="forgot-pw-link" onclick="toggleForgotPw(false)">Giriş Ekranına Dön</span>
         </div>
@@ -4562,12 +4562,7 @@
 
         let aktifKullanici = guvenliParse('aket_current_user', null);
 
-        document.getElementById("loginPassword").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                girisYap();
-            }
-        });
+        // Enter ile giriş — inline onkeydown ile yönetiliyor (mobil klavyelerde keypress güvenilmez)
 
         let stok = guvenliParse('aket_stok', {});
         let cariHareketler = guvenliParse('aket_cari', []);
@@ -4679,14 +4674,17 @@
         // ── Giriş denemesi kilitleme (istemci tarafı; omuz-üstü / kaba deneme yavaşlatır) ──
         function _girisKilitDurum(tc) {
             let d = guvenliParse('aket_login_fails_' + tc, { n: 0, ts: 0 });
-            if (d.n < 5) return { kilitli: false };
-            // 5+ hata: artan bekleme (30sn, 60, 120, 240, max 300)
-            let bekleme = Math.min(300, 30 * Math.pow(2, d.n - 5)) * 1000;
+            // Paylaşımlı cihazlarda personeli kilitlememek için yüksek eşik + kısa bekleme
+            if (d.n < 10) return { kilitli: false };
+            // 10+ hata: 15sn, 30, 60, max 60sn
+            let bekleme = Math.min(60, 15 * Math.pow(2, d.n - 10)) * 1000;
             let kalan = d.ts + bekleme - Date.now();
             return kalan > 0 ? { kilitli: true, saniye: Math.ceil(kalan / 1000) } : { kilitli: false };
         }
         function _girisHataEkle(tc) {
             let d = guvenliParse('aket_login_fails_' + tc, { n: 0, ts: 0 });
+            // Son denemeden 10 dk geçtiyse sayacı sıfırla (eski hatalar birikmesin)
+            if (d.ts && (Date.now() - d.ts) > 600000) d.n = 0;
             d.n++; d.ts = Date.now();
             try { localStorage.setItem('aket_login_fails_' + tc, JSON.stringify(d)); } catch (e) {}
         }
