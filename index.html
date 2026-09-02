@@ -43,12 +43,10 @@
     <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="./splash/apple-splash-750-1334.png">
     <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="./splash/apple-splash-640-1136.png">
     <title>AK ET Kurumsal Yönetim Sistemi</title>
-    <!-- Firebase SDK — Çevrimiçi Senkron (defer: HTML parsing'i bloklamaz, yavaş bağlantıda sayfa yüklenir) -->
+    <!-- Firebase SDK — Çevrimiçi Senkron (defer + async: uygulama başlangıcını beklemez) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-check-compat.js"></script>
-    <!-- Chart.js — Grafik Dashboard -->
+    <!-- Chart.js — yalnız Analiz sekmesinde gerekir -->
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root { 
@@ -4582,7 +4580,10 @@
         // Uygulama başlangıcı — window.onload DEĞİL: onload tüm resimlerin (ikonlar, ~1.4 MB
         // splash görselleri) yüklenmesini bekler; yavaş mobil bağlantıda uygulama "açılmıyor"
         // gibi görünür. DOM hazır olur olmaz başlat.
+        let _aketBasladi = false;
         function _aketBaslat() {
+            if (_aketBasladi) return;   // yalnız bir kez
+            _aketBasladi = true;
             try {
                 const LOGO_SURUM = 2;
                 if (+(localStorage.getItem('aket_logo_surum') || 1) < LOGO_SURUM) {
@@ -4609,13 +4610,9 @@
                 try { document.getElementById('login-screen').style.display = 'flex'; } catch (_) {}
             }
         }
-        // DOMContentLoaded, bu senkron script bitmeden TETİKLENMEZ → tüm let'ler hazır olur.
-        // Sayfa zaten yüklüyse (SW anlık servis) bir sonraki tick'e ertele (yine sıralama güvenli).
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', _aketBaslat);
-        } else {
-            setTimeout(_aketBaslat, 0);
-        }
+        // _aketBaslat çağrısı bu script'in EN SONUNA taşındı (tüm let/const'lar hazır olsun,
+        // TDZ hatası olmasın) — ayrıca DOMContentLoaded'a da bağlı (yedek).
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _aketBaslat);
 
         function logoKaydet(input) {
             if (input.files && input.files[0]) {
@@ -6660,9 +6657,14 @@
         let firebaseSonYaziTs = 0;
         let _firebaseRetryPending = false;
 
+        let _fbBaslatDenemesi = 0;
         function firebaseBaslat() {
             if(firebaseDB) return; // Zaten bağlı
-            if(typeof firebase === 'undefined') return; // SDK henüz yüklenmedi (yavaş bağlantı)
+            if(typeof firebase === 'undefined') {
+                // SDK henüz inmedi (defer script / yavaş bağlantı) — kısa aralıklarla tekrar dene
+                if(_fbBaslatDenemesi++ < 40) setTimeout(firebaseBaslat, 500);
+                return;
+            }
 
             // Önce localStorage'daki kaydedilmiş config'i dene, yoksa sabit config
             let config = FIREBASE_CONFIG;
@@ -6675,30 +6677,10 @@
             try {
                 if(!firebase.apps.length) firebase.initializeApp(config);
 
-                // ── App Check: DB erişimini yalnız gerçek uygulamadan gelen isteklere daralt ──
-                // KURULUM: Firebase Console → App Check → Web → reCAPTCHA v3 → site anahtarını al,
-                // aşağıdaki RECAPTCHA_SITE_KEY'e yapıştır. Anahtar boşken App Check atlanır (uygulama çalışır).
-                const RECAPTCHA_SITE_KEY = ''; // <-- Firebase Console'dan alınacak
-                try {
-                    if (RECAPTCHA_SITE_KEY && firebase.appCheck) {
-                        firebase.appCheck().activate(
-                            new firebase.appCheck.ReCaptchaV3Provider(RECAPTCHA_SITE_KEY),
-                            true /* otomatik token yenileme */
-                        );
-                    }
-                } catch (e) { console.warn('App Check başlatılamadı:', e.message); }
-
-                // ── Anonim kimlik doğrulama: kurallar auth != null gerektirdiğinde erişimi sağlar ──
-                // KURULUM: Firebase Console → Authentication → Sign-in method → Anonymous → Etkinleştir.
-                // Başarısız olursa (provider kapalı / ağ yok) uygulama yine de dener — mevcut açık
-                // kurallarla çalışır, sıkı kurallarda okuma/yazma reddedilir.
-                try {
-                    if (firebase.auth && !firebase.auth().currentUser) {
-                        firebase.auth().signInAnonymously().catch(e =>
-                            console.warn('Anonim giriş başarısız (Console → Authentication → Anonymous?):', e.code || e.message)
-                        );
-                    }
-                } catch (e) { console.warn('Auth başlatılamadı:', e.message); }
+                // NOT: Anonim Auth + App Check kaldırıldı — Firebase Console'da bu sağlayıcılar
+                // etkinleştirilmediği için her açılışta 400 hatası + gereksiz ~200 KB SDK yüklüyordu.
+                // Güvenlik sertleştirmesi (auth != null kuralları) yapılacaksa, önce Console'da
+                // Anonymous Auth açılıp firebase-auth-compat.js geri eklenmeli.
 
                 firebaseDB = firebase.database();
 
@@ -9339,7 +9321,11 @@
         // ─── YARDIMCI ─────────────────────────────────────────────
         function ikTarihFmt(t){if(!t)return'';try{return new Date(t+(t.length===10?'T00:00:00':'')).toLocaleDateString('tr-TR',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return t;}}
 
-        // PWA Service Worker — v13 (auto-update destekli)
+        // ── UYGULAMA BAŞLANGICI — script sonunda, tüm let/const hazırken, senkron çağrı.
+        //    DOMContentLoaded / window.onload beklenmez → defer'li scriptler uygulamayı geciktirmez.
+        _aketBaslat();
+
+        // PWA Service Worker
         // ── Android adres çubuğu yükseklik düzeltmesi ──
         (function() {
             function fixViewportHeight() {
